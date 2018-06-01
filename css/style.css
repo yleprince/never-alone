@@ -38,7 +38,31 @@ article .activeTab {
     background-color: deepskyblue;
 }
 
+#menu {
+     position: absolute;
+     width: 25%;
+     height: 25%;
+ }
+
+#menu-holder {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
 .graph {
     /*width: 99%;*/
     /*height: 99%;*/
+}
+
+.menu-segment {
+    fill: #4679bd;
+}
+
+.menu-segment:hover {
+    fill: #5689cd;
+}
+
+.menu-icon {
+    pointer-events: none;
 }

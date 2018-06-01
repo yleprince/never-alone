@@ -272,24 +272,21 @@ function main(data) {
 
     // TODO : PUT YOUR GRAPHS HERE
 
+
     let graph = new GraphExample("tab-wave", data); // Example : a GraphExample object in the Wave tab
 }
 
 function instantiateNavigation(){
-    let tabs = document.getElementsByClassName("tab");
-    let btnTabWave = document.getElementById("btn-tab-wave");
-    let btnTabPerson = document.getElementById("btn-tab-person");
-    let btnTabSuccess = document.getElementById("btn-tab-success");
+    let data_menu = [
+        { icon : "./data/menu/home.svg", action: "4" },
+        { icon : "./data/menu/wave.svg", action: "0" },
+        { icon : "./data/menu/person.svg", action: "1" },
+        { icon : "./data/menu/success.svg", action: "2" }
+    ];
 
-    btnTabWave.addEventListener("click", () => openTab(0));
-    btnTabPerson.addEventListener("click", () => openTab(1));
-    btnTabSuccess.addEventListener("click", () => openTab(2));
-
-    function openTab (i) {
-        console.log(tabs);
-        for (let tab of tabs) {
-            tab.classList.toggle("activeTab", false);
-        }
-        tabs[i].classList.toggle("activeTab");
-    }
+    // Show menu launch
+    let m = new d3.radialMenu().radius(50)
+        .thickness(30)
+        .appendTo("#menu-holder")
+        .show(data_menu);
 }
