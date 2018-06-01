@@ -42,3 +42,29 @@ article .activeTab {
     /*width: 99%;*/
     /*height: 99%;*/
 }
+
+
+/* PARALLEL COORDINATES */
+.background path {
+    fill: none;
+    stroke: #ddd;
+    shape-rendering: crispEdges;
+}
+
+.foreground path {
+    fill: none;
+    stroke: steelblue;
+}
+
+.axis line,
+.axis path {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.axis .title {
+    font-size: 10px;
+    transform: rotate(-21deg) translate(-5px,-6px);
+    fill: #222;
+}
