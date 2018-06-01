@@ -3,8 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>Never Alone</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
+<nav>
+    <button id="btn-tab-wave">Wave</button>
+    <button id="btn-tab-person">Person</button>
+    <button id="btn-tab-success">Success</button>
+</nav>
+<article>
+    <div id="tab-wave" class="tab activeTab">
+
+    </div>
+    <div id="tab-person" class="tab">
+        Ne dois pas s'afficher
+    </div>
+    <div id="tab-success" class="tab">
+        Ne dois pas s'afficher
+    </div>
+</article>
+<script src="d3/d3.js"></script>
+<script type="module" src="main.js"></script>
+<script type="module" src="modules/graphs/Graph.js"></script>
+<script type="module" src="modules/graphs/GraphExample.js"></script>
+<script type="module" src="modules/defaultOptions.js"></script>
 </body>
 </html>

@@ -1,0 +1,44 @@
+body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+}
+
+body > nav {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+}
+
+body > article {
+    width: 100%;
+    height: 100%;
+}
+
+article .tab {
+    width: 100%;
+    height: 100%;
+    /*padding: 4px;*/
+    display: none;
+}
+
+article .activeTab {
+    display: grid;
+}
+
+#tab-wave {
+    background-color: hotpink;
+}
+
+#tab-person {
+    background-color: limegreen;
+}
+
+#tab-success {
+    background-color: deepskyblue;
+}
+
+.graph {
+    /*width: 99%;*/
+    /*height: 99%;*/
+}
