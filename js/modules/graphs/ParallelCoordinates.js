@@ -51,8 +51,6 @@ class ParallelCoordinates extends Graph {
             innerWidth = this.width - margin.left - margin.right,
             innerHeight = this.height - margin.top - margin.bottom;
 
-        let line = d3.line();
-
         // Types
         let types = {
             "Number": {
@@ -90,33 +88,24 @@ class ParallelCoordinates extends Graph {
             }
         ];
 
-        console.log(dimensions);
-
         let xscale = d3.scalePoint()
             .domain(d3.range(dimensions.length))
             .range([0, innerWidth]);
-
         let yAxis = d3.axisLeft();
+
+        let line = d3.line();
+        let dragging = {};
+        let dimPos = {};
 
         let g = this.svg.append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
-
-        let axes = g.selectAll(".axis")
-            .data(dimensions)
-            .enter().append("g")
-            .attr("class", d => {
-                return "axis " + d.key;
-            })
-            .attr("transform", (d, i) => {
-                return `translate(${xscale(i)})`;
-            });
+        ParallelCoordinates.updateDimPos(dimPos, dimensions, xscale);
 
         this.data.forEach(d =>
             dimensions.forEach(p =>
                 d[p.key] = !d[p.key] ? null : p.type.coerce(d[p.key])));
 
-        // type/dimension default setting happens here
         dimensions.forEach(dim => {
             if (!("domain" in dim)) {
                 // detect domain using dimension type's extent function
@@ -128,18 +117,6 @@ class ParallelCoordinates extends Graph {
             }
             dim.scale.domain(dim.domain);
         });
-
-        axes.append("g")
-            .each(function (d) {
-                let renderAxis = "axis" in d
-                    ? d.axis.scale(d.scale)  // custom axis
-                    : yAxis.scale(d.scale);  // default axis
-                d3.select(this).call(renderAxis);
-            })
-            .append("text")
-            .attr("class", "title")
-            .attr("text-anchor", "start")
-            .text(d => "description" in d ? d.description : d.key);
 
         // Add background lines for context.
         let background = g.append("g")
@@ -157,11 +134,65 @@ class ParallelCoordinates extends Graph {
             .enter().append("path")
             .attr("d", d => line(project(d)));
 
+        // Add a group element for each dimension
+        let axes = g.selectAll(".axis")
+            .data(dimensions)
+            .enter().append("g")
+            .attr("class", d => {
+                return "axis " + d.key;
+            })
+            .attr("transform", (d, i) => {
+                return `translate(${xscale(i)})`;
+            })
+            .call(d3.drag()
+                .subject(function (d, i) {
+                    return {xscale: xscale(i)};
+                })
+                .on("start", function (d) {
+                    dragging[d.key] = ParallelCoordinates.position(d.key, dragging, dimPos);
+                    background.attr("visibility", "hidden");
+                })
+                .on("drag", function (d, i) {
+                    dragging[d.key] = Math.min(innerWidth + 1, Math.max(-1, d3.event.x));
+                    foreground.attr("d", d => line(project(d)));
+                    dimensions.sort(function (a, b) {
+                        return ParallelCoordinates.position(a.key, dragging, dimPos) - ParallelCoordinates.position(b.key, dragging, dimPos);
+                    });
+                    ParallelCoordinates.updateDimPos(dimPos, dimensions, xscale);
+                    axes.attr("transform", function (d) {
+                        return "translate(" + ParallelCoordinates.position(d.key, dragging, dimPos) + ")";
+                    })
+                })
+                .on("end", function (d) {
+                    delete dragging[d.key];
+                    transition(d3.select(this).attr("transform", d => {
+                        return "translate(" + dimPos[d.key] + ")"
+                    }));
+                    transition(foreground).attr("d", d => line(project(d)));
+                    background
+                        .attr("d", path)
+                        .transition()
+                        .delay(500)
+                        .duration(0)
+                        .attr("visibility", null);
+                }));
+
+        axes.append("g")
+            .each(function (d) {
+                let renderAxis = "axis" in d
+                    ? d.axis.scale(d.scale)  // custom axis
+                    : yAxis.scale(d.scale);  // default axis
+                d3.select(this).call(renderAxis);
+            })
+            .append("text")
+            .attr("class", "title")
+            .attr("text-anchor", "start")
+            .text(d => "description" in d ? d.description : d.key);
+
         // Add and store a brush for each axis.
         axes.append("g")
             .attr("class", "brush")
             .each(function (d) {
-                console.log(d);
                 d3.select(this).call(d.brush = d3.brushY()
                     .extent([[-10, 0], [10, innerHeight]])
                     .on("start", brushstart)
@@ -173,13 +204,18 @@ class ParallelCoordinates extends Graph {
             .attr("x", -8)
             .attr("width", 16);
 
+        function transition(g) {
+            return g.transition().duration(500);
+        }
+
         function project(d) {
             return dimensions.map(function (p, i) {
                 // check if data element has property and contains a value
                 if (!(p.key in d) || d[p.key] === null) {
                     return null;
                 }
-                return [xscale(i), p.scale(d[p.key])];
+                return [ParallelCoordinates.position(p.key, dragging, dimPos), p.scale(d[p.key])];
+                // return [xscale(i), p.scale(d[p.key])];
             });
         }
 
@@ -191,10 +227,10 @@ class ParallelCoordinates extends Graph {
         function brush() {
             let actives = [];
             g.selectAll(".axis .brush")
-                .filter(function(d) {
+                .filter(function (d) {
                     return d3.brushSelection(this);
                 })
-                .each(function(d) {
+                .each(function (d) {
                     actives.push({
                         dimension: d,
                         extent: d3.brushSelection(this)
@@ -212,6 +248,17 @@ class ParallelCoordinates extends Graph {
                 }
             });
         }
+    }
+
+    static updateDimPos(dimPos, dimensions, xscale) {
+        dimensions.forEach(function (d, i) {
+            dimPos[d.key] = xscale(i);
+        });
+    }
+
+    static position(k, dragging, dimPos) {
+        let v = dragging[k];
+        return v == null ? dimPos[k] : v;
     }
 
     static d3_functor(v) {
