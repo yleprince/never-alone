@@ -150,11 +150,12 @@ class ParallelCoordinates extends Graph {
                 })
                 .on("start", function (d) {
                     dragging[d.key] = ParallelCoordinates.position(d.key, dragging, dimPos);
-                    background.attr("visibility", "hidden");
+                    background.style("opacity", 0);
                 })
                 .on("drag", function (d, i) {
                     dragging[d.key] = Math.min(innerWidth + 1, Math.max(-1, d3.event.x));
                     foreground.attr("d", d => line(project(d)));
+                    background.attr("d", d => line(project(d)));
                     dimensions.sort(function (a, b) {
                         return ParallelCoordinates.position(a.key, dragging, dimPos) - ParallelCoordinates.position(b.key, dragging, dimPos);
                     });
@@ -170,11 +171,11 @@ class ParallelCoordinates extends Graph {
                     }));
                     transition(foreground).attr("d", d => line(project(d)));
                     background
-                        .attr("d", path)
+                        .attr("d", d => line(project(d)))
                         .transition()
                         .delay(500)
                         .duration(0)
-                        .attr("visibility", null);
+                        .style("opacity", 1);
                 }));
 
         axes.append("g")
