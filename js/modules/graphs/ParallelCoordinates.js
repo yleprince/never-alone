@@ -38,7 +38,7 @@ class ParallelCoordinates extends Graph {
     preprocess() {
         this.data = this.allData.filter(d => d.wave === this.wave && d.age > 0 && d.exphappy > 0 && d.interests.art > 0)
             .map(d => {
-                return {age: d.age, exphappy: d.exphappy, art: d.interests.art}
+                return {age: d.age, exphappy: d.exphappy, art: d.interests.art, iid: d.iid}
             });
     }
 
@@ -83,6 +83,11 @@ class ParallelCoordinates extends Graph {
             },
             {
                 key: "art",
+                type: types["Number"],
+                scale: d3.scaleLinear().range([innerHeight, 0])
+            },
+            {
+                key: "iid",
                 type: types["Number"],
                 scale: d3.scaleLinear().range([innerHeight, 0])
             }
