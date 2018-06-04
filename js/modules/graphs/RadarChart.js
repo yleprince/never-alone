@@ -8,7 +8,7 @@ import fillWithDefault from "../defaultOptions.js";
 const defaultOptions = {
     color : "black",
     size : 5,
-    iid : 1
+    iid : 2
 };
 
 class RadarChart extends Graph{
@@ -126,7 +126,7 @@ class RadarChart extends Graph{
                     var value = d[key];
                     //console.log("key: " + key)
                     //console.log("value: " + value)
-                    dataDictThemself.push({"area":key, "value":value})
+                    dataOthers.push({"area":key, "value":value})
                 }
             });
         console.log("dataOthers: " + JSON.stringify(dataOthers));
