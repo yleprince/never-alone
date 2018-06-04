@@ -27,7 +27,7 @@ article .activeTab {
 }
 
 #tab-wave {
-    background-color: hotpink;
+    background-color: white;
 }
 
 #tab-person {
@@ -67,4 +67,14 @@ article .activeTab {
     font-size: 10px;
     transform: rotate(-21deg) translate(-5px,-6px);
     fill: #222;
+}
+
+line {
+    fill: none;
+    stroke: crimson;
+}
+
+.decided {
+    fill: none;
+    stroke: lime;
 }

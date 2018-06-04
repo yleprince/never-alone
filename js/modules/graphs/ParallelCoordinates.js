@@ -38,8 +38,19 @@ class ParallelCoordinates extends Graph {
     preprocess() {
         this.data = this.allData.filter(d => d.wave === this.wave && d.age > 0 && d.exphappy > 0 && d.interests.art > 0)
             .map(d => {
-                return {age: d.age, exphappy: d.exphappy, art: d.interests.art, iid: d.iid}
+                return {
+                    age: d.age,
+                    exphappy: d.exphappy,
+                    art: d.interests.art,
+                    iid: d.iid,
+                    id: d.id,
+                    gender: d.gender,
+                    dec: d.speedDates.map(sd => {
+                        return {d: sd.dec, d_o: sd.dec_o, id: sd.partner}
+                    })
+                }
             });
+        console.log(this.data);
     }
 
     /**
@@ -87,31 +98,18 @@ class ParallelCoordinates extends Graph {
                 scale: d3.scaleLinear().range([innerHeight, 0])
             },
             {
-                key: "iid",
+                key: "id",
                 type: types["Number"],
-                scale: d3.scaleLinear().range([innerHeight, 0])
+                scale: d3.scaleLinear().range([innerHeight, 0]),
             }
         ];
-
-        let xscale = d3.scalePoint()
-            .domain(d3.range(dimensions.length))
-            .range([0, innerWidth]);
-        let yAxis = d3.axisLeft();
-
-        let line = d3.line();
-        let dragging = {};
-        let dimPos = {};
-
-        let g = this.svg.append("g")
-            .attr("transform", `translate(${margin.left},${margin.top})`);
-
-        ParallelCoordinates.updateDimPos(dimPos, dimensions, xscale);
 
         this.data.forEach(d =>
             dimensions.forEach(p =>
                 d[p.key] = !d[p.key] ? null : p.type.coerce(d[p.key])));
 
         dimensions.forEach(dim => {
+
             if (!("domain" in dim)) {
                 // detect domain using dimension type's extent function
                 dim.domain = ParallelCoordinates.d3_functor(dim.type.extent)(this.data.map(d => d[dim.key]));
@@ -122,6 +120,46 @@ class ParallelCoordinates extends Graph {
             }
             dim.scale.domain(dim.domain);
         });
+        let allDimensions = dimensions.concat(ParallelCoordinates.copyData(dimensions).reverse());
+
+        for (let i = 0; i < allDimensions.length; i++) {
+            allDimensions[i].gender = i < allDimensions.length / 2 ? 0 : 1;
+            allDimensions[i].globalKey = allDimensions[i].key + "_" + allDimensions[i].gender;
+        }
+
+        allDimensions.splice(allDimensions.length / 2, 0, {
+            key: "match",
+            globalKey: "match",
+            gender: 2,
+            type: types["Number"],
+            scale: d3.scaleLinear().range([innerHeight, 0]),
+        });
+
+        // allDimensions.filter(d => d.key === "iid")
+        //     .forEach(el => {
+        //         el.domain =
+        //             ParallelCoordinates.d3_functor(el.type.extent)(
+        //                 this.data.filter(pe => pe.gender === el.gender)
+        //                     .map(d => d[el.key]));
+        //         el.scale.domain(el.domain);
+        //         el.axis = d3.axisLeft().scale(el.scale);
+        //     });
+        //
+        // console.log(allDimensions);
+
+        let xscale = d3.scalePoint()
+            .domain(d3.range(allDimensions.length))
+            .range([0, innerWidth]);
+        let yAxis = d3.axisLeft();
+
+        let line = d3.line();
+        let dragging = {};
+        let dimPos = {};
+
+        let g = this.svg.append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        ParallelCoordinates.updateDimPos(dimPos, allDimensions, xscale);
 
         // Add background lines for context.
         let background = g.append("g")
@@ -137,14 +175,30 @@ class ParallelCoordinates extends Graph {
             .selectAll("path")
             .data(this.data)
             .enter().append("path")
-            .attr("d", d => line(project(d)));
+            .attr("d", d => {
+                let orig_idx = d.gender === 0 ? ((allDimensions.length - 1) / 2) - 1 : ((allDimensions.length - 1) / 2) + 1;
+                let mid_idx = ((allDimensions.length - 1) / 2);
+                let dest_idx = d.gender === 0 ? ((allDimensions.length - 1) / 2) + 1 : ((allDimensions.length - 1) / 2) - 1;
+                let y1 = allDimensions[orig_idx].scale(d.id);
+                g.selectAll(".line_" + d.iid)
+                    .data(d.dec)
+                    .enter().append("line")
+                    .attr("class", ".line_" + d.iid)
+                    .attr("x1", xscale(orig_idx))
+                    .attr("y1", y1)
+                    .attr("x2", xscale(mid_idx))
+                    .attr("y2", dec => (y1 + allDimensions[dest_idx].scale(dec.id)) / 2)
+                    .classed("decided", dec => dec.d);
+                let proj = project(d);
+                return line(proj);
+            });
 
         // Add a group element for each dimension
         let axes = g.selectAll(".axis")
-            .data(dimensions)
+            .data(allDimensions)
             .enter().append("g")
             .attr("class", d => {
-                return "axis " + d.key;
+                return "axis " + d.globalKey;
             })
             .attr("transform", (d, i) => {
                 return `translate(${xscale(i)})`;
@@ -154,46 +208,65 @@ class ParallelCoordinates extends Graph {
                     return {xscale: xscale(i)};
                 })
                 .on("start", function (d) {
-                    dragging[d.key] = ParallelCoordinates.position(d.key, dragging, dimPos);
-                    background.style("opacity", 0);
+                    if (d.key !== "id") {
+                        dragging[d.globalKey] = ParallelCoordinates.position(d.globalKey, dragging, dimPos);
+                        background.style("opacity", 0);
+                    }
                 })
                 .on("drag", function (d, i) {
-                    dragging[d.key] = Math.min(innerWidth + 1, Math.max(-1, d3.event.x));
-                    foreground.attr("d", d => line(project(d)));
-                    background.attr("d", d => line(project(d)));
-                    dimensions.sort(function (a, b) {
-                        return ParallelCoordinates.position(a.key, dragging, dimPos) - ParallelCoordinates.position(b.key, dragging, dimPos);
-                    });
-                    ParallelCoordinates.updateDimPos(dimPos, dimensions, xscale);
-                    axes.attr("transform", function (d) {
-                        return "translate(" + ParallelCoordinates.position(d.key, dragging, dimPos) + ")";
-                    })
+                    if (d.key !== "id") {
+                        if (d.gender === 0) {
+
+                            dragging[d.globalKey] = Math.min(
+                                xscale(((allDimensions.length - 1) / 2) - 1),
+                                Math.max(-1, d3.event.x));
+                        } else {
+                            // dragging[d.globalKey] = Math.min(innerWidth + 1, Math.max(-1, d3.event.x));
+                            dragging[d.globalKey] = Math.min(
+                                innerWidth + 1,
+                                Math.max(xscale(((allDimensions.length - 1) / 2) + 1), d3.event.x));
+
+                        }
+                        foreground.attr("d", d => line(project(d)));
+                        background.attr("d", d => line(project(d)));
+                        allDimensions.sort(function (a, b) {
+                            return ParallelCoordinates.position(a.globalKey, dragging, dimPos) - ParallelCoordinates.position(b.globalKey, dragging, dimPos);
+                        });
+                        ParallelCoordinates.updateDimPos(dimPos, allDimensions, xscale);
+                        axes.attr("transform", function (d) {
+                            return "translate(" + ParallelCoordinates.position(d.globalKey, dragging, dimPos) + ")";
+                        })
+                    }
                 })
                 .on("end", function (d) {
-                    delete dragging[d.key];
-                    transition(d3.select(this).attr("transform", d => {
-                        return "translate(" + dimPos[d.key] + ")"
-                    }));
-                    transition(foreground).attr("d", d => line(project(d)));
-                    background
-                        .attr("d", d => line(project(d)))
-                        .transition()
-                        .delay(500)
-                        .duration(0)
-                        .style("opacity", 1);
+                    if (d.key !== "id") {
+                        delete dragging[d.globalKey];
+                        transition(d3.select(this).attr("transform", d => {
+                            return "translate(" + dimPos[d.globalKey] + ")"
+                        }));
+                        transition(foreground).attr("d", d => line(project(d)));
+                        background
+                            .attr("d", d => line(project(d)))
+                            .transition()
+                            .delay(500)
+                            .duration(0)
+                            .style("opacity", 1);
+                    }
                 }));
 
         axes.append("g")
             .each(function (d) {
-                let renderAxis = "axis" in d
-                    ? d.axis.scale(d.scale)  // custom axis
-                    : yAxis.scale(d.scale);  // default axis
-                d3.select(this).call(renderAxis);
+                if (d.globalKey !== "match") {
+                    let renderAxis = "axis" in d
+                        ? d.axis.scale(d.scale)  // custom axis
+                        : yAxis.scale(d.scale);  // default axis
+                    d3.select(this).call(renderAxis);
+                }
             })
             .append("text")
             .attr("class", "title")
             .attr("text-anchor", "start")
-            .text(d => "description" in d ? d.description : d.key);
+            .text(d => d.globalKey !== "match" ? ("description" in d ? d.description : d.key) : "");
 
         // Add and store a brush for each axis.
         axes.append("g")
@@ -215,14 +288,22 @@ class ParallelCoordinates extends Graph {
         }
 
         function project(d) {
-            return dimensions.map(function (p, i) {
+            let projection = allDimensions.filter(dim => dim.gender === d.gender).map((p, i) => {
                 // check if data element has property and contains a value
                 if (!(p.key in d) || d[p.key] === null) {
                     return null;
                 }
-                return [ParallelCoordinates.position(p.key, dragging, dimPos), p.scale(d[p.key])];
+                return [ParallelCoordinates.position(p.globalKey, dragging, dimPos), p.scale(d[p.key])];
                 // return [xscale(i), p.scale(d[p.key])];
             });
+            // if (d.gender === 0) {
+            //     d.dec.forEach(dec => projection.push([
+            //         allDimensions[((allDimensions.length - 1) / 2) - 1].scale(d.id),
+            //         allDimensions[((allDimensions.length - 1) / 2) + 1].scale(dec.id),
+            //     ]));
+            // }
+            // console.log(projection);
+            return projection
         }
 
         function brushstart() {
@@ -246,7 +327,7 @@ class ParallelCoordinates extends Graph {
             foreground.style("display", d => {
                 if (actives.every(active => {
                         let dim = active.dimension;
-                        return dim.type.within(d[dim.key], active.extent, dim);
+                        return dim.gender !== d.gender || dim.type.within(d[dim.key], active.extent, dim);
                     })) {
                     return null;
                 } else {
@@ -256,9 +337,20 @@ class ParallelCoordinates extends Graph {
         }
     }
 
+    // TODO put this function in another script to use it later
+    static copyData(data) {
+        return data.map(a => {
+            let newObject = {};
+            Object.keys(a).forEach(propertyKey => {
+                newObject[propertyKey] = a[propertyKey];
+            });
+            return newObject;
+        })
+    }
+
     static updateDimPos(dimPos, dimensions, xscale) {
         dimensions.forEach(function (d, i) {
-            dimPos[d.key] = xscale(i);
+            dimPos[d.globalKey] = xscale(i);
         });
     }
 
