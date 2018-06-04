@@ -257,6 +257,7 @@ d3.csv("data/SpeedDating.csv")
         rows.forEach(r => {
             let p = data.find(d => d.iid === r.person.iid);
             if(!p) {
+                console.log("!p")
                 p = r.person;
                 p.speedDates = [];
                 data.push(p);
@@ -275,7 +276,7 @@ function main(data) {
 
 
     //let graph = new GraphExample("tab-wave", data); // Example : a GraphExample object in the Wave tab
-    let graph = new RadarChart("tab-wave", data); // Example : a GraphExample object in the Wave tab
+    let graph = new RadarChart("tab-person", data); // Example : a GraphExample object in the Wave tab
 
 }
 

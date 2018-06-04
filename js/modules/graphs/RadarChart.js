@@ -37,21 +37,44 @@ class RadarChart extends Graph{
      * Keep the interesting data for the Graph
      */
     preprocess(){
-        this.data = this.allData.filter(d => d.iid == this.iid)
+        this.dataThemself = this.allData.filter(d => d.iid === this.iid)
             .map(d => {return {amb : d.self_traits.amb, att : d.self_traits.att,
             fun : d.self_traits.fun, int : d.self_traits.int, sin : d.self_traits.sin}});
 
-        console.log(this.data);
+        this.dataOthers = this.allData.find(d => d.iid === this.iid).speedDates
+            .map(d => {return {amb_o : d.speedDates}});
+
+        let sd = this.allData.find(d => d.iid === this.iid).speedDates;
+
+        this.dataOthers = [{
+            "amb": d3.mean(sd, d => d.rating_o.amb),
+            "att": d3.mean(sd, d => d.rating_o.att),
+            "fun": d3.mean(sd, d => d.rating_o.fun),
+            "sin": d3.mean(sd, d => d.rating_o.sin),
+            "int": d3.mean(sd, d => d.rating_o.int)
+        }];
+        console.log(this.dataOthers);
+
+        //amb_o : d.speedDate
+
+
+
+        console.log("this.dataThemself: " + JSON.stringify(this.dataThemself));
+        console.log("this.dataOthers: " + JSON.stringify(this.dataOthers));
     }
 
     /**
      * Fill SVG for the graph (implement the visualization here)
      */
     createGraph(id){
+        let margin = {top: 30, right: 10, bottom: 10, left: 30};
+
         var cfg = {
             radius: 5,
-            w: 600,
-            h: 600,
+            //w: 500,
+            //h: 500,
+            w : 500 - margin.left - margin.right,
+            h : 500 - margin.top - margin.bottom,
             factor: 1,
             factorLegend: .85,
             levels: 3,
@@ -66,41 +89,59 @@ class RadarChart extends Graph{
             color: d3.scaleOrdinal().range(["#6F257F", "#CA0D59"])
         };
 
-        // TODO : implement margin, axis according to your needs
+        cfg.maxValue = 10;
 
-        const x = d3.scaleLinear()
-            .range([0, this.width])
-            .domain(d3.extent(this.data, d => d.age));
-        const y = d3.scaleLinear()
-            .range([this.height, 0])
-            .domain(d3.extent(this.data, d => d.exphappy));
 
-        // this.svg.selectAll(".dot")
-        //     .data(this.data)
-        //     .enter().append("circle")
-        //     .attr("class", "dot")
-        //     .attr("r", this.size)
-        //     .attr("cx", d => x(d.age))
-        //     .attr("cy", d => y(d.exphappy))
-        //     .style("fill", this.color);
-
-        //var total = this.data.length;
-        var total = d3.keys(this.data[0]).length;
+        // Defining some useful variables for afterwards
+        var total = d3.keys(this.dataThemself[0]).length;
         var radius = cfg.factor*Math.min(cfg.w/2, cfg.h/2);
         d3.select(id).select("svg").remove();
 
-        var g = d3.select(id)
-            .append("svg")
-            .attr("width", cfg.w+cfg.ExtraWidthX)
-            .attr("height", cfg.h+cfg.ExtraWidthY)
-            .append("g")
-            .attr("transform", "translate(" + cfg.TranslateX + "," + cfg.TranslateY + ")");
+        // Declare a SVG
+        let g = this.svg.append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        // Data
+        var dataDictThemself = [];
+        this.dataThemself.map(d => {return {amb : d.amb, att : d.att, fun : d.fun,
+            int : d.int, sin : d.sin}})
+            .forEach(function(d){
+                //console.log("d: " + JSON.stringify(d))
+                for(var key in d){
+                    var value = d[key];
+                    //console.log("key: " + key)
+                    //console.log("value: " + value)
+                    dataDictThemself.push({"area":key, "value":value})
+                }
+            });
+        console.log("dataDictThemself: " + JSON.stringify(dataDictThemself));
+
+
+        var dataOthers = [];
+        this.dataOthers.map(d => {return {amb : d.amb, att : d.att, fun : d.fun,
+            int : d.int, sin : d.sin}})
+            .forEach(function(d){
+                //console.log("d: " + JSON.stringify(d))
+                for(var key in d){
+                    var value = d[key];
+                    //console.log("key: " + key)
+                    //console.log("value: " + value)
+                    dataDictThemself.push({"area":key, "value":value})
+                }
+            });
+        console.log("dataOthers: " + JSON.stringify(dataOthers));
+
+
+
+
+
 
         //Circular segments
         for(var j=0; j<cfg.levels; j++){
             var levelFactor = cfg.factor*radius*((j+1)/cfg.levels);
-            this.svg.selectAll(".levels")
-                .data(this.data)
+            //this.svg.selectAll(".levels")
+            g.selectAll(".levels")
+                .data(d3.keys(this.dataThemself[0]))
                 .enter()
                 .append("svg:line")
                 .attr("x1", function(d, i){return levelFactor*(1-cfg.factor*Math.sin(i*cfg.radians/total));})
@@ -115,8 +156,9 @@ class RadarChart extends Graph{
         }
 
 
-        var axis = this.svg.selectAll(".axis")
-            .data(d3.keys(this.data[0]))
+        //var axis = this.svg.selectAll(".axis")
+        var axis = g.selectAll(".axis")
+            .data(d3.keys(this.dataThemself[0]))
             .enter()
             .append("g")
             .attr("class", "axis")
@@ -132,67 +174,125 @@ class RadarChart extends Graph{
             .style("stroke", "grey")
             .style("stroke-width", "1px");
 
-
-
-        // axis.append("text")
-        //     .attr("class", "legend")
-        //     .text(function(d){return d})
-        //     .style("font-family", "sans-serif")
-        //     .style("font-size", "11px")
-        //     .attr("text-anchor", "middle")
-        //     .attr("dy", "1.5em")
-        //     .attr("transform", function(d, i){return "translate(0, -10)"})
-        //     .attr("x", function(d, i){return cfg.w/2*(1-cfg.factorLegend*Math.sin(i*cfg.radians/total))-60*Math.sin(i*cfg.radians/total);})
-        //     .attr("y", function(d, i){return cfg.h/2*(1-Math.cos(i*cfg.radians/total))-20*Math.cos(i*cfg.radians/total);});
-
+        //Append legends
+        axis.append("text")
+            .attr("class", "legend")
+            .text(function(d){return d})
+            .style("font-family", "sans-serif")
+            .style("font-size", "11px")
+            .attr("text-anchor", "middle")
+            .attr("dy", "1.5em")
+            .attr("transform", function(d, i){return "translate(0, -10)"})
+            .attr("x", function(d, i){return cfg.w/2*(1-cfg.factorLegend*Math.sin(i*cfg.radians/total))-60*Math.sin(i*cfg.radians/total);})
+            .attr("y", function(d, i){return cfg.h/2*(1-Math.cos(i*cfg.radians/total))-20*Math.cos(i*cfg.radians/total);});
 
 
 
-        // this.svg.forEach(function(y, x){
-        //     dataValues = [];
-        //     g.selectAll(".nodes")
-        //         .data(y, function(j, i){
-        //             dataValues.push([
-        //                 cfg.w/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.sin(i*cfg.radians/total)),
-        //                 cfg.h/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.cos(i*cfg.radians/total))
-        //             ]);
-        //         });
-        //     dataValues.push(dataValues[0]);
-        //     g.selectAll(".area")
-        //         .data([dataValues])
-        //         .enter()
-        //         .append("polygon")
-        //         .attr("class", "radar-chart-serie"+series)
-        //         .style("stroke-width", "2px")
-        //         .style("stroke", cfg.color(series))
-        //         .attr("points",function(d) {
-        //             var str="";
-        //             for(var pti=0;pti<d.length;pti++){
-        //                 str=str+d[pti][0]+","+d[pti][1]+" ";
-        //             }
-        //             return str;
-        //         })
-        //         .style("fill", function(j, i){return cfg.color(series)})
-        //         .style("fill-opacity", cfg.opacityArea)
-        //         .on('mouseover', function (d){
-        //             z = "polygon."+d3.select(this).attr("class");
-        //             g.selectAll("polygon")
-        //                 .transition(200)
-        //                 .style("fill-opacity", 0.1);
-        //             g.selectAll(z)
-        //                 .transition(200)
-        //                 .style("fill-opacity", .7);
-        //         })
-        //         .on('mouseout', function(){
-        //             g.selectAll("polygon")
-        //                 .transition(200)
-        //                 .style("fill-opacity", cfg.opacityArea);
-        //         });
-        //     series++;
+        //get keys
+        //d3.keys(this.data[0]).forEach(function(y, x){
+        //     console.log("y: " + y )
+        //     console.log("x: " + x )
+        //});
+
+
+        //Get keys and one value
+        // this.data.forEach(function(d){
+        //     console.log("d: " + JSON.stringify(d))
+        //     d3.keys(d).forEach(function(y){
+        //         console.log("key: " + y)
+        //         console.log("value: " + d.amb)
+        //     })
         // });
-        // series=0;
 
 
+
+        var series = 0;
+        buildChart(dataDictThemself);
+        cfg.color =  d3.scaleOrdinal().range(["#FFA500", "#FF0000"]);
+        series++;
+        buildChart(dataOthers);
+
+
+        function buildChart(data) {
+
+            var dataValues = [];
+            g.selectAll(".nodes")
+                .data(data, function (j, i) {
+                    console.log("i: " + i)
+                    console.log("j: " + JSON.stringify(j))
+                    dataValues.push([
+                        cfg.w / 2 * (1 - (parseFloat(Math.max(j.value, 0)) / cfg.maxValue) * cfg.factor * Math.sin(i * cfg.radians / total)),
+                        cfg.h / 2 * (1 - (parseFloat(Math.max(j.value, 0)) / cfg.maxValue) * cfg.factor * Math.cos(i * cfg.radians / total))
+                    ]);
+
+                });
+            dataValues.push(dataValues[0]);
+            g.selectAll(".area")
+                .data([dataValues])
+                .enter()
+                .append("polygon")
+                .attr("class", "radar-chart-serie" + series)
+                .style("stroke-width", "2px")
+                .style("stroke", cfg.color(series))
+                .attr("points", function (d) {
+                    var str = "";
+                    for (var pti = 0; pti < d.length; pti++) {
+                        str = str + d[pti][0] + "," + d[pti][1] + " ";
+                    }
+                    return str;
+                })
+                .style("fill", function (j, i) {
+                    return cfg.color(series)
+                })
+                .style("fill-opacity", cfg.opacityArea)
+                .on('mouseover', function (d) {
+                    var z = "polygon." + d3.select(this).attr("class");
+                    g.selectAll("polygon")
+                        .transition(200)
+                        .style("fill-opacity", 0.1);
+                    g.selectAll(z)
+                        .transition(200)
+                        .style("fill-opacity", .7);
+                })
+                .on('mouseout', function () {
+                    g.selectAll("polygon")
+                        .transition(200)
+                        .style("fill-opacity", cfg.opacityArea);
+                });
+
+
+
+            var tooltip = d3.select("body").append("div").attr("class", "toolTip");
+            g.selectAll(".nodes")
+                .data(data).enter()
+                .append("svg:circle")
+                .attr("class", "radar-chart-serie"+series)
+                .attr('r', cfg.radius)
+                .attr("alt", function(j){return Math.max(j.value, 0)})
+                .attr("cx", function(j, i){
+                    dataValues.push([
+                        cfg.w/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.sin(i*cfg.radians/total)),
+                        cfg.h/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.cos(i*cfg.radians/total))
+                    ]);
+                    return cfg.w/2*(1-(Math.max(j.value, 0)/cfg.maxValue)*cfg.factor*Math.sin(i*cfg.radians/total));
+                })
+                .attr("cy", function(j, i){
+                    return cfg.h/2*(1-(Math.max(j.value, 0)/cfg.maxValue)*cfg.factor*Math.cos(i*cfg.radians/total));
+                })
+                .attr("data-id", function(j){return j.area})
+                .style("fill", "#fff")
+                .style("stroke-width", "2px")
+                .style("stroke", cfg.color(series)).style("fill-opacity", .9)
+                .on('mouseover', function (d){
+                    console.log(d.area)
+                    tooltip
+                        .style("left", d3.event.pageX - 40 + "px")
+                        .style("top", d3.event.pageY - 80 + "px")
+                        .style("display", "inline-block")
+                        .html((d.area) + "<br><span>" + (d.value) + "</span>");
+                })
+                .on("mouseout", function(d){ tooltip.style("display", "none");});
+        }
 
     }
 
