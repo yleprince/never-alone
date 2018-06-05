@@ -257,7 +257,6 @@ d3.csv("data/SpeedDating.csv")
         rows.forEach(r => {
             let p = data.find(d => d.iid === r.person.iid);
             if(!p) {
-                console.log("!p")
                 p = r.person;
                 p.speedDates = [];
                 data.push(p);

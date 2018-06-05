@@ -8,7 +8,7 @@ import fillWithDefault from "../defaultOptions.js";
 const defaultOptions = {
     color : "black",
     size : 5,
-    iid : 2
+    iid : 3
 };
 
 class RadarChart extends Graph{
@@ -38,8 +38,8 @@ class RadarChart extends Graph{
      */
     preprocess(){
         this.dataThemself = this.allData.filter(d => d.iid === this.iid)
-            .map(d => {return {amb : d.self_traits.amb, att : d.self_traits.att,
-            fun : d.self_traits.fun, int : d.self_traits.int, sin : d.self_traits.sin}});
+            .map(d => {return {Ambitious : d.self_traits.amb, Fun : d.self_traits.fun,
+            Attractive : d.self_traits.att, Intelligent : d.self_traits.int, Sincere : d.self_traits.sin}});
 
         this.dataOthers = this.allData.find(d => d.iid === this.iid).speedDates
             .map(d => {return {amb_o : d.speedDates}});
@@ -47,17 +47,12 @@ class RadarChart extends Graph{
         let sd = this.allData.find(d => d.iid === this.iid).speedDates;
 
         this.dataOthers = [{
-            "amb": d3.mean(sd, d => d.rating_o.amb),
-            "att": d3.mean(sd, d => d.rating_o.att),
-            "fun": d3.mean(sd, d => d.rating_o.fun),
-            "sin": d3.mean(sd, d => d.rating_o.sin),
-            "int": d3.mean(sd, d => d.rating_o.int)
+            "Ambitious": d3.mean(sd, d => d.rating_o.amb),
+            "Fun": d3.mean(sd, d => d.rating_o.fun),
+            "Attractive": d3.mean(sd, d => d.rating_o.att),
+            "Sincere": d3.mean(sd, d => d.rating_o.sin),
+            "Intelligent": d3.mean(sd, d => d.rating_o.int)
         }];
-        console.log(this.dataOthers);
-
-        //amb_o : d.speedDate
-
-
 
         console.log("this.dataThemself: " + JSON.stringify(this.dataThemself));
         console.log("this.dataOthers: " + JSON.stringify(this.dataOthers));
@@ -77,7 +72,7 @@ class RadarChart extends Graph{
             h : 500 - margin.top - margin.bottom,
             factor: 1,
             factorLegend: .85,
-            levels: 3,
+            levels: 5,
             maxValue: 0,
             radians: 2 * Math.PI,
             opacityArea: 0.5,
@@ -103,8 +98,8 @@ class RadarChart extends Graph{
 
         // Data
         var dataDictThemself = [];
-        this.dataThemself.map(d => {return {amb : d.amb, att : d.att, fun : d.fun,
-            int : d.int, sin : d.sin}})
+        this.dataThemself.map(d => {return {Ambitious : d.Ambitious, Attractive : d.Attractive, Fun : d.Fun,
+            Intelligent : d.Intelligent, Sincere : d.Sincere}})
             .forEach(function(d){
                 //console.log("d: " + JSON.stringify(d))
                 for(var key in d){
@@ -117,19 +112,19 @@ class RadarChart extends Graph{
         console.log("dataDictThemself: " + JSON.stringify(dataDictThemself));
 
 
-        var dataOthers = [];
-        this.dataOthers.map(d => {return {amb : d.amb, att : d.att, fun : d.fun,
-            int : d.int, sin : d.sin}})
+        var dataDictOthers = [];
+        this.dataOthers.map(d => {return {Ambitious : d.Ambitious, Attractive : d.Attractive, Fun : d.Fun,
+            Intelligent : d.Intelligent, Sincere : d.Sincere}})
             .forEach(function(d){
                 //console.log("d: " + JSON.stringify(d))
                 for(var key in d){
                     var value = d[key];
                     //console.log("key: " + key)
                     //console.log("value: " + value)
-                    dataOthers.push({"area":key, "value":value})
+                    dataDictOthers.push({"area":key, "value":value})
                 }
             });
-        console.log("dataOthers: " + JSON.stringify(dataOthers));
+        console.log("dataDictOthers: " + JSON.stringify(dataDictOthers));
 
 
 
@@ -210,7 +205,7 @@ class RadarChart extends Graph{
         buildChart(dataDictThemself);
         cfg.color =  d3.scaleOrdinal().range(["#FFA500", "#FF0000"]);
         series++;
-        buildChart(dataOthers);
+        buildChart(dataDictOthers);
 
 
         function buildChart(data) {
@@ -218,13 +213,10 @@ class RadarChart extends Graph{
             var dataValues = [];
             g.selectAll(".nodes")
                 .data(data, function (j, i) {
-                    console.log("i: " + i)
-                    console.log("j: " + JSON.stringify(j))
                     dataValues.push([
                         cfg.w / 2 * (1 - (parseFloat(Math.max(j.value, 0)) / cfg.maxValue) * cfg.factor * Math.sin(i * cfg.radians / total)),
                         cfg.h / 2 * (1 - (parseFloat(Math.max(j.value, 0)) / cfg.maxValue) * cfg.factor * Math.cos(i * cfg.radians / total))
                     ]);
-
                 });
             dataValues.push(dataValues[0]);
             g.selectAll(".area")
