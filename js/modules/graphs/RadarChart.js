@@ -96,7 +96,7 @@ class RadarChart extends Graph{
         let g = this.svg.append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
-        // Data
+        // Store data in dictionaries
         var dataDictThemself = [];
         this.dataThemself.map(d => {return {Ambitious : d.Ambitious, Attractive : d.Attractive, Fun : d.Fun,
             Intelligent : d.Intelligent, Sincere : d.Sincere}})
@@ -127,10 +127,7 @@ class RadarChart extends Graph{
         console.log("dataDictOthers: " + JSON.stringify(dataDictOthers));
 
 
-
-
-
-
+        //BEGINNING OF RADAR CHART
         //Circular segments
         for(var j=0; j<cfg.levels; j++){
             var levelFactor = cfg.factor*radius*((j+1)/cfg.levels);
@@ -151,7 +148,24 @@ class RadarChart extends Graph{
         }
 
 
-        //var axis = this.svg.selectAll(".axis")
+        //Text indicating levels
+        for(var j=0; j<cfg.levels; j++){
+            var levelFactor = cfg.factor*radius*((j+1)/cfg.levels);
+            g.selectAll(".levels")
+                .data([1]) //dummy data
+                .enter()
+                .append("svg:text")
+                .attr("x", function(d){return levelFactor*(1-cfg.factor*Math.sin(0));})
+                .attr("y", function(d){return levelFactor*(1-cfg.factor*Math.cos(0));})
+                .attr("class", "legend")
+                .style("font-family", "sans-serif")
+                .style("font-size", "10px")
+                .attr("transform", "translate(" + (cfg.w/2-levelFactor + cfg.ToRight) + ", " + (cfg.h/2-levelFactor) + ")")
+                .attr("fill", "#737373")
+                .text((j+1)*10/cfg.levels);
+        }
+
+
         var axis = g.selectAll(".axis")
             .data(d3.keys(this.dataThemself[0]))
             .enter()
