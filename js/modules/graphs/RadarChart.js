@@ -8,7 +8,7 @@ import fillWithDefault from "../defaultOptions.js";
 const defaultOptions = {
     color : "black",
     size : 5,
-    iid : 3
+    iid : 5
 };
 
 class RadarChart extends Graph{

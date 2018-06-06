@@ -1,6 +1,7 @@
 import Graph from "./modules/graphs/Graph.js";
 import GraphExample from "./modules/graphs/GraphExample.js";
 import RadarChart from "./modules/graphs/RadarChart.js";
+import GroupedBarChart from "./modules/graphs/GroupedBarChart.js";
 
 d3.csv("data/SpeedDating.csv")
     .row((d, i) => {
@@ -271,11 +272,9 @@ function main(data) {
     // Create the tabs
     instantiateNavigation();
 
-    // TODO : PUT YOUR GRAPHS HERE
-
-
     //let graph = new GraphExample("tab-wave", data); // Example : a GraphExample object in the Wave tab
-    let graph = new RadarChart("tab-person", data); // Example : a GraphExample object in the Wave tab
+    //let graph = new RadarChart("tab-person", data); // RadarChart in the Person tab
+    let graph = new GroupedBarChart("tab-person", data); // Grouped Bar Chart in the Person tab
 
 }
 
