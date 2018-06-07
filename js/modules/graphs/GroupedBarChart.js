@@ -57,7 +57,7 @@ class GroupedBarChart extends Graph{
             [
                 {"Attribute": "Ambitious",
                     "During the event": this.dataDuringEvent[0].Ambitious,
-                    "One day after the event: ": this.data1DayAftEvent[0].Ambitious,
+                    "One day after the event": this.data1DayAftEvent[0].Ambitious,
                     "Three-Four weeks after the event": this.data3WeeksAftEvent[0].Ambitious},
                 {"Attribute": "Fun",
                     "During the event": this.dataDuringEvent[0].Fun,
@@ -83,6 +83,7 @@ class GroupedBarChart extends Graph{
         console.log(this.data1DayAftEvent);
         console.log(this.data3WeeksAftEvent);
         console.log(this.data[0]);
+
     }
 
     /**
@@ -90,7 +91,104 @@ class GroupedBarChart extends Graph{
      */
     createGraph(){
 
-        console.log("blabla")
+        let margin = {top: 30, right: 10, bottom: 10, left: 30};
+
+        var cfg = {
+            width : 700 - margin.left - margin.right,
+            height : 500 - margin.top - margin.bottom,
+        };
+
+        // Declare a SVG
+        let g = this.svg.append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        // var x0 = d3.scaleBand()
+        //     .rangeRound([0, cfg.width])
+        //     .paddingInner(0.1);
+
+        let x0 = d3.scaleBand()
+            .rangeRound([0, cfg.width])
+            .paddingInner(0.1);
+
+        let x1 = d3.scaleBand()
+            .padding(0.05);
+
+        let y = d3.scaleLinear()
+            .rangeRound([cfg.height, 0]);
+
+        let z = d3.scaleOrdinal()
+            .range(["#98abc5", "#8a89a6", "#7b6888"])
+
+        let keys = d3.keys(this.data[0][0]);
+        console.log("key: " + keys.slice(1));
+
+
+        x0.domain(this.data[0].map(function(d) {return d.Attribute; }));
+        x1.domain(keys.slice(1)).rangeRound([0, x0.bandwidth()]);
+
+        // TODO : decide if we keep a vertical axis with a fixed value
+        // y.domain([0, d3.max(this.data[0], function(d) {
+        //     return d3.max(keys.slice(1), function(key) {return d[key];});})]).nice();
+        y.domain([0, 10]).nice();
+
+
+        //BEGINNING OF GROUPED BAR CHART
+        // Plot the bars
+        g.append("g")
+            .selectAll("g")
+            .data(this.data[0])
+            .enter().append("g")
+            .attr("transform", function(d) { return "translate(" + x0(d.Attribute) + ",0)"; })
+            .selectAll("rect")
+            .data(function(d) { return keys.slice(1).map(function(key) { return {key: key, value: d[key]}; }); })
+            .enter().append("rect")
+            .attr("x", function(d) { return x1(d.key); })
+            .attr("y", function(d) { return y(d.value); })
+            .attr("width", x1.bandwidth())
+            .attr("height", function(d) { return cfg.height - y(d.value); })
+            .attr("fill", function(d) { return z(d.key); });
+
+
+        // Add horizontal axis with name of the attributes
+        g.append("g")
+            .attr("class", "axis")
+            .attr("transform", "translate(0," + cfg.height + ")")
+            .call(d3.axisBottom(x0));
+
+
+        // Add vertical axis with
+        g.append("g")
+            .attr("class", "axis")
+            .call(d3.axisLeft(y).ticks(null, "s"))
+            .append("test")
+            .attr("x", 2)
+            .attr("y", y(y.ticks().pop()) + 0.5)
+            .attr("dy", "0.32em")
+            .attr("fill", "#000")
+            .attr("font-weight", "bold")
+            .attr("text-anchor", "start")
+            .text("Score")
+
+        var legend = g.append("g")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", 10)
+            .attr("text-anchor", "end")
+            .selectAll("g")
+            .data(keys.slice(1).reverse())
+            .enter().append("g")
+            .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+        legend.append("rect")
+            .attr("x", cfg.width - 19)
+            .attr("width", 19)
+            .attr("height", 19)
+            .attr("fill", z);
+
+        legend.append("text")
+            .attr("x", cfg.width - 24)
+            .attr("y", 9.5)
+            .attr("dy", "0.32em")
+            .text(function(d) { return d; });
     }
 
     /**
