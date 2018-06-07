@@ -8,7 +8,7 @@ import fillWithDefault from "../defaultOptions.js";
 
 const defaultOptions = {
     color: "crimson",
-    wave: 1
+    wave: 16
 };
 
 class ParallelCoordinates extends Graph {
@@ -302,7 +302,6 @@ class ParallelCoordinates extends Graph {
             //         allDimensions[((allDimensions.length - 1) / 2) + 1].scale(dec.id),
             //     ]));
             // }
-            // console.log(projection);
             return projection
         }
 
