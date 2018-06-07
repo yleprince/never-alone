@@ -133,6 +133,27 @@ class GroupedBarChart extends Graph{
 
 
         //BEGINNING OF GROUPED BAR CHART
+        //Defining mouseover and mouseout
+        // function mouseover(d, i){
+        //     d3.select(this)
+        //         .attr("fill", "red");
+        //
+        //     g.append("text")
+        //         .attr("id", "id"+i)
+        //         .attr("x", 100)
+        //         .attr("y", 100)
+        //         .text("test");
+        // }
+
+        function mouseout(d, i){
+        //    d3.select(this)
+        //        .attr()
+        //         .attr()
+        //         .attr()
+        //
+            d3.select("#id" + i).remove();
+        }
+
         // Plot the bars
         g.append("g")
             .selectAll("g")
@@ -146,7 +167,23 @@ class GroupedBarChart extends Graph{
             .attr("y", function(d) { return y(d.value); })
             .attr("width", x1.bandwidth())
             .attr("height", function(d) { return cfg.height - y(d.value); })
-            .attr("fill", function(d) { return z(d.key); });
+            .attr("fill", function(d) { return z(d.key); })
+            .on("mouseover", function(d, i){
+                //Change color when bar hovers
+                d3.select(this)
+                    .attr("fill", "grey");})
+                //Append some text
+                // g.append("text")
+                //     .attr("id", "id"+i)
+                //     .attr("x", 100)
+                //     .attr("y", 100)
+                //     .text("test");})
+            .on("mouseout", function(d, i){
+                //Go back to initial settings when user unhovers
+                d3.select(this)
+                    .attr("fill", function(d) { return z(d.key); })
+
+                d3.select("#id" + i).remove();});
 
 
         // Add horizontal axis with name of the attributes
@@ -156,7 +193,7 @@ class GroupedBarChart extends Graph{
             .call(d3.axisBottom(x0));
 
 
-        // Add vertical axis with
+        // Add vertical axis with graduation
         g.append("g")
             .attr("class", "axis")
             .call(d3.axisLeft(y).ticks(null, "s"))
@@ -169,12 +206,12 @@ class GroupedBarChart extends Graph{
             .attr("text-anchor", "start")
             .text("Score")
 
-        var legend = g.append("g")
+        let legend = g.append("g")
             .attr("font-family", "sans-serif")
             .attr("font-size", 10)
             .attr("text-anchor", "end")
             .selectAll("g")
-            .data(keys.slice(1).reverse())
+            .data(keys.slice(1))
             .enter().append("g")
             .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
