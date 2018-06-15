@@ -93,8 +93,6 @@ class ScatterBubble extends Graph{
             .style("opacity", 0)
             .style('position', 'absolute');
 
-
-
         this.svg.selectAll(".dot")
             .data(this.scatter_data)
             .enter().append("circle")
