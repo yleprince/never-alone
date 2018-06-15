@@ -46,7 +46,7 @@ class ParallelCoordinates extends Graph {
                     id: d.id,
                     gender: d.gender,
                     dec: d.speedDates.map(sd => {
-                        return {d: sd.dec, d_o: sd.dec_o, id: sd.partner}
+                        return {d: sd.dec, d_o: sd.dec_o, id: sd.partner, g: d.gender}
                     })
                 }
             });
@@ -159,6 +159,8 @@ class ParallelCoordinates extends Graph {
         let g = this.svg.append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
+        this._g = g;
+
         ParallelCoordinates.updateDimPos(dimPos, allDimensions, xscale);
 
         // Add background lines for context.
@@ -180,10 +182,10 @@ class ParallelCoordinates extends Graph {
                 let mid_idx = ((allDimensions.length - 1) / 2);
                 let dest_idx = d.gender === 0 ? ((allDimensions.length - 1) / 2) + 1 : ((allDimensions.length - 1) / 2) - 1;
                 let y1 = allDimensions[orig_idx].scale(d.id);
-                g.selectAll(".line_" + d.iid)
+                g.selectAll("line_" + d.iid)
                     .data(d.dec)
                     .enter().append("line")
-                    .attr("class", ".line_" + d.iid)
+                    .attr("class", "midLine line_" + d.iid + " gender_" + d.gender)
                     .attr("x1", xscale(orig_idx))
                     .attr("y1", y1)
                     .attr("x2", xscale(mid_idx))
@@ -334,6 +336,30 @@ class ParallelCoordinates extends Graph {
                 }
             });
         }
+    }
+
+    showMidLines(type, show) {
+        console.log(type, show);
+        let filtering;
+        switch (type) {
+            case "GG":
+                filtering = d => d.d === d.d_o && d.d === 1;
+                break;
+            case "GR":
+                filtering = d => (d.g === 0 && d.d === 1 && d.d_o === 0) || (d.g === 1 && d.d === 0 && d.d_o === 1);
+                break;
+            case "RG":
+                filtering = d => (d.g === 0 && d.d === 0 && d.d_o === 1) || (d.g === 1 && d.d === 1 && d.d_o === 0);
+                break;
+            case "RR":
+                filtering = d => d.d === d.d_o && d.d === 0;
+                break;
+            default:
+                console.error("Bad type for line selection.");
+        }
+        this._g.selectAll(".midLine")
+            .filter(d => filtering(d))
+            .style("opacity", show ? 1 : 0)
     }
 
     // TODO put this function in another script to use it later

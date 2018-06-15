@@ -272,8 +272,32 @@ function main(data) {
     instantiateNavigation();
 
     // TODO : PUT YOUR GRAPHS HERE
+    // --- PAR COORDS ---
+    createPC(data);
+}
 
-    let graph = new ParallelCoordinates("tab-wave", data); // Example : a GraphExample object in the Wave tab
+function createPC(data) {
+    let graph = new ParallelCoordinates("graph-wave", data); // Example : a GraphExample object in the Wave tab
+    let checkBoxGG = document.getElementById("GG");
+    let checkBoxGR = document.getElementById("GR");
+    let checkBoxRG = document.getElementById("RG");
+    let checkBoxRR = document.getElementById("RR");
+
+    checkBoxGG.addEventListener("input", e => {
+        graph.showMidLines("GG", checkBoxGG.checked);
+    });
+
+    checkBoxGR.addEventListener("input", e => {
+        graph.showMidLines("GR", checkBoxGR.checked);
+    });
+
+    checkBoxRG.addEventListener("input", e => {
+        graph.showMidLines("RG", checkBoxRG.checked);
+    });
+
+    checkBoxRR.addEventListener("input", e => {
+        graph.showMidLines("RR", checkBoxRR.checked);
+    });
 }
 
 function instantiateNavigation(){
