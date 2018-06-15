@@ -56,6 +56,11 @@ class RadarChart extends Graph{
 
         console.log("this.dataThemself: " + JSON.stringify(this.dataThemself));
         console.log("this.dataOthers: " + JSON.stringify(this.dataOthers));
+
+    //this._iid -> semantique pour que le parametre soit caché/inchangeable
+    //Getter et setter pour iid pour pouvoir acceder et changer depuis main.js
+    //get iid()  ->> _iid
+
     }
 
     /**

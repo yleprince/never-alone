@@ -117,7 +117,7 @@ class GroupedBarChart extends Graph{
             .rangeRound([cfg.height, 0]);
 
         let z = d3.scaleOrdinal()
-            .range(["#98abc5", "#8a89a6", "#7b6888"])
+            .range(["#a6cee3", "#1f78b4", "#b2df8a"])
 
         let keys = d3.keys(this.data[0][0]);
         console.log("key: " + keys.slice(1));

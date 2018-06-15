@@ -272,6 +272,7 @@ function main(data) {
     // Create the tabs
     instantiateNavigation();
 
+
     //let graph = new GraphExample("tab-wave", data); // Example : a GraphExample object in the Wave tab
     //let graph = new RadarChart("tab-person", data); // RadarChart in the Person tab
     let graph = new GroupedBarChart("tab-person", data); // Grouped Bar Chart in the Person tab
