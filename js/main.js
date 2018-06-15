@@ -274,8 +274,21 @@ function main(data) {
 
 
     //let graph = new GraphExample("tab-wave", data); // Example : a GraphExample object in the Wave tab
-    //let graph = new RadarChart("tab-person", data); // RadarChart in the Person tab
-    let graph = new GroupedBarChart("tab-person", data); // Grouped Bar Chart in the Person tab
+
+    //RADAR CHART
+    let graph = new RadarChart("tab-person", data); // RadarChart in the Person tab
+    let checkboxSelf_traits = document.getElementById("self_traits");
+    let checkboxRating_o = document.getElementById("rating_o");
+
+    checkboxSelf_traits.addEventListener("input", e => {
+        graph.showRadarChart("self_traits", checkboxSelf_traits.checked);
+    });
+
+    checkboxRating_o.addEventListener("input", e => {
+        graph.showRadarChart("rating_o", checkboxRating_o.checked);
+    });
+
+    //let graph = new GroupedBarChart("tab-person", data); // Grouped Bar Chart in the Person tab
 
 }
 

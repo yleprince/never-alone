@@ -25,13 +25,46 @@ class RadarChart extends Graph{
         let opts = fillWithDefault(options, defaultOptions);
         this.color = opts.color;
         this.size = opts.size;
-        this.iid = opts.iid;
+        this._iid = opts.iid;
+
+
+        // // To use the select function
+        // let attributeNames = ["self_traits", "self_look_traits"]
+        // let buttonRadarChart = this.instantiateButtonSuccess(attributeNames, "attributesRadarChart")
+        //
+        // this.currentAttributeNames = attributeNames[0];
+
 
         this.preprocess();
         this.createGraph();
     }
 
+    //this._iid -> semantique pour que le parametre soit caché/inchangeable
+    //Getter et setter pour iid pour pouvoir acceder et changer depuis main.js
+    //get iid()  ->> _iid
+
+    get iid() {
+        return this._iid;
+    }
+
+    set iid(newIid) {
+        this._iid = newIid;
+    }
+
     // -- METHODS TO IMPLEMENT ---
+
+    // instantiateButtonSuccess(list, id){
+    //     let elm = document.getElementById(id),
+    //         df = document.createDocumentFragment();
+    //     let count = list.length;
+    //     for (let i = 0; i < count; i++){
+    //         let option = document.createElement('option');
+    //         option.value = list[i];
+    //         option.appendChild(document.createTextNode(list[i]));
+    //         df.appendChild(option);
+    //     }
+    //     elm.appendChild(df);
+    // }
 
     /**
      * Keep the interesting data for the Graph
@@ -40,6 +73,7 @@ class RadarChart extends Graph{
         this.dataThemself = this.allData.filter(d => d.iid === this.iid)
             .map(d => {return {Ambitious : d.self_traits.amb, Fun : d.self_traits.fun,
             Attractive : d.self_traits.att, Intelligent : d.self_traits.int, Sincere : d.self_traits.sin}});
+
 
         this.dataOthers = this.allData.find(d => d.iid === this.iid).speedDates
             .map(d => {return {amb_o : d.speedDates}});
@@ -57,9 +91,7 @@ class RadarChart extends Graph{
         console.log("this.dataThemself: " + JSON.stringify(this.dataThemself));
         console.log("this.dataOthers: " + JSON.stringify(this.dataOthers));
 
-    //this._iid -> semantique pour que le parametre soit caché/inchangeable
-    //Getter et setter pour iid pour pouvoir acceder et changer depuis main.js
-    //get iid()  ->> _iid
+
 
     }
 
@@ -69,7 +101,7 @@ class RadarChart extends Graph{
     createGraph(id){
         let margin = {top: 30, right: 10, bottom: 10, left: 30};
 
-        var cfg = {
+        let cfg = {
             radius: 5,
             //w: 500,
             //h: 500,
@@ -115,7 +147,7 @@ class RadarChart extends Graph{
                 }
             });
         console.log("dataDictThemself: " + JSON.stringify(dataDictThemself));
-
+        this._dataDictThemself = dataDictThemself
 
         var dataDictOthers = [];
         this.dataOthers.map(d => {return {Ambitious : d.Ambitious, Attractive : d.Attractive, Fun : d.Fun,
@@ -130,7 +162,7 @@ class RadarChart extends Graph{
                 }
             });
         console.log("dataDictOthers: " + JSON.stringify(dataDictOthers));
-
+        this._dataDictOthers = dataDictOthers;
 
         //BEGINNING OF RADAR CHART
         //Circular segments
@@ -220,14 +252,17 @@ class RadarChart extends Graph{
 
 
 
-        var series = 0;
-        buildChart(dataDictThemself);
-        cfg.color =  d3.scaleOrdinal().range(["#FFA500", "#FF0000"]);
-        series++;
-        buildChart(dataDictOthers);
+        let series = 0;
+        // let defaultRC = document.getElementById("self_traits");
+        // switch (defaultRC){
 
 
-        function buildChart(data) {
+        // }
+
+
+
+
+        this.buildChart = function (data) {
 
             var dataValues = [];
             g.selectAll(".nodes")
@@ -306,6 +341,27 @@ class RadarChart extends Graph{
         }
 
     }
+
+    showRadarChart(type, show) {
+        console.log("type: " + type);
+        console.log("show: " + show);
+        switch (type | show) {
+            case (type==="self_traits" && show===true):
+                console.log("_dataDictThemself in showradar" + this._dataDictThemself)
+                //this.buildChart(this._dataDictThemself);
+                break;
+            case "rating_o":
+                //cfg.color =  d3.scaleOrdinal().range(["#FFA500", "#FF0000"]);
+                //series++;
+                console.log("_dataDictOthers in showradar" + this._dataDictOthers)
+                //this.buildChart(this._dataDictOthers);
+                break;
+            //default:
+            //    console.error("None of the above");
+        }
+    }
+
+
 
     /**
      * Actions that need to be done when the Graph is resized
