@@ -347,7 +347,8 @@ class ParallelCoordinates extends Graph {
             g.selectAll(".midLine")
                 .transition()
                 .duration(250)
-                .style("opacity", d => !selIDs[!!d.g].includes(d.id) || !selIDs[!d.g].includes(d.id_o) ? 0 : 1)
+                // .style("opacity", d => !selIDs[!!d.g].includes(d.id) || !selIDs[!d.g].includes(d.id_o) ? 0 : 1)
+                .style("display", d => !selIDs[!!d.g].includes(d.id) || !selIDs[!d.g].includes(d.id_o) ? "none" : null)
         }
     }
 
