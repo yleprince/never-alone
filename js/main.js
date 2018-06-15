@@ -1,5 +1,5 @@
 import Graph from "./modules/graphs/Graph.js";
-import GraphExample from "./modules/graphs/GraphExample.js";
+import ScatterBubble from "./modules/graphs/ScatterBubble.js";
 
 d3.csv("data/SpeedDating.csv")
     .row((d, i) => {
@@ -273,7 +273,7 @@ function main(data) {
     // TODO : PUT YOUR GRAPHS HERE
 
 
-    let graph = new GraphExample("tab-wave", data); // Example : a GraphExample object in the Wave tab
+    let graph = new ScatterBubble("scatter", data); // Example : a GraphExample object in the Wave tab
 }
 
 function instantiateNavigation(){
