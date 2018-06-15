@@ -46,7 +46,7 @@ class ParallelCoordinates extends Graph {
                     id: d.id,
                     gender: d.gender,
                     dec: d.speedDates.map(sd => {
-                        return {d: sd.dec, d_o: sd.dec_o, id: sd.partner, g: d.gender}
+                        return {d: sd.dec, d_o: sd.dec_o, id_o: sd.partner, g: d.gender, id: d.id}
                     })
                 }
             });
@@ -189,7 +189,7 @@ class ParallelCoordinates extends Graph {
                     .attr("x1", xscale(orig_idx))
                     .attr("y1", y1)
                     .attr("x2", xscale(mid_idx))
-                    .attr("y2", dec => (y1 + allDimensions[dest_idx].scale(dec.id)) / 2)
+                    .attr("y2", dec => (y1 + allDimensions[dest_idx].scale(dec.id_o)) / 2)
                     .classed("decided", dec => dec.d);
                 let proj = project(d);
                 return line(proj);
@@ -314,6 +314,7 @@ class ParallelCoordinates extends Graph {
         // Handles a brush event, toggling the display of foreground lines.
         function brush() {
             let actives = [];
+            let selIDs = {false: [], true: []};
             g.selectAll(".axis .brush")
                 .filter(function (d) {
                     return d3.brushSelection(this);
@@ -328,13 +329,25 @@ class ParallelCoordinates extends Graph {
             foreground.style("display", d => {
                 if (actives.every(active => {
                         let dim = active.dimension;
-                        return dim.gender !== d.gender || dim.type.within(d[dim.key], active.extent, dim);
+                        if (dim.gender !== d.gender || dim.type.within(d[dim.key], active.extent, dim)) {
+                            return true
+                        } else {
+                            return false;
+                        }
                     })) {
+                    if (!selIDs[!!d.gender].includes(d.id)) {
+                        selIDs[!!d.gender].push(d.id);
+                    }
                     return null;
                 } else {
                     return "none";
                 }
             });
+            console.log(selIDs);
+            g.selectAll(".midLine")
+                .transition()
+                .duration(250)
+                .style("opacity", d => !selIDs[!!d.g].includes(d.id) || !selIDs[!d.g].includes(d.id_o) ? 0 : 1)
         }
     }
 
@@ -359,6 +372,8 @@ class ParallelCoordinates extends Graph {
         }
         this._g.selectAll(".midLine")
             .filter(d => filtering(d))
+            .transition()
+            .duration(500)
             .style("opacity", show ? 1 : 0)
     }
 
