@@ -20,62 +20,33 @@ class GraphSuccessSecondaryFeature extends Graph{
      */
     constructor(id, allData, options = {}){
         super(id, allData);
-
         let opts = fillWithDefault(options, defaultOptions);
-        // this.color = opts.color;
+
         this.color = ["#a6cee3", "#1f78b4"];
         this.size = opts.size;
 
-        // Chris
-        let continuousVar = ["age", "income"];
-        let categoricalVar = ["gender", "race", "study", "career", "goal", "interest"];
-        let buttonSucessContinuous = this.instantiateButtonSucess(continuousVar, "varDensityContinuous");
-        let buttonSucessCategorical = this.instantiateButtonSucess(categoricalVar, "varDensityCategorical");
-        // document.getElementById("varDensityContinuous").addEventListener('click', this.show_selected("varDensityContinuous"));
-        this.currentContinuousVar = continuousVar[0];
-        this.currentCategoricalVar = categoricalVar[1];
-        this.filterVar = "gender";
-        this.filterValue = 0;
+        this.currentContinuousVar = options.currentContinuousVar;
+        this.currentCategoricalVar = options.currentCategoricalVar;
+        this.filterVar = options.filterVar;
+        this.filterValue = options.filterValue;
 
         this.preprocess();
         this.createGraph();
     }
 
     // -- METHODS TO IMPLEMENT ---
-
-    /*show_selected(id) {
-        console.log("show_selected")
-        let selector = document.getElementById(id).value;
-        console.log(selector)
-    }*/
-
-    instantiateButtonSucess(list, id){
-        let elm = document.getElementById(id),
-            df = document.createDocumentFragment();
-        let count = list.length;
-        for (let i = 0; i < count; i++) {
-            let option = document.createElement('option');
-            option.value = list[i];
-            option.appendChild(document.createTextNode(list[i]));
-            df.appendChild(option);
-        }
-        elm.appendChild(df);
-    }
-
     /**
      * Keep the interesting data for the Graph
      */
     preprocess(){
-        console.log("GraphSuccessSecondaryFeature - Preprocess");
         this.preprocessContinuousGraph();
         this.preprocessCategoricalGraph();
     }
 
     preprocessContinuousGraph(){
-        console.log("Preprocess Continuous Graph");
         // Get all data
-        this.dataFullContinuous = this.allData.map(d => {return {tmp_var : d[this.currentContinuousVar]}})
-            .filter(d => d.tmp_var > 0);
+        this.dataFullContinuous = this.allData.map(d => {return {tmp_var : d[this.currentContinuousVar]}});
+            //.filter(d => d.tmp_var > 0);
 
         // Group data per age and get the counts for each age
         this.dataFullContinuous = d3.nest()
@@ -163,10 +134,6 @@ class GraphSuccessSecondaryFeature extends Graph{
      * Fill SVG for the graph (implement the visualization here)
      */
     createGraph(){
-        /*let margin = {top: 300, right: 100, bottom: 100, left: 300},
-            innerWidth = this.width - margin.left - margin.right,
-            innerHeight = this.height - margin.top - margin.bottom;*/
-
         this.createContinuousGraph();
         this.createCategoricalVar();
     }
@@ -267,7 +234,6 @@ class GraphSuccessSecondaryFeature extends Graph{
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         let keys = d3.keys(this.dataCategorical[0]);
-        console.log("key: " + keys);
 
         let x0 = d3.scaleBand()
             .rangeRound([0, innerWidth])
@@ -351,7 +317,6 @@ class GraphSuccessSecondaryFeature extends Graph{
             .attr("dy", "0.32em")
             .text(function(d) { return d; });
     }
-
 
     /**
      * Actions that need to be done when the Graph is resized
