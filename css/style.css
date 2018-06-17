@@ -26,6 +26,38 @@ article .activeTab {
     display: grid;
 }
 
+
+
+#scatter {
+    display: flex;
+}
+/*
+#scatter_params {
+    flex: 1;
+    margin: auto;
+}*/
+
+#scatter_plot{
+    /*flex:4;*/
+    margin: auto;
+
+    /*display: flex;*/
+}
+
+svg {
+    background-color: white;
+    opacity: 0.8;
+    margin: 2em auto;
+    transition: ease 0.5s;
+    box-shadow: -2px 4px 10px 3px rgba(0,0,0,0.1);
+}
+
+svg:hover {
+    opacity: 1;
+    box-shadow: -2px 4px 10px 3px rgba(0,0,0,0.3);
+}
+
+
 #tab-wave {
     background-color: hotpink;
 }

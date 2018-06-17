@@ -273,7 +273,9 @@ function main(data) {
     // TODO : PUT YOUR GRAPHS HERE
 
 
-    let graph = new ScatterBubble("scatter", data); // Example : a GraphExample object in the Wave tab
+    let graph = new ScatterBubble("scatter_plot", data); // Example : a GraphExample object in the Wave tab
+
+
 }
 
 function instantiateNavigation(){
