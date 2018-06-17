@@ -51,8 +51,8 @@ article .activeTab {
 }
 
 .graph {
-    /*width: 99%;*/
-    /*height: 99%;*/
+    /*width: 100%;
+    height: 100%;*/
 }
 
 .menu-segment {
@@ -65,4 +65,39 @@ article .activeTab {
 
 .menu-icon {
     pointer-events: none;
+}
+
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: black;
+    stroke-width: 2px;
+    shape-rendering: crispEdges;
+}
+
+.line {
+    fill: none;
+    stroke: gray;
+    stroke-width: 5px;
+}
+
+.selectFeature {
+    display:block;
+    width:20%;
+    font-weight:500;
+    margin-left:10px;
+    line-height:40px;
+}
+
+#varDensityContinuous {
+    position: absolute;
+    left:74%;
+    top:7%;
+}
+
+#varDensityCategorical {
+    position: absolute;
+    left:74%;
+    top:63%;
 }

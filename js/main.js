@@ -1,5 +1,7 @@
 import Graph from "./modules/graphs/Graph.js";
 import GraphExample from "./modules/graphs/GraphExample.js";
+import GraphDensityVerticalLine from "./modules/graphs/GraphDensityVerticalLine.js";
+import GraphSuccessSecondaryFeature from "./modules/graphs/GraphSuccessSecondaryFeature.js";
 
 d3.csv("data/SpeedDating.csv")
     .row((d, i) => {
@@ -271,9 +273,13 @@ function main(data) {
     instantiateNavigation();
 
     // TODO : PUT YOUR GRAPHS HERE
+    console.log(data);
 
+    // let graph = new GraphExample("tab-wave", data); // Example : a GraphExample object in the Wave tab
+    // let graphDensityVerticalLine = new GraphDensityVerticalLine("tab-person", data);
 
-    let graph = new GraphExample("tab-wave", data); // Example : a GraphExample object in the Wave tab
+    // Success chris
+    createSuccessSecondaryFeature(data, "tab-success");
 }
 
 function instantiateNavigation(){
@@ -289,4 +295,71 @@ function instantiateNavigation(){
         .thickness(30)
         .appendTo("#menu-holder")
         .show(data_menu);
+
+    console.log(m.onClick)
+}
+
+function createSuccessSecondaryFeature(data, tabToDisplay) {
+    // Variables
+    let continuousVar = ["age", "date"]; // "income"
+    let categoricalVar = ["race", "goal"]; // "gender", "study", "career", "interest"
+    let currentContinuousVar = continuousVar[0];
+    let currentCategoricalVar = categoricalVar[0];
+
+    // Filter Variables Yrieix
+    let filterVar = "gender";
+    let filterValue = 0;
+
+    // Button Continuous Variable
+    instantiateButtonSucess(continuousVar, "varDensityContinuous");
+    let buttonSucessContinuous = document.getElementById("varDensityContinuous");
+    buttonSucessContinuous.addEventListener("change", e => {
+        let x = document.getElementById("varDensityContinuous");
+        currentContinuousVar = x.value;
+        console.log("Change, currentContinuousVar: "+ currentContinuousVar);
+        // Update graph
+        let graphSuccessSecondaryFeature = new GraphSuccessSecondaryFeature(tabToDisplay, data,
+            {currentContinuousVar: currentContinuousVar,
+                currentCategoricalVar: currentCategoricalVar,
+                filterVar: filterVar,
+                filterValue: filterValue
+            });
+    });
+
+    // Button Categorical Variable
+    instantiateButtonSucess(categoricalVar, "varDensityCategorical");
+    let buttonSucessCategorical = document.getElementById("varDensityCategorical");
+    buttonSucessCategorical.addEventListener("change", e => {
+        let x = document.getElementById("varDensityCategorical");
+        currentCategoricalVar = x.value;
+        console.log("Change, currentCategoricalVar: "+ currentCategoricalVar);
+        // Update graph
+        let graphSuccessSecondaryFeature = new GraphSuccessSecondaryFeature(tabToDisplay, data,
+            {currentContinuousVar: currentContinuousVar,
+                currentCategoricalVar: currentCategoricalVar,
+                filterVar: filterVar,
+                filterValue: filterValue
+            });
+    });
+
+    // Create graph for the first time
+    let graphSuccessSecondaryFeature = new GraphSuccessSecondaryFeature(tabToDisplay, data,
+        {currentContinuousVar: currentContinuousVar,
+            currentCategoricalVar: currentCategoricalVar,
+            filterVar: filterVar,
+            filterValue: filterValue
+        });
+}
+
+function instantiateButtonSucess(list, id){
+    let elm = document.getElementById(id),
+        df = document.createDocumentFragment();
+    let count = list.length;
+    for (let i = 0; i < count; i++) {
+        let option = document.createElement('option');
+        option.value = list[i];
+        option.appendChild(document.createTextNode(list[i]));
+        df.appendChild(option);
+    }
+    elm.appendChild(df);
 }

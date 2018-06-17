@@ -198,12 +198,15 @@ d3.radialMenu = function() {
             .append("g")
             .attr("class", "menu-segment-container");
 
-        // Add the segments
+        // Chris
         let tabs = document.getElementsByClassName("tab");
+
+        // Add the segments
         menuSegments.append("path")
             .attr("class", "menu-segment")
-            .each(function(d) { this._current = d; }) // store the initial data value for later
+            .each(function(d) { this._current = d; })                   // store the initial data value for later
             // .on("click", function(d) { alert(d.data.action); })
+            // Chris
             .on("click", function(d) {
                 console.log("menuSegments");
                 console.log(tabs);
@@ -217,8 +220,8 @@ d3.radialMenu = function() {
             .duration(animationDuration)
             .attrTween("d", function(a) {
                 // Create interpolations from the 0 to radius - to give the impression of an expanding menu
-                let innerTween = d3.interpolate(0, radius);
-                let outerTween = d3.interpolate(0, arc.outerRadius()());
+                var innerTween = d3.interpolate(0, radius);
+                var outerTween = d3.interpolate(0, arc.outerRadius()());
                 return function(t) {
                     // Re-configure the radius of the arc
                     return arc.innerRadius(innerTween(t)).outerRadius(outerTween(t))(a);
