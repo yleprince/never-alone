@@ -279,7 +279,7 @@ function main(data) {
     // let graphDensityVerticalLine = new GraphDensityVerticalLine("tab-person", data);
 
     // Success chris
-    createSuccessSecondaryFeature(data);
+    createSuccessSecondaryFeature(data, "tab-success");
 }
 
 function instantiateNavigation(){
@@ -295,9 +295,11 @@ function instantiateNavigation(){
         .thickness(30)
         .appendTo("#menu-holder")
         .show(data_menu);
+
+    console.log(m.onClick)
 }
 
-function createSuccessSecondaryFeature(data) {
+function createSuccessSecondaryFeature(data, tabToDisplay) {
     // Variables
     let continuousVar = ["age", "date"]; // "income"
     let categoricalVar = ["race", "goal"]; // "gender", "study", "career", "interest"
@@ -316,7 +318,7 @@ function createSuccessSecondaryFeature(data) {
         currentContinuousVar = x.value;
         console.log("Change, currentContinuousVar: "+ currentContinuousVar);
         // Update graph
-        let graphSuccessSecondaryFeature = new GraphSuccessSecondaryFeature("tab-wave", data,
+        let graphSuccessSecondaryFeature = new GraphSuccessSecondaryFeature(tabToDisplay, data,
             {currentContinuousVar: currentContinuousVar,
                 currentCategoricalVar: currentCategoricalVar,
                 filterVar: filterVar,
@@ -332,7 +334,7 @@ function createSuccessSecondaryFeature(data) {
         currentCategoricalVar = x.value;
         console.log("Change, currentCategoricalVar: "+ currentCategoricalVar);
         // Update graph
-        let graphSuccessSecondaryFeature = new GraphSuccessSecondaryFeature("tab-wave", data,
+        let graphSuccessSecondaryFeature = new GraphSuccessSecondaryFeature(tabToDisplay, data,
             {currentContinuousVar: currentContinuousVar,
                 currentCategoricalVar: currentCategoricalVar,
                 filterVar: filterVar,
@@ -341,7 +343,7 @@ function createSuccessSecondaryFeature(data) {
     });
 
     // Create graph for the first time
-    let graphSuccessSecondaryFeature = new GraphSuccessSecondaryFeature("tab-wave", data,
+    let graphSuccessSecondaryFeature = new GraphSuccessSecondaryFeature(tabToDisplay, data,
         {currentContinuousVar: currentContinuousVar,
             currentCategoricalVar: currentCategoricalVar,
             filterVar: filterVar,
