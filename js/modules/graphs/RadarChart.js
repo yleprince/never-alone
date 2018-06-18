@@ -273,8 +273,7 @@ class RadarChart extends Graph{
 
 
         function buildChart (data) {
-            //
-            //console.log("series: " + this.series)
+
 
             var dataValues = [];
             g.selectAll(".nodes")
@@ -351,7 +350,7 @@ class RadarChart extends Graph{
                 })
                 .on("mouseout", function(d){ tooltip.style("display", "none");}
                 );
-            //series++;
+
             console.log("class: " + "class")
 
         }
@@ -387,6 +386,12 @@ class RadarChart extends Graph{
                         .style("opacity", 0);
                 }
                 break;
+            case "self_look_traits":
+                    break;
+            case "same_gender_look_traits":
+                break;
+
+
             //default:
             //    console.error("None of the above");
         }

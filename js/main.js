@@ -272,13 +272,23 @@ function main(data) {
     // Create the tabs
     instantiateNavigation();
 
-
+    //GRAPH EXAMPLE
     //let graph = new GraphExample("tab-wave", data); // Example : a GraphExample object in the Wave tab
 
     //RADAR CHART
+    createRC(data);
+
+    //GROUPED BAR CHART
+    let graph = new GroupedBarChart("tab-person", data); // Grouped Bar Chart in the Person tab
+
+}
+
+function createRC(data){
     let graph = new RadarChart("tab-person", data); // RadarChart in the Person tab
     let checkboxSelf_traits = document.getElementById("self_traits");
     let checkboxRating_o = document.getElementById("rating_o");
+    let checkboxSelf_look_traits = document.getElementById("self_look_traits");
+    let checkboxSame_gender_look_traits = document.getElementById("same_gender_look_traits");
 
     checkboxSelf_traits.addEventListener("input", e => {
         graph.showRadarChart("self_traits", checkboxSelf_traits.checked);
@@ -288,8 +298,13 @@ function main(data) {
         graph.showRadarChart("rating_o", checkboxRating_o.checked);
     });
 
-    //let graph = new GroupedBarChart("tab-person", data); // Grouped Bar Chart in the Person tab
+    checkboxSelf_look_traits.addEventListener("input", e => {
+        graph.showRadarChart("self_look_traits", checkboxSelf_look_traits.checked);
+    });
 
+    checkboxSame_gender_look_traits.addEventListener("input", e => {
+        graph.showRadarChart("same_gender_look_traits", checkboxSame_gender_look_traits.checked);
+    });
 }
 
 function instantiateNavigation(){
