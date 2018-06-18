@@ -292,12 +292,20 @@ function createSuccessPrimaryFeature(data, tabToDisplay){
 
 }
 
-function instantiatePrimaryFeature(data, select_options, primary_div){
+function instantiatePrimaryFeature(data, select_options, primary_div_id){
+    let primary_div = document.getElementById(primary_div_id)
+
+
+    //Add Primary figure title
+    // let primary_title = document.createElement('h2');
+    // primary_title.innerHTML = 'Success exploration: Males vs Females'
+    // primary_div.appendChild(primary_title);
+
 
     //Create Interaction div
     let primary_feature_interaction_div = document.createElement('div');
     primary_feature_interaction_div.id = 'primary_feature_interaction_div';
-    document.getElementById(primary_div).appendChild(primary_feature_interaction_div);
+    primary_div.appendChild(primary_feature_interaction_div);
 
     //Create Select
     let selectPrimaryFeature = document.createElement("select");
@@ -319,23 +327,50 @@ function instantiatePrimaryFeature(data, select_options, primary_div){
 
     // add text info
     let infos = [
-        {label: '#Match', id: 'nb_matches'},
-        {label: '#Candidates', id: 'nb_candidates'},
         {label: 'Female value', id: 'female'},
-        {label: 'Male value', id: 'male'}
+        {label: 'Male value', id: 'male'},
+        {label: 'Match ratio (%)', id:'match_ratio'},
+        {label: '#Match', id: 'nb_matches'},
+        {label: '#Candidates', id: 'nb_candidates'}
     ];
 
+    let tble = document.createElement('table');
+    tble.id = 'success_primary_feature_table';
+
+    let tbdy = document.createElement('tbody');
+
+    let header = document.createElement('tr');
+    let h_label = document.createElement('th');
+    h_label.innerHTML = 'Info';
+    header.appendChild(h_label);
+
+    let h_value = document.createElement('th');
+    h_value.innerHTML = 'Value';
+    header.appendChild(h_value);
+    tble.appendChild(header);
+
+
     for (let info of infos){
-        let element = document.createElement('p');
-        element.innerHTML = info.label + ': <span id='+ info.id +'></span>';
-        primary_feature_interaction_div.appendChild(element);
+        let tr = document.createElement('tr');
+
+        let td_l = document.createElement('td');
+        td_l.innerHTML = info.label;
+        tr.appendChild(td_l);
+
+        let td_v = document.createElement('td');
+        td_v.innerHTML = '<span id='+ info.id +'></span>';
+        tr.appendChild(td_v);
+
+        tbdy.appendChild(tr);
     }
+    tble.appendChild(tbdy);
+    primary_feature_interaction_div.appendChild(tble);
 
 
     //Create Plot div
     let primary_plot_div = document.createElement('div');
     primary_plot_div.id = 'primary_plot_div';
-    document.getElementById(primary_div).appendChild(primary_plot_div);
+    primary_div.appendChild(primary_plot_div);
     let primary_plot = new ScatterBubble('primary_plot_div', data, 'go_out');
     
     var btn = document.createElement("button");

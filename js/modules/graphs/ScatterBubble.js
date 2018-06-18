@@ -125,9 +125,9 @@ class ScatterBubble extends Graph{
      */
     createGraph(){
         // TODO : implement margin, axis according to your needs
-        let margin = {top: 20, right: 20, bottom: 30, left: 40};
-        let width = 600 - margin.left - margin.right;
-        let height = 400 - margin.top - margin.bottom;
+        let margin = {top: 20, right: 30, bottom: 40, left: 40};
+        let width = 800 - margin.left - margin.right;
+        let height = 600 - margin.top - margin.bottom;
 
         this.canvas_param = {c_margin:margin, c_w: width, c_h: height};
 
@@ -166,7 +166,7 @@ class ScatterBubble extends Graph{
                            .range([2, 20])
                            .domain(d3.extent(this.scat, d => d.count));
 
-        let color = d3.scaleLinear() //scalePow().exponent(0.2)
+        let color = d3.scalePow().exponent(0.5)
                 .domain(d3.extent(this.scat, d => d.matches/d.count))
                 .range([0,1]);
 
@@ -175,35 +175,32 @@ class ScatterBubble extends Graph{
         let yAxis = d3.axisLeft()
             .scale(y);
 
-        // x axis
-        // this.g.append("g")
-        //     .attr("class", "x axis")
-        //     .attr("transform", "translate(0," + this.innerHeight + ")")
-        //     .call(d3.axisBottom(x));
-
-        // // y axis
-        // this.g.append("g")
-        //     .attr("class", "y axis")
-        //     // .attr("transform", "translate(0, " + innerWidth + ")")
-        //     .call(d3.axisLeft(y));
-
-
         this.g.append("g")
             .attr('class', 'x axis')
             .attr('transform', 'translate (0,' + this.canvas_param.c_h + ")")
             .call(xAxis);
 
+        this.g.append("text")             
+            .attr("transform",
+                    "translate(" + (this.canvas_param.c_w - 2*this.canvas_param.c_margin.right) + " ," + (this.canvas_param.c_h + this.canvas_param.c_margin.top + 15) + ")")
+            .style("text-anchor", "end")
+            .text("Female");
+
         this.g.append("g")
           .attr("class", "y axis")
-          // .attr('transform', "translate ("+this.canvas_param.c_margin.left+",0)")
           .call(yAxis);
 
-        // this.svg.append("g")
-        //     .attr('class', 'y axis')
-        //     .call(yAxis);
+        this.g.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0 - this.canvas_param.c_margin.left)
+            .attr("x",0 - this.canvas_param.c_margin.top)
+            .attr("dy", "1em")
+            .style("text-anchor", "end")
+            .text("Male");   
 
         let infos = {   nb_matches: document.getElementById('nb_matches'),
                         nb_candidates: document.getElementById('nb_candidates'),
+                        match_ratio: document.getElementById('match_ratio'),
                         female: document.getElementById('female'),
                         male: document.getElementById('male')
                     }
@@ -220,7 +217,8 @@ class ScatterBubble extends Graph{
                 d3.select(this).attr("fill", 'black');
 
                 infos.nb_candidates.innerHTML = d.count;
-                infos.nb_matches.innerHTML = d.matches;                
+                infos.nb_matches.innerHTML = d.matches; 
+                infos.match_ratio.innerHTML = Math.trunc(1000*d.matches/d.count)/10;            
                 infos.female.innerHTML = d.x;
                 infos.male.innerHTML = d.y;
 
@@ -232,11 +230,16 @@ class ScatterBubble extends Graph{
                 d.clicked = !d.clicked;
                 
                 if (d.clicked){
-                    d3.select(this).attr("stroke", 'black').attr('stroke-width', 2).style('z-index', 10);
+
+                    d3.select(this)
+                        .attr("stroke", 'black')
+                        .attr('stroke-width', 1)
+                        .style("stroke-dasharray", ("3, 3"));
                 } else {
                     d3.select(this).attr('stroke-width', 0);
                 }
             });
+
         
     }
 

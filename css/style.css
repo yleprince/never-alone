@@ -27,47 +27,58 @@ article .activeTab {
 }
 
 
-
+/* YRIEIX ----> */
 #success_primary_feature {
     position: absolute;
-    top: 30%;
-    left:12%;
-/*    width: 200px;
-    height: 100px;*/
+    margin: 10% 20%;
     display: flex;
+    align-items: center;
 }
 
-/*
-#scatter_params {
-    flex: 1;
+/*#scatter_plot{
     margin: auto;
-}*/
-
-#scatter_plot{
-    /*flex:4;*/
-    margin: auto;
-
-    /*display: flex;*/
+}
+*/
+ 
+th {
+  color:#D5DDE5;;
+  background:#1b1e24;
+  font-size:1.3em;
+  font-weight: 100;
+  padding:0.7em;
+  vertical-align:middle;
 }
 
-#select_scatter_data{
-    /*margin: auto;*/
+tr {
+  color:#666B85;
+  font-size:0.8em;
+  font-weight:normal;
+}
+ 
+tr:hover td {
+  background:#5689cd;
+  color:#FFFFFF;
+}
+ 
+
+tr:nth-child(odd) td {
+  background:#EBEBEB;
+}
+ 
+tr:nth-child(odd):hover td {
+  background:#5689cd;
+}
+ 
+td {
+  background:#FFFFFF;
+  padding:0.7em;
+  text-align:right;
+  vertical-align:middle;
+  font-weight:300;
+  font-size: 1.1em;
 }
 
-svg {
-    /*background-color: white;*/
-/*    opacity: 0.5;
-*/    
-    /*margin: 2em auto;*/
-    /*transition: ease 0.5s;*/
-    /*box-shadow: -2px 4px 10px 3px rgba(0,0,0,0.1);*/
-}
-
-svg:hover {
-    /*opacity: 1;*/
-    /*box-shadow: -2px 4px 10px 3px rgba(0,0,0,0.3);*/
-}
-
+/* <------ YRIEIX */
 
 #tab-wave {
     background-color: hotpink;
