@@ -133,6 +133,8 @@ class RadarChart extends Graph{
         let g = this.svg.append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
+        this._g = g;
+
         // Store data in dictionaries
         var dataDictThemself = [];
         this.dataThemself.map(d => {return {Ambitious : d.Ambitious, Attractive : d.Attractive, Fun : d.Fun,
@@ -252,7 +254,7 @@ class RadarChart extends Graph{
 
 
 
-        let series = 0;
+
         // let defaultRC = document.getElementById("self_traits");
         // switch (defaultRC){
 
@@ -262,7 +264,17 @@ class RadarChart extends Graph{
 
 
 
-        this.buildChart = function (data) {
+        let series = 0;
+        buildChart(dataDictThemself);
+        console.log("series: " + series);
+        series++;
+        buildChart(dataDictOthers);
+        console.log("series: " + series);
+
+
+        function buildChart (data) {
+            //
+            //console.log("series: " + this.series)
 
             var dataValues = [];
             g.selectAll(".nodes")
@@ -273,7 +285,7 @@ class RadarChart extends Graph{
                     ]);
                 });
             dataValues.push(dataValues[0]);
-            g.selectAll(".area")
+            g.selectAll(".radar-chart-serie" + series)
                 .data([dataValues])
                 .enter()
                 .append("polygon")
@@ -337,7 +349,11 @@ class RadarChart extends Graph{
                         .style("display", "inline-block")
                         .html((d.area) + "<br><span>" + (d.value) + "</span>");
                 })
-                .on("mouseout", function(d){ tooltip.style("display", "none");});
+                .on("mouseout", function(d){ tooltip.style("display", "none");}
+                );
+            //series++;
+            console.log("class: " + "class")
+
         }
 
     }
@@ -345,20 +361,36 @@ class RadarChart extends Graph{
     showRadarChart(type, show) {
         console.log("type: " + type);
         console.log("show: " + show);
-        switch (type | show) {
-            case (type==="self_traits" && show===true):
-                console.log("_dataDictThemself in showradar" + this._dataDictThemself)
-                //this.buildChart(this._dataDictThemself);
+        switch (type) {
+            //case (type==="self_traits" && show===true):
+            case "self_traits":
+                if (show===true){
+                    console.log(this._g.selectAll((".radar-chart-serie0")));
+                    this._g
+                        .selectAll((".radar-chart-serie0"))
+                        .style("opacity", 1);
+                } else {
+                    this._g
+                        .selectAll((".radar-chart-serie0"))
+                        .style("opacity", 0);
+                }
                 break;
             case "rating_o":
-                //cfg.color =  d3.scaleOrdinal().range(["#FFA500", "#FF0000"]);
-                //series++;
-                console.log("_dataDictOthers in showradar" + this._dataDictOthers)
-                //this.buildChart(this._dataDictOthers);
+                if (show===true){
+                    console.log(this._g.selectAll((".radar-chart-serie1")));
+                    this._g
+                        .selectAll((".radar-chart-serie1"))
+                        .style("opacity", 1);
+                } else {
+                    this._g
+                        .selectAll((".radar-chart-serie1"))
+                        .style("opacity", 0);
+                }
                 break;
             //default:
             //    console.error("None of the above");
         }
+
     }
 
 
