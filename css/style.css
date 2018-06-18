@@ -101,3 +101,15 @@ article .activeTab {
     left:74%;
     top:63%;
 }
+
+#densityVarPerson1 {
+    position: absolute;
+    left:74%;
+    top:7%;
+}
+
+#densityVarPerson2 {
+    position: absolute;
+    left:74%;
+    top:27%;
+}
