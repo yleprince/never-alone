@@ -8,7 +8,8 @@ import fillWithDefault from "../defaultOptions.js";
 
 const defaultOptions = {
     color: "crimson",
-    wave: 1
+    wave: 2,
+    opacityMiddle : 0.5
 };
 
 class ParallelCoordinates extends Graph {
@@ -25,6 +26,7 @@ class ParallelCoordinates extends Graph {
         let opts = fillWithDefault(options, defaultOptions);
         this.color = opts.color;
         this.wave = opts.wave;
+        this.opacityMiddle = opts.opacityMiddle;
 
         this.preprocess();
         this.createGraph();
@@ -153,7 +155,7 @@ class ParallelCoordinates extends Graph {
 
         // Color
         let colorAxis = d3.scaleLinear()
-            .range(['mediumturquoise', 'hotpink'])
+            .range(['#d9ff13', '#00A889'])
             .interpolate(d3.interpolateHcl);
 
         // Add background lines for context.
@@ -183,6 +185,7 @@ class ParallelCoordinates extends Graph {
                     .attr("y1", y1)
                     .attr("x2", xscale(mid_idx))
                     .attr("y2", dec => (y1 + allDimensions[dest_idx].scale(dec.id_o)) / 2)
+                    .style("opacity", this.opacityMiddle)
                     .classed("decided", dec => dec.d);
                 let proj = project(d);
                 return line(proj);
