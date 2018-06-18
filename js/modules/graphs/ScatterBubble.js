@@ -34,6 +34,8 @@ class ScatterBubble extends Graph{
         this.preprocess();
 
         this.createGraph();
+
+        // console.log('this.allData', this.allData);
     }
 
     // -- METHODS TO IMPLEMENT ---
@@ -43,9 +45,13 @@ class ScatterBubble extends Graph{
      */
     preprocess(){
         this.links = this.allData.filter(d => d.gender === 1)
-            .map(d => {return {female_id : d.iid, males_id : d.speedDates.map(date => date.pid)}});
+            .map(d => {return {female_id : d.iid, 
+                               males_id : d.speedDates.map(date => date.pid),
+                               match : d.speedDates.map(date => date.match)
+                           }});
 
 
+        // console.log('this.links', this.links);
         let females = {};
         let males = {};
 
@@ -67,17 +73,16 @@ class ScatterBubble extends Graph{
 
         this.scatter_data = [];
         for (let link of this.links){
-            for (let male_id of link.males_id){
-                if (male_id in males && link.female_id in females){
-                    this.scatter_data.push({male: males[male_id], female: females[link.female_id]});
+            for (let i=0; i<link.males_id.length; ++i){
+                if (link.males_id[i] in males && link.female_id in females){
+                    this.scatter_data.push({male: males[link.males_id[i]], 
+                                            female: females[link.female_id],
+                                            match: link.match[i]});
                 }
             }
         }
         console.log('scatter_data', this.scatter_data);
 
-
-        //Create array of options to be added
-        // let properties = 
         //Create and append select list
         this.selectList = document.createElement("select");
         this.selectList.id = "select_scatter_data";
@@ -90,7 +95,6 @@ class ScatterBubble extends Graph{
             option.text = property;
             this.selectList.appendChild(option);
         }
-        // this.selected_property = 'career_c';
     }
 
 
@@ -106,11 +110,15 @@ class ScatterBubble extends Graph{
                 scat.push({
                     'x': date.female[this.selected_property],
                     'y': date.male[this.selected_property],
-                    'count': 1
+                    'count': 1,
+                    'matches': date.match
                 });
             } else {
-                scat.find(d => d.x === date.female[this.selected_property]
-                            && d.y === date.male[this.selected_property]).count += 1;
+                let observation = scat.find(d => 
+                            d.x === date.female[this.selected_property]
+                         && d.y === date.male[this.selected_property]);
+                observation.count += 1;
+                observation.matches += date.match;
             }
         }
         return scat;
@@ -164,6 +172,10 @@ class ScatterBubble extends Graph{
                            .range([2, 20])
                            .domain(d3.extent(this.scatter_selected, d => d.count));
 
+        let color = d3.scalePow().exponent(0.2)
+                .domain(d3.extent(this.scatter_selected, d => d.matches/d.count))
+                .range([1,0]);
+
         let xAxis = d3.axisBottom()
             .scale(x);
         let yAxis = d3.axisLeft()
@@ -203,9 +215,9 @@ class ScatterBubble extends Graph{
             .attr('r', d => size_scale(d.count))
             .attr("cx", d => x(d.x))
             .attr("cy", d => y(d.y))
-            .style("fill", 'crimson')
+            .attr("fill", d => d3.interpolateReds(color(d.matches/d.count)))
             .on("mouseover", function (d) {
-                d3.select(this).style('fill', 'mediumaquamarine');
+                d3.select(this).attr("fill", 'black');
                 tooltip.transition()
                    .duration(200)
                    .style("opacity", .9);
@@ -218,7 +230,7 @@ class ScatterBubble extends Graph{
 
             })
             .on('mouseout', function (d) {
-                d3.select(this).style('fill', 'crimson');
+                d3.select(this).attr("fill", d => d3.interpolateReds(color(d.matches/d.count)));
                 tooltip.transition()
                     .duration(500)
                     .style("opacity", 0);
