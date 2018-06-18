@@ -281,15 +281,20 @@ function main(data) {
     createPersonDensityFeature(data, "tab-person");
 
     // Success chris
-    createSuccessSecondaryFeature(data, "tab-success");
+    // iidSelected Yrieix
+    let iidSelected = new Array(300);//create an empty array with length 45
+    for(let i=0;i<iidSelected.length;i++){
+        iidSelected[i] = i
+    }
+    createSuccessSecondaryFeature(data, "tab-success", iidSelected);
 }
 
 function instantiateNavigation(){
     let data_menu = [
-        { icon : "./data/menu/home.svg", action: "4" },
-        { icon : "./data/menu/wave.svg", action: "0" },
-        { icon : "./data/menu/person.svg", action: "1" },
-        { icon : "./data/menu/success.svg", action: "2" }
+        { icon : "./data/menu/home.svg", action: "0" },
+        { icon : "./data/menu/wave.svg", action: "1" },
+        { icon : "./data/menu/person.svg", action: "2" },
+        { icon : "./data/menu/success.svg", action: "3" }
     ];
 
     // Show menu launch
@@ -339,7 +344,6 @@ function createPersonDensityFeature(data, tabToDisplay) {
 }
 
 function instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, densityVarPerson2, iid) {
-    // Create graph for the first time
     let graphPersonDensityFeature = new GraphDensityVerticalLine(tabToDisplay, data,
         {densityVarPerson1: densityVarPerson1,
             densityVarPerson2: densityVarPerson2,
@@ -348,16 +352,12 @@ function instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, 
 }
 
 // Success Secondary Feature
-function createSuccessSecondaryFeature(data, tabToDisplay) {
+function createSuccessSecondaryFeature(data, tabToDisplay, iidSelected) {
     // Variables
     let continuousVar = ["age", "date"]; // "income"
     let categoricalVar = ["race", "goal"]; // "gender", "study", "career", "interest"
     let currentContinuousVar = continuousVar[0];
     let currentCategoricalVar = categoricalVar[0];
-
-    // Filter Variables Yrieix
-    let filterVar = "gender";
-    let filterValue = 0;
 
     // Button Continuous Variable
     instantiateButtonFeature(continuousVar, "varDensityContinuous");
@@ -367,7 +367,7 @@ function createSuccessSecondaryFeature(data, tabToDisplay) {
         currentContinuousVar = x.value;
         console.log("Change, currentContinuousVar: "+ currentContinuousVar);
         // Update graph
-        instantiateSuccessSecondaryFeature(data, tabToDisplay, currentContinuousVar, currentCategoricalVar, filterVar, filterValue);
+        instantiateSuccessSecondaryFeature(data, tabToDisplay, currentContinuousVar, currentCategoricalVar, iidSelected);
     });
 
     // Button Categorical Variable
@@ -378,20 +378,18 @@ function createSuccessSecondaryFeature(data, tabToDisplay) {
         currentCategoricalVar = x.value;
         console.log("Change, currentCategoricalVar: "+ currentCategoricalVar);
         // Update graph
-        instantiateSuccessSecondaryFeature(data, tabToDisplay, currentContinuousVar, currentCategoricalVar, filterVar, filterValue);
+        instantiateSuccessSecondaryFeature(data, tabToDisplay, currentContinuousVar, currentCategoricalVar, iidSelected);
     });
 
     // Create graph for the first time
-    instantiateSuccessSecondaryFeature(data, tabToDisplay, currentContinuousVar, currentCategoricalVar, filterVar, filterValue);
+    instantiateSuccessSecondaryFeature(data, tabToDisplay, currentContinuousVar, currentCategoricalVar, iidSelected);
 }
 
-function instantiateSuccessSecondaryFeature(data, tabToDisplay, currentContinuousVar, currentCategoricalVar, filterVar, filterValue) {
-    // Create graph for the first time
+function instantiateSuccessSecondaryFeature(data, tabToDisplay, currentContinuousVar, currentCategoricalVar, iidSelected) {
     let graphSuccessSecondaryFeature = new GraphSuccessSecondaryFeature(tabToDisplay, data,
         {currentContinuousVar: currentContinuousVar,
             currentCategoricalVar: currentCategoricalVar,
-            filterVar: filterVar,
-            filterValue: filterValue
+            iidSelected: iidSelected
         });
 }
 

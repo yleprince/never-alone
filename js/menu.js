@@ -210,6 +210,7 @@ d3.radialMenu = function() {
             .on("click", function(d) {
                 console.log("menuSegments");
                 console.log(tabs);
+                console.log(d);
                 for (let tab of tabs) {
                     console.log("tab:" + tab);
                     tab.classList.toggle("activeTab", false);

@@ -26,6 +26,10 @@ article .activeTab {
     display: grid;
 }
 
+#tab-home {
+    background-color: gray;
+}
+
 #tab-wave {
     background-color: hotpink;
 }
@@ -112,4 +116,12 @@ article .activeTab {
     position: absolute;
     left:74%;
     top:27%;
+}
+
+h1 {
+    text-align: center;
+}
+
+h2 {
+    text-align: center;
 }
