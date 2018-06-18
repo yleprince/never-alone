@@ -7,9 +7,11 @@ import Graph from "./Graph.js";
 import fillWithDefault from "../defaultOptions.js";
 
 const defaultOptions = {
-    color: "crimson",
+    // color: "crimson",
     wave: 2,
-    opacityMiddle : 0.5
+    opacityMiddle: 0.5,
+    colorByAxis: "age",
+    axes: ["age", "field_cd", "exphappy", "goal", ["interests", "art"]]
 };
 
 class ParallelCoordinates extends Graph {
@@ -24,9 +26,11 @@ class ParallelCoordinates extends Graph {
         super(id, allData);
 
         let opts = fillWithDefault(options, defaultOptions);
-        this.color = opts.color;
+        // this.color = opts.color;
         this.wave = opts.wave;
         this.opacityMiddle = opts.opacityMiddle;
+        this.colorByAxis = opts.colorByAxis;
+        this.axes = opts.axes;
 
         this.preprocess();
         this.createGraph();
@@ -38,27 +42,60 @@ class ParallelCoordinates extends Graph {
      * Keep the interesting data for the Graph
      */
     preprocess() {
-        this.data = this.allData.filter(d => d.wave === this.wave && d.age > 0 && d.exphappy > 0 && d.interests.art > 0)
+        this.data = this.allData.filter(d => d.wave === this.wave && d.age > 0 && d.exphappy > 0 && d.interests.art > 0 && d.field_cd > 0)
             .map(d => {
-                return {
-                    age: d.age,
-                    exphappy: d.exphappy,
-                    art: d.interests.art,
+                // return {
+                //     age: d.age,
+                //     field_cd: d.field_cd,
+                //     exphappy: d.exphappy,
+                //     art: d.interests.art,
+                //     iid: d.iid,
+                //     id: d.id,
+                //     gender: d.gender,
+                //     goal: d.goal,
+                //     dec: d.speedDates.map(sd => {
+                //         return {d: sd.dec, d_o: sd.dec_o, id_o: sd.partner, g: d.gender, id: d.id}
+                //     })
+                // }
+                let res = {
                     iid: d.iid,
                     id: d.id,
                     gender: d.gender,
                     dec: d.speedDates.map(sd => {
                         return {d: sd.dec, d_o: sd.dec_o, id_o: sd.partner, g: d.gender, id: d.id}
                     })
-                }
+                };
+
+                this.keys = [];
+
+                this.axes.forEach(a => {
+                    let key = a;
+                    if (Array.isArray(a)) {
+                        let val = d[a[0]];
+                        key = a[0];
+                        let sub_keys = a.slice(1);
+                        sub_keys.forEach(k => {
+                            val = val[k];
+                            key += "/" + k;
+                        });
+                        res[key] = val;
+                    } else {
+                        res[key] = d[a]
+                    }
+                    this.keys.push(key);
+                });
+
+                this.keys.push("id");
+
+                return res;
             });
-        console.log(this.data);
     }
 
     /**
      * Fill SVG for the graph (implement the visualization here)
      */
     createGraph() {
+        console.log(this.data);
 
         let margin = {top: 30, right: 10, bottom: 10, left: 30},
             innerWidth = this.width - margin.left - margin.right,
@@ -83,28 +120,15 @@ class ParallelCoordinates extends Graph {
         };
 
         // Dimensions
-        let dimensions = [
-            {
-                key: "age",
+
+        let dimensions = this.keys.map(a => {
+            return {
+                key: a,
                 type: types["Number"],
                 scale: d3.scaleLinear().range([innerHeight, 0])
-            },
-            {
-                key: "exphappy",
-                type: types["Number"],
-                scale: d3.scaleLinear().range([innerHeight, 0])
-            },
-            {
-                key: "art",
-                type: types["Number"],
-                scale: d3.scaleLinear().range([innerHeight, 0])
-            },
-            {
-                key: "id",
-                type: types["Number"],
-                scale: d3.scaleLinear().range([innerHeight, 0]),
             }
-        ];
+        });
+
 
         this.data.forEach(d =>
             dimensions.forEach(p =>
@@ -147,6 +171,7 @@ class ParallelCoordinates extends Graph {
         let dimPos = {};
 
         let g = this.svg.append("g")
+            .attr("class", "pc")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
         this._g = g;
@@ -156,6 +181,7 @@ class ParallelCoordinates extends Graph {
         // Color
         let colorAxis = d3.scaleLinear()
             .range(['#d9ff13', '#00A889'])
+            .domain(d3.extent(this.data, d => d[this.colorByAxis]))
             .interpolate(d3.interpolateHcl);
 
         // Add background lines for context.
@@ -189,7 +215,8 @@ class ParallelCoordinates extends Graph {
                     .classed("decided", dec => dec.d);
                 let proj = project(d);
                 return line(proj);
-            });
+            })
+            .style("stroke", d => colorAxis(d[this.colorByAxis]));
 
         // Add a group element for each dimension
         let axes = g.selectAll(".axis")
@@ -202,13 +229,15 @@ class ParallelCoordinates extends Graph {
                 return `translate(${xscale(i)})`;
             })
             .on("click", dim => {
-                colorAxis
-                    .domain(d3.extent(this.data, function (d) {
-                        return d[dim.key];
-                    }));
-                foreground.transition()
-                    .duration(750)
-                    .style("stroke", d => colorAxis(d[dim.key]));
+                if (dim.key !== "match") {
+                    colorAxis
+                        .domain(d3.extent(this.data, function (d) {
+                            return d[dim.key];
+                        }));
+                    foreground.transition()
+                        .duration(750)
+                        .style("stroke", d => colorAxis(d[dim.key]));
+                }
             })
             .call(d3.drag()
                 .subject(function (d, i) {
@@ -351,7 +380,6 @@ class ParallelCoordinates extends Graph {
     }
 
     showMidLines(type, show) {
-        console.log(type, show);
         let filtering;
         switch (type) {
             case "GG":
@@ -374,7 +402,7 @@ class ParallelCoordinates extends Graph {
             .filter(d => filtering(d))
             .transition()
             .duration(500)
-            .style("opacity", show ? 1 : 0);
+            .style("opacity", show ? this.opacityMiddle : 0);
     }
 
     // TODO put this function in another script to use it later

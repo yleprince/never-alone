@@ -5,7 +5,7 @@ import ParallelCoordinates from "./modules/graphs/ParallelCoordinates.js";
 d3.csv("data/SpeedDating.csv")
     .row((d, i) => {
         return {
-            person:{
+            person: {
                 iid: +d.iid,
                 id: +d.id, // for the same wave there is two same id, one for a girl one for a boy
                 gender: +d.gender,
@@ -256,7 +256,7 @@ d3.csv("data/SpeedDating.csv")
         let data = [];
         rows.forEach(r => {
             let p = data.find(d => d.iid === r.person.iid);
-            if(!p) {
+            if (!p) {
                 p = r.person;
                 p.speedDates = [];
                 data.push(p);
@@ -268,6 +268,7 @@ d3.csv("data/SpeedDating.csv")
     });
 
 function main(data) {
+    console.log(data);
     // Create the tabs
     instantiateNavigation();
 
@@ -277,7 +278,17 @@ function main(data) {
 }
 
 function createPC(data) {
-    let graph = new ParallelCoordinates("graph-wave", data); // Example : a GraphExample object in the Wave tab
+    let keys = ["age", "field_cd", "race", "imprace",
+        "imprelig", "goal", "date", "go_out", "career_c",
+        ["interests", "art"],
+        ["interests", "clubbing"], ["interests", "concerts"], ["interests", "dining"], ["interests", "exercise"],
+        ["interests", "gaming"], ["interests", "hiking"], ["interests", "movies"], ["interests", "music"],
+        ["interests", "reading"], ["interests", "shopping"], ["interests", "sports"], ["interests", "theater"], ["interests", "tv"],
+        ["interests", "tvsports"], ["interests", "yoga"], "exphappy"
+    ];
+    let graph = new ParallelCoordinates("graph-wave", data, {
+        axes: keys
+    }); // Example : a GraphExample object in the Wave tab
     let checkBoxGG = document.getElementById("GG");
     let checkBoxGR = document.getElementById("GR");
     let checkBoxRG = document.getElementById("RG");
@@ -298,9 +309,11 @@ function createPC(data) {
     checkBoxRR.addEventListener("input", e => {
         graph.showMidLines("RR", checkBoxRR.checked);
     });
+
+
 }
 
-function instantiateNavigation(){
+function instantiateNavigation() {
     let tabs = document.getElementsByClassName("tab");
     let btnTabWave = document.getElementById("btn-tab-wave");
     let btnTabPerson = document.getElementById("btn-tab-person");
@@ -310,7 +323,7 @@ function instantiateNavigation(){
     btnTabPerson.addEventListener("click", () => openTab(1));
     btnTabSuccess.addEventListener("click", () => openTab(2));
 
-    function openTab (i) {
+    function openTab(i) {
         console.log(tabs);
         for (let tab of tabs) {
             tab.classList.toggle("activeTab", false);

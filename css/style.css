@@ -53,7 +53,7 @@ article .activeTab {
 
 .foreground path {
     fill: none;
-    stroke: steelblue;
+    stroke-width: 1.5;
 }
 
 .axis line,
@@ -71,10 +71,66 @@ article .activeTab {
 
 line {
     fill: none;
-    stroke: crimson;
+    stroke: #ff884d;
 }
 
 .decided {
     fill: none;
-    stroke: lime;
+    stroke: #00ccff;
 }
+
+.pc .axis .title {
+    font-size: 10px;
+    transform: rotate(-21deg) translate(-5px, -6px);
+    fill: black;
+}
+
+/*.pc .axis line,*/
+/*.pc .axis path {*/
+    /*fill: none;*/
+    /*stroke: #ccc;*/
+    /*stroke-width: 1px;*/
+/*}*/
+
+.pc .axis .tick text {
+    fill: black;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.pc .axis.manufac_name .tick text,
+.pc .axis.food_group .tick text {
+    opacity: 1;
+}
+
+.pc .axis:hover line,
+.pc .axis:hover path,
+.pc .axis.active line,
+.pc .axis.active path {
+    fill: none;
+    stroke: black;
+    stroke-width: 1px;
+}
+
+.pc .axis:hover .title {
+    font-weight: bold;
+}
+
+.pc .axis:hover .tick text {
+    opacity: 1;
+}
+
+.pc .axis.active .title {
+    font-weight: bold;
+}
+
+.pc .axis.active .tick text {
+    opacity: 1;
+    font-weight: bold;
+}
+
+/*.pc .brush .extent {*/
+    /*fill-opacity: .3;*/
+    /*stroke: #fff;*/
+    /*stroke-width: 1px;*/
+/*}*/
