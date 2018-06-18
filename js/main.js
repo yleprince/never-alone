@@ -303,6 +303,9 @@ function instantiateNavigation(){
 
 // Person Density Feature
 function createPersonDensityFeature(data, tabToDisplay) {
+    // Input to define
+    let iid = 1;
+
     // Variables
     let continuousVar = ["age", "date"]; // "income"
     let categoricalVar = ["race", "goal"]; // "gender", "study", "career", "interest"
@@ -317,7 +320,7 @@ function createPersonDensityFeature(data, tabToDisplay) {
         densityVarPerson1 = x.value;
         console.log("Change, densityVarPerson1: "+ densityVarPerson1);
         // Update graph
-        instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, densityVarPerson2);
+        instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, densityVarPerson2, iid);
     });
 
     // Button Categorical Variable
@@ -328,18 +331,19 @@ function createPersonDensityFeature(data, tabToDisplay) {
         densityVarPerson2 = x.value;
         console.log("Change, currentCategoricalVar: "+ densityVarPerson2);
         // Update graph
-        instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, densityVarPerson2);
+        instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, densityVarPerson2, iid);
     });
 
     // Create graph for the first time
-    instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, densityVarPerson2);
+    instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, densityVarPerson2, iid);
 }
 
-function instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, densityVarPerson2) {
+function instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, densityVarPerson2, iid) {
     // Create graph for the first time
     let graphPersonDensityFeature = new GraphDensityVerticalLine(tabToDisplay, data,
         {densityVarPerson1: densityVarPerson1,
             densityVarPerson2: densityVarPerson2,
+            iid: iid
         });
 }
 

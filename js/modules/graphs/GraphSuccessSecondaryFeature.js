@@ -112,7 +112,7 @@ class GraphSuccessSecondaryFeature extends Graph{
         let nbColumn = 2;
         // create array
         this.dataCategorical = new Array(nbLine);
-        for (var i = 0; i < this.dataCategorical.length; i++) {
+        for (let i = 0; i < this.dataCategorical.length; i++) {
             this.dataCategorical[i] = new Array(nbColumn);
             this.dataCategorical[i]["key"] = this.dataFullCategorical[i].key; // key full
             this.dataCategorical[i]["Full"] = this.dataFullCategorical[i].value; // value full
@@ -134,14 +134,16 @@ class GraphSuccessSecondaryFeature extends Graph{
      * Fill SVG for the graph (implement the visualization here)
      */
     createGraph(){
-        this.createContinuousGraph();
-        this.createCategoricalVar();
+        let marginContinuousGraph = {top: this.height*(10/100), right: this.width*(5/100), bottom: this.height*(66/100), left: this.width*(75/100)};
+        this.createContinuousGraph(marginContinuousGraph);
+
+        let marginCategoricalVar = {top: this.height*(66/100), right: this.width*(5/100), bottom: this.height*(10/100), left: this.width*(75/100)};
+        this.createCategoricalVar(marginCategoricalVar);
     }
 
-    createContinuousGraph(){
+    createContinuousGraph(margin){
         // margin continuous var
-        let margin = {top: 100, right: 100, bottom: this.height*(2/3), left: this.width*(3/4)},
-            innerWidth = this.width - margin.left - margin.right,
+        let innerWidth = this.width - margin.left - margin.right,
             innerHeight = this.height - margin.top - margin.bottom;
 
         const x = d3.scaleLinear()
@@ -224,10 +226,9 @@ class GraphSuccessSecondaryFeature extends Graph{
     }
 
 
-    createCategoricalVar(){
+    createCategoricalVar(margin){
         // margin continuous var
-        let margin = {top: this.height*(2/3), right: 100, bottom: 100, left: this.width*(3/4)},
-            innerWidth = this.width - margin.left - margin.right,
+        let innerWidth = this.width - margin.left - margin.right,
             innerHeight = this.height - margin.top - margin.bottom;
 
         let g = this.svg.append("g")
