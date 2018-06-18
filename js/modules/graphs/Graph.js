@@ -23,6 +23,8 @@ class Graph{
         this.width = clientRect.width;
         this.height = clientRect.height;
 
+        this.div.select("svg").remove();
+        
         this.svg = this.div.append("svg")
             .attr("class", "graph")
             .attr("width", this.width)

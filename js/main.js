@@ -273,20 +273,79 @@ function main(data) {
     // TODO : PUT YOUR GRAPHS HERE
 
 
-    let graph = new ScatterBubble("scatter_plot", data); // Example : a GraphExample object in the Wave tab
+    // Success Yrieix
+    createSuccessPrimaryFeature(data, "success_primary_feature");
 
-    let selectList = document.getElementById('select_scatter_data');
-    selectList.addEventListener('change', function(event){
-        console.log(event.target.value);
-        /// PROBLEME ICI: >>>
-        graph.plot_data(event.target.value);
+}
 
-        /// <<<< PROBLEME ICI
-    });
+function createSuccessPrimaryFeature(data, tabToDisplay){
+
+    let explorable_variables = [{title:'Carreer', name:'career_c', values:['job1', 'job2']},
+                                {title:'Go out', name:'go_out', values:['very often', 'often']},
+                                {title:'Happiness expectation', name:'exphappy', values:['very happy', 'happy']},
+                                {title:'Age', name:'age', values:[]}
+                                ];
+
+    instantiatePrimaryFeature(data, explorable_variables, 'success_primary_feature');
 
 
 
 }
+
+function instantiatePrimaryFeature(data, select_options, primary_div){
+
+    //Create Interaction div
+    let primary_feature_interaction_div = document.createElement('div');
+    primary_feature_interaction_div.id = 'primary_feature_interaction_div';
+    document.getElementById(primary_div).appendChild(primary_feature_interaction_div);
+
+    //Create Select
+    let selectPrimaryFeature = document.createElement("select");
+    selectPrimaryFeature.id = 'primary_feature_select';
+    
+    //Create and append the options
+    for (let property of select_options){
+        let option = document.createElement("option");
+        option.value = property.name;
+        option.text = property.title;
+        selectPrimaryFeature.appendChild(option);
+    }    
+    primary_feature_interaction_div.appendChild(selectPrimaryFeature);
+    selectPrimaryFeature.addEventListener('change', function(event){
+        let selected_data = event.target.value; 
+        console.log('selected_data', selected_data);
+        primary_plot.plot_data(selected_data);
+    });
+
+    // add text info
+    let infos = [
+        {label: '#Match', id: 'nb_matches'},
+        {label: '#Candidates', id: 'nb_candidates'},
+        {label: 'Female value', id: 'female'},
+        {label: 'Male value', id: 'male'}
+    ];
+
+    for (let info of infos){
+        let element = document.createElement('p');
+        element.innerHTML = info.label + ': <span id='+ info.id +'></span>';
+        primary_feature_interaction_div.appendChild(element);
+    }
+
+
+    //Create Plot div
+    let primary_plot_div = document.createElement('div');
+    primary_plot_div.id = 'primary_plot_div';
+    document.getElementById(primary_div).appendChild(primary_plot_div);
+    let primary_plot = new ScatterBubble('primary_plot_div', data, 'go_out');
+    
+    var btn = document.createElement("button");
+    btn.appendChild(document.createTextNode("GET CLICKED"));
+    btn.addEventListener('click', e => console.log(primary_plot.get_clicked()));
+    primary_feature_interaction_div.appendChild(btn);
+
+}
+
+
 
 function instantiateNavigation(){
     let data_menu = [

@@ -28,9 +28,15 @@ article .activeTab {
 
 
 
-#scatter {
+#success_primary_feature {
+    position: absolute;
+    top: 30%;
+    left:12%;
+/*    width: 200px;
+    height: 100px;*/
     display: flex;
 }
+
 /*
 #scatter_params {
     flex: 1;
@@ -44,17 +50,22 @@ article .activeTab {
     /*display: flex;*/
 }
 
+#select_scatter_data{
+    /*margin: auto;*/
+}
+
 svg {
-    background-color: white;
-    /*opacity: 0.8;*/
-    margin: 2em auto;
-    transition: ease 0.5s;
-    box-shadow: -2px 4px 10px 3px rgba(0,0,0,0.1);
+    /*background-color: white;*/
+/*    opacity: 0.5;
+*/    
+    /*margin: 2em auto;*/
+    /*transition: ease 0.5s;*/
+    /*box-shadow: -2px 4px 10px 3px rgba(0,0,0,0.1);*/
 }
 
 svg:hover {
     /*opacity: 1;*/
-    box-shadow: -2px 4px 10px 3px rgba(0,0,0,0.3);
+    /*box-shadow: -2px 4px 10px 3px rgba(0,0,0,0.3);*/
 }
 
 
