@@ -3,6 +3,13 @@ import GraphExample from "./modules/graphs/GraphExample.js";
 import GraphDensityVerticalLine from "./modules/graphs/GraphDensityVerticalLine.js";
 import GraphSuccessSecondaryFeature from "./modules/graphs/GraphSuccessSecondaryFeature.js";
 
+let setups = {
+    "home": true,
+    "person": false,
+    "wave": false,
+    "success": false
+};
+
 d3.csv("data/SpeedDating.csv")
     .row((d, i) => {
         return {
@@ -270,26 +277,59 @@ d3.csv("data/SpeedDating.csv")
 
 function main(data) {
     // Create the tabs
-    instantiateNavigation();
+    instantiateNavigation(data);
 
     // TODO : PUT YOUR GRAPHS HERE
     console.log(data);
 
-    let graph = new GraphExample("tab-wave", data); // Example : a GraphExample object in the Wave tab
-
-    // Person chris
-    createPersonDensityFeature(data, "tab-person");
-
-    // Success chris
-    // iidSelected Yrieix
-    let iidSelected = new Array(300);//create an empty array with length 45
-    for(let i=0;i<iidSelected.length;i++){
-        iidSelected[i] = i
-    }
-    createSuccessSecondaryFeature(data, "tab-success", iidSelected);
 }
 
-function instantiateNavigation(){
+function setUpHome(data) {
+    if(!setups.home) {
+        // Code for the tab goes here
+
+        setups.home = true;
+    }
+}
+
+function setUpPerson(data) {
+    if(!setups.person) {
+        // Code for the tab goes here
+
+        // Person chris
+        createPersonDensityFeature(data, "tab-person");
+
+        setups.person = true;
+    }
+}
+
+function setUpWave(data) {
+    if(!setups.wave) {
+        // Code for the tab goes here
+
+        let graph = new GraphExample("tab-wave", data); // Example : a GraphExample object in the Wave tab
+
+        setups.wave = true;
+    }
+}
+
+function setUpSuccess(data) {
+    if(!setups.success) {
+        // Code for the tab goes here
+
+        // Success chris
+        // iidSelected Yrieix
+        let iidSelected = new Array(300);//create an empty array with length 45
+        for(let i=0;i<iidSelected.length;i++){
+            iidSelected[i] = i
+        }
+        createSuccessSecondaryFeature(data, "tab-success", iidSelected);
+
+        setups.success = true;
+    }
+}
+
+function instantiateNavigation(data){
     let data_menu = [
         { icon : "./data/menu/home.svg", action: "0" },
         { icon : "./data/menu/wave.svg", action: "1" },
@@ -304,6 +344,27 @@ function instantiateNavigation(){
         .show(data_menu);
 
     console.log(m.onClick)
+
+    let tabHome = document.getElementById("tab-home");
+    let tabPerson = document.getElementById("tab-person");
+    let tabWave = document.getElementById("tab-wave");
+    let tabSuccess = document.getElementById("tab-success");
+    tabHome.addEventListener("open", e => {
+        tabHome.classList.toggle("activeTab");
+        setUpHome(data)
+    });
+    tabPerson.addEventListener("open", e => {
+        tabPerson.classList.toggle("activeTab");
+        setUpPerson(data)
+    });
+    tabWave.addEventListener("open", e => {
+        tabWave.classList.toggle("activeTab");
+        setUpWave(data)
+    });
+    tabSuccess.addEventListener("open", e => {
+        tabSuccess.classList.toggle("activeTab");
+        setUpSuccess(data)
+    });
 }
 
 // Person Density Feature

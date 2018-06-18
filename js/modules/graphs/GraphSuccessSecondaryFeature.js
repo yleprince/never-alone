@@ -22,7 +22,7 @@ class GraphSuccessSecondaryFeature extends Graph{
         super(id, allData);
         let opts = fillWithDefault(options, defaultOptions);
 
-        this.color = ["#a6cee3", "#1f78b4"];
+        this.color = ["#1f78b4", "#a6cee3"];
         this.size = opts.size;
 
         this.currentContinuousVar = options.currentContinuousVar;
@@ -155,14 +155,12 @@ class GraphSuccessSecondaryFeature extends Graph{
             // .domain([0, d3.max(this.dataFullContinuous, function(d) { return d.value; })]);
             .domain(d3.extent(this.dataFullContinuous, d => d.value));
 
-        let z = d3.scaleOrdinal().range(this.color);
-
         let g = this.svg.append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         // Full data
         let lineFull = d3.line()
-            .curve(d3.curveBasis)
+            .curve(d3.curveCardinal)
             .x(function(d) { return x(d.key); })
             .y(function(d) {
                 if (y(d.value) >= 0) {
@@ -177,11 +175,11 @@ class GraphSuccessSecondaryFeature extends Graph{
             .attr("class", "line")
             .attr("d", lineFull)
             .style("fill", "None")
-            .style("stroke", z);
+            .style("stroke", this.color[0]);
 
         // Selected data
         let lineFilter = d3.line()
-            .curve(d3.curveBasis)
+            .curve(d3.curveCardinal)
             .x(function(d) { return x(d.key); })
             .y(function(d) {
                 if (y(d.value) >= 0) {
@@ -196,7 +194,7 @@ class GraphSuccessSecondaryFeature extends Graph{
             .attr("class", "line")
             .attr("d", lineFilter)
             .style("fill", "None")
-            .style("stroke", z);
+            .style("stroke", this.color[1]);
 
         // x axis
         g.append("g")
@@ -227,7 +225,7 @@ class GraphSuccessSecondaryFeature extends Graph{
             .attr("x", innerWidth - 19)
             .attr("width", 19)
             .attr("height", 19)
-            .attr("fill", z);
+            .attr("fill", (d, i) => this.color[i]);
 
         legend.append("text")
             .attr("x", innerWidth - 24)
@@ -260,7 +258,7 @@ class GraphSuccessSecondaryFeature extends Graph{
             .rangeRound([innerHeight, 0])
             .domain([0, d3.max(this.dataCategorical, function(d) { return d["Full"]; })]);
 
-        let z = d3.scaleOrdinal().range(this.color);
+        let z = d3.scaleOrdinal().range([this.color[1], this.color[0]]);
 
         // Plot the bars
         g.append("g")
