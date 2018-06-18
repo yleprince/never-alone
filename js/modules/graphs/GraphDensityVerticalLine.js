@@ -105,8 +105,6 @@ class GraphDensityVerticalLine extends Graph{
     }
 
     createContinuousGraph(data, valuePerson, margin){
-        // margin continuous var
-        //let margin = {top: 100, right: 100, bottom: this.height*(2/3), left: this.width*(3/4)},
         let innerWidth = this.width - margin.left - margin.right,
             innerHeight = this.height - margin.top - margin.bottom;
 
@@ -129,7 +127,13 @@ class GraphDensityVerticalLine extends Graph{
         let lineFull = d3.line()
             .curve(d3.curveBasis)
             .x(function(d) { return x(d.key); })
-            .y(function(d) { return y(d.value); });
+            .y(function(d) {
+                if (y(d.value) >= 0) {
+                    return y(d.value);
+                } else {
+                    return 0;
+                }
+            });
 
         g.append("path")
             .datum(data)

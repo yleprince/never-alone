@@ -27,8 +27,7 @@ class GraphSuccessSecondaryFeature extends Graph{
 
         this.currentContinuousVar = options.currentContinuousVar;
         this.currentCategoricalVar = options.currentCategoricalVar;
-        this.filterVar = options.filterVar;
-        this.filterValue = options.filterValue;
+        this.iidSelected = options.iidSelected;
 
         this.preprocess();
         this.createGraph();
@@ -59,10 +58,9 @@ class GraphSuccessSecondaryFeature extends Graph{
         console.log(this.dataFullContinuous);
 
         // Get filter data
-        // Filter sur une autre variable !!!
-        this.dataFilterContinuous = this.allData.map(d => {return {tmp_var : d[this.currentContinuousVar], tmp_var_filter : d[this.filterVar]}})
-            .filter(d => d.tmp_var > 0)
-            .filter(d => d.tmp_var_filter === this.filterValue);
+        this.dataFilterContinuous = this.allData.map(d => {return {tmp_var : d[this.currentContinuousVar], iid : d["iid"]}})
+            // .filter(d => d.tmp_var > 0)
+            .filter(d => d.iid in this.iidSelected);
 
 
         // Group data per age and get the counts for each age
@@ -93,8 +91,9 @@ class GraphSuccessSecondaryFeature extends Graph{
 
         // Get filter data
         // Filter sur une autre variable !!!
-        this.dataFilterCategorical = this.allData.map(d => {return {tmp_var : d[this.currentCategoricalVar], tmp_var_filter : d[this.filterVar]}})
-            .filter(d => d.tmp_var_filter === this.filterValue);
+        this.dataFilterCategorical = this.allData.map(d => {return {tmp_var : d[this.currentCategoricalVar], iid : d["iid"]}})
+            // .filter(d => d.tmp_var_filter === this.filterValue);
+            .filter(d => d.iid in this.iidSelected);
 
         // Group data per age and get the counts for each age
         this.dataFilterCategorical = d3.nest()
@@ -156,7 +155,7 @@ class GraphSuccessSecondaryFeature extends Graph{
             // .domain([0, d3.max(this.dataFullContinuous, function(d) { return d.value; })]);
             .domain(d3.extent(this.dataFullContinuous, d => d.value));
 
-        let z = d3.scaleOrdinal().range(this.color.reverse());
+        let z = d3.scaleOrdinal().range(this.color);
 
         let g = this.svg.append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -165,7 +164,13 @@ class GraphSuccessSecondaryFeature extends Graph{
         let lineFull = d3.line()
             .curve(d3.curveBasis)
             .x(function(d) { return x(d.key); })
-            .y(function(d) { return y(d.value); });
+            .y(function(d) {
+                if (y(d.value) >= 0) {
+                    return y(d.value);
+                } else {
+                    return 0;
+                }
+            });
 
         g.append("path")
             .datum(this.dataFullContinuous)
@@ -178,7 +183,13 @@ class GraphSuccessSecondaryFeature extends Graph{
         let lineFilter = d3.line()
             .curve(d3.curveBasis)
             .x(function(d) { return x(d.key); })
-            .y(function(d) { return y(d.value); });
+            .y(function(d) {
+                if (y(d.value) >= 0) {
+                    return y(d.value);
+                } else {
+                    return 0;
+                }
+            });
 
         g.append("path")
             .datum(this.dataFilterContinuous)
@@ -249,7 +260,7 @@ class GraphSuccessSecondaryFeature extends Graph{
             .rangeRound([innerHeight, 0])
             .domain([0, d3.max(this.dataCategorical, function(d) { return d["Full"]; })]);
 
-        let z = d3.scaleOrdinal().range(this.color.reverse());
+        let z = d3.scaleOrdinal().range(this.color);
 
         // Plot the bars
         g.append("g")
@@ -261,9 +272,24 @@ class GraphSuccessSecondaryFeature extends Graph{
             .data(function(d) { return keys.map(function(key) { return {key: key, value: d[key]}; }); })
             .enter().append("rect")
             .attr("x", function(d) { return x1(d.key); })
-            .attr("y", function(d) { return y(d.value); })
+            // .attr("y", function(d) { return y(d.value); })
+            .attr("y", (function(d) {
+                if (y(d.value) >= 0) {
+                    return y(d.value);
+                } else {
+                    return 0;
+                }
+            }))
             .attr("width", x1.bandwidth())
-            .attr("height", function(d) { return innerHeight - y(d.value); })
+            // .attr("height", function(d) { return innerHeight - y(d.value); })
+            .attr("height", function(d) {
+                let tmp_height = innerHeight - y(d.value);
+                if (tmp_height >= 0) {
+                    return tmp_height;
+                } else {
+                    return 0;
+                }
+            })
             .attr("fill", function(d) { return z(d.key); })
             .on("mouseover", function(d, i){
                 //Change color when bar hovers
