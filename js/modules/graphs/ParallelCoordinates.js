@@ -10,7 +10,7 @@ const defaultOptions = {
     // color: "crimson",
     wave: 2,
     opacityMiddle: 0.5,
-    axes: ["age", "field_cd", "exphappy", "goal", ["interests", "art"]],
+    axes: ["age", "field_cd", "exphappy", "goal"],
 };
 
 class ParallelCoordinates extends Graph {
@@ -28,8 +28,8 @@ class ParallelCoordinates extends Graph {
         // this.color = opts.color;
         this.wave = opts.wave;
         this.opacityMiddle = opts.opacityMiddle;
-        this.axes = opts.axes.slice(0, 2);
-        this.colorByAxis = this.axes[0];
+        this.axes = opts.axes;
+        // this.colorByAxis = Array.isArray(this.axes[0]) ? this.axes[0][0] + "/" + this.axes[0][1]: this.axes[0];
 
         this.preprocess();
         this.createGraph();
@@ -127,6 +127,8 @@ class ParallelCoordinates extends Graph {
                 scale: d3.scaleLinear().range([innerHeight, 0])
             }
         });
+
+        this.colorByAxis = this.keys[0];
 
 
         this.data.forEach(d =>
