@@ -8,7 +8,7 @@ import fillWithDefault from "../defaultOptions.js";
 
 const defaultOptions = {
     color: "crimson",
-    wave: 16
+    wave: 1
 };
 
 class ParallelCoordinates extends Graph {
@@ -135,18 +135,6 @@ class ParallelCoordinates extends Graph {
             scale: d3.scaleLinear().range([innerHeight, 0]),
         });
 
-        // allDimensions.filter(d => d.key === "iid")
-        //     .forEach(el => {
-        //         el.domain =
-        //             ParallelCoordinates.d3_functor(el.type.extent)(
-        //                 this.data.filter(pe => pe.gender === el.gender)
-        //                     .map(d => d[el.key]));
-        //         el.scale.domain(el.domain);
-        //         el.axis = d3.axisLeft().scale(el.scale);
-        //     });
-        //
-        // console.log(allDimensions);
-
         let xscale = d3.scalePoint()
             .domain(d3.range(allDimensions.length))
             .range([0, innerWidth]);
@@ -162,6 +150,11 @@ class ParallelCoordinates extends Graph {
         this._g = g;
 
         ParallelCoordinates.updateDimPos(dimPos, allDimensions, xscale);
+
+        // Color
+        let colorAxis = d3.scaleLinear()
+            .range(['mediumturquoise', 'hotpink'])
+            .interpolate(d3.interpolateHcl);
 
         // Add background lines for context.
         let background = g.append("g")
@@ -205,6 +198,15 @@ class ParallelCoordinates extends Graph {
             .attr("transform", (d, i) => {
                 return `translate(${xscale(i)})`;
             })
+            .on("click", dim => {
+                colorAxis
+                    .domain(d3.extent(this.data, function (d) {
+                        return d[dim.key];
+                    }));
+                foreground.transition()
+                    .duration(750)
+                    .style("stroke", d => colorAxis(d[dim.key]));
+            })
             .call(d3.drag()
                 .subject(function (d, i) {
                     return {xscale: xscale(i)};
@@ -218,12 +220,10 @@ class ParallelCoordinates extends Graph {
                 .on("drag", function (d, i) {
                     if (d.key !== "id") {
                         if (d.gender === 0) {
-
                             dragging[d.globalKey] = Math.min(
                                 xscale(((allDimensions.length - 1) / 2) - 1),
                                 Math.max(-1, d3.event.x));
                         } else {
-                            // dragging[d.globalKey] = Math.min(innerWidth + 1, Math.max(-1, d3.event.x));
                             dragging[d.globalKey] = Math.min(
                                 innerWidth + 1,
                                 Math.max(xscale(((allDimensions.length - 1) / 2) + 1), d3.event.x));
@@ -329,11 +329,7 @@ class ParallelCoordinates extends Graph {
             foreground.style("display", d => {
                 if (actives.every(active => {
                         let dim = active.dimension;
-                        if (dim.gender !== d.gender || dim.type.within(d[dim.key], active.extent, dim)) {
-                            return true
-                        } else {
-                            return false;
-                        }
+                        return dim.gender !== d.gender || dim.type.within(d[dim.key], active.extent, dim);
                     })) {
                     if (!selIDs[!!d.gender].includes(d.id)) {
                         selIDs[!!d.gender].push(d.id);
@@ -343,11 +339,10 @@ class ParallelCoordinates extends Graph {
                     return "none";
                 }
             });
-            console.log(selIDs);
             g.selectAll(".midLine")
-                .transition()
-                .duration(250)
-                // .style("opacity", d => !selIDs[!!d.g].includes(d.id) || !selIDs[!d.g].includes(d.id_o) ? 0 : 1)
+            // .transition()
+            // .duration(250)
+            // .style("opacity", d => !selIDs[!!d.g].includes(d.id) || !selIDs[!d.g].includes(d.id_o) ? 0 : 1)
                 .style("display", d => !selIDs[!!d.g].includes(d.id) || !selIDs[!d.g].includes(d.id_o) ? "none" : null)
         }
     }
@@ -371,11 +366,12 @@ class ParallelCoordinates extends Graph {
             default:
                 console.error("Bad type for line selection.");
         }
+
         this._g.selectAll(".midLine")
             .filter(d => filtering(d))
             .transition()
             .duration(500)
-            .style("opacity", show ? 1 : 0)
+            .style("opacity", show ? 1 : 0);
     }
 
     // TODO put this function in another script to use it later
