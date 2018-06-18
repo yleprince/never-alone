@@ -278,14 +278,75 @@ function main(data) {
 }
 
 function createPC(data) {
-    let keys = ["age", "field_cd", "race", "imprace",
-        "imprelig", "goal", "date", "go_out", "career_c",
-        ["interests", "art"],
-        ["interests", "clubbing"], ["interests", "concerts"], ["interests", "dining"], ["interests", "exercise"],
-        ["interests", "gaming"], ["interests", "hiking"], ["interests", "movies"], ["interests", "music"],
-        ["interests", "reading"], ["interests", "shopping"], ["interests", "sports"], ["interests", "theater"], ["interests", "tv"],
-        ["interests", "tvsports"], ["interests", "yoga"], "exphappy"
-    ];
+    // let keys = ["age", "field_cd", "race", "imprace",
+    //     "imprelig", "goal", "date", "go_out", "career_c",
+    //     ["interests", "art"],
+    //     ["interests", "clubbing"], ["interests", "concerts"], ["interests", "dining"], ["interests", "exercise"],
+    //     ["interests", "gaming"], ["interests", "hiking"], ["interests", "movies"], ["interests", "music"],
+    //     ["interests", "reading"], ["interests", "shopping"], ["interests", "sports"], ["interests", "theater"], ["interests", "tv"],
+    //     ["interests", "tvsports"], ["interests", "yoga"], "exphappy"
+    // ];
+
+    let keys = [];
+    let no_feat = ["iid", "id", "idg", "wave", "round", "position", "speedDates", "gender", "condtn", "positin1", "field"];
+
+    let ul = document.createElement("ul");
+    let listCol = document.getElementById("list-col-wave");
+    let listSel = document.getElementById("list-sel-wave");
+
+
+    for (let feature in data[0]) {
+        if (data[0].hasOwnProperty(feature) && !no_feat.includes(feature)) {
+            let li = document.createElement("li");
+            li.innerHTML = feature;
+            li.val = feature;
+            if (typeof(data[0][feature]) === "object") {
+                let subUl = document.createElement("ul");
+                for (let feat in data[0][feature]) {
+                    if (data[0][feature].hasOwnProperty(feat)) {
+                        keys.push([feature, feat]);
+                        let li = document.createElement("li");
+                        li.innerHTML = feat;
+                        li.val = feature + "/" + feat;
+                        subUl.appendChild(li);
+
+                        // Add listener on sub li
+                        li.addEventListener("click", e => {
+                            console.log("kikoo", feature, feat);
+                            li.style.display = "none";
+                            addSelected(li);
+                        })
+                    }
+                }
+                li.appendChild(subUl);
+            } else {
+                // Add listener on li
+                li.addEventListener("click", e => {
+                    console.log("kikoo", feature);
+                    li.style.display = "none";
+                    addSelected(li);
+                });
+                keys.push(feature);
+            }
+            ul.appendChild(li);
+        }
+    }
+
+    listCol.appendChild(ul);
+
+    function addSelected(li) {
+        let span = document.createElement("span");
+        span.innerHTML = li.val;
+        span.classList.add("col-tag");
+        span.addEventListener("click", e => {
+            li.style.display = "block";
+            span.remove();
+        });
+        listSel.append(span)
+    }
+
+    console.log(keys);
+
     let graph = new ParallelCoordinates("graph-wave", data, {
         axes: keys
     }); // Example : a GraphExample object in the Wave tab

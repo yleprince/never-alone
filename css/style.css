@@ -26,8 +26,10 @@ article .activeTab {
     display: grid;
 }
 
+/*---------------------- TABS ----------------------*/
 #tab-wave {
-    background-color: white;
+    grid-template-columns: 80% auto;
+    grid-template-rows: 90% auto;
 }
 
 #tab-person {
@@ -38,13 +40,78 @@ article .activeTab {
     background-color: deepskyblue;
 }
 
+#graph-container-wave {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: 3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#graph-wave {
+    width: 100%;
+    height: 50%;
+}
+
+#options-wave {
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 2;
+    grid-row-end: 3;
+}
+
+#list-col-wave {
+    width: 100%;
+    height: 70%;
+    overflow-y: scroll;
+    /*overflow-wrap: break-word;*/
+}
+
+#list-sel-wave {
+    width: 100%;
+    height: 30%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    align-content: center;
+}
+
 .graph {
     /*width: 99%;*/
     /*height: 99%;*/
 }
 
+#list-col-wave ul {
+    list-style-type: none;
+    padding: 0 10px 0 10px;
+    margin: 0;
+}
 
-/* PARALLEL COORDINATES */
+#list-col-wave li {
+    padding: 8px;
+    /*border: 1px solid black;*/
+    background-color: #eee;
+}
+
+#list-col-wave li:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+#list-col-wave li:hover {
+    background-color: #ddd;
+}
+
+.col-tag {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px dotted hotpink;
+    background-color: rgba(255, 179, 204, 0.3);
+}
+
+/*---------------------- PARALLEL COORDINATES ----------------------*/
 .background path {
     fill: none;
     stroke: #ddd;
@@ -65,7 +132,7 @@ article .activeTab {
 
 .axis .title {
     font-size: 10px;
-    transform: rotate(-21deg) translate(-5px,-6px);
+    transform: rotate(-21deg) translate(-5px, -6px);
     fill: #222;
 }
 
@@ -87,9 +154,9 @@ line {
 
 /*.pc .axis line,*/
 /*.pc .axis path {*/
-    /*fill: none;*/
-    /*stroke: #ccc;*/
-    /*stroke-width: 1px;*/
+/*fill: none;*/
+/*stroke: #ccc;*/
+/*stroke-width: 1px;*/
 /*}*/
 
 .pc .axis .tick text {
@@ -130,7 +197,7 @@ line {
 }
 
 /*.pc .brush .extent {*/
-    /*fill-opacity: .3;*/
-    /*stroke: #fff;*/
-    /*stroke-width: 1px;*/
+/*fill-opacity: .3;*/
+/*stroke: #fff;*/
+/*stroke-width: 1px;*/
 /*}*/
