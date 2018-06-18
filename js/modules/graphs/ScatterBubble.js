@@ -34,16 +34,6 @@ class ScatterBubble extends Graph{
         this.preprocess();
 
         this.createGraph();
-
-        this.selectList.addEventListener('change', function(event){
-            this.selected_property = event.target.value;
-            console.log(this.selected_property);
-
-            /// PROBLEME ICI: >>>
-            this.createGraph();
-
-            /// <<<< PROBLEME ICI
-        });
     }
 
     // -- METHODS TO IMPLEMENT ---
@@ -100,7 +90,7 @@ class ScatterBubble extends Graph{
             option.text = property;
             this.selectList.appendChild(option);
         }
-        this.selected_property = 'career_c';
+        // this.selected_property = 'career_c';
     }
 
 
@@ -136,6 +126,8 @@ class ScatterBubble extends Graph{
         let width = 960 - margin.left - margin.right;
         let height = 500 - margin.top - margin.bottom;
 
+        this.canvas_param = {c_margin:margin, c_w: width, c_h: height};
+
         this.svg.attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
             .append("g")
@@ -143,23 +135,33 @@ class ScatterBubble extends Graph{
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
+        this.plot_data('career_c');
+
+    }
+
+    plot_data(label){
+        this.svg.selectAll("g").remove();
+        this.svg.selectAll(".dot").remove();
+
+        this.selected_property = label;
+
         this.scatter_selected = this.scatterize();
         console.log('scatterize', this.scatter_selected);
         
         const x = d3.scaleLinear()
-            .range([0, width])
+            .range([0, this.canvas_param.c_w])
             .domain([d3.min(this.scatter_selected, d => d.x) -0.5,
                      d3.max(this.scatter_selected, d => d.x) +0.5]);
 
             // .domain(d3.extent(this.scatter_selected, d => d.x));
         const y = d3.scaleLinear()
-            .range([height, 0])
+            .range([this.canvas_param.c_h, 0])
             .domain([d3.min(this.scatter_selected, d => d.y) -0.5,
                      d3.max(this.scatter_selected, d => d.y) +0.5]);
             // .domain(d3.extent(this.scatter_selected, d => d.y));
 
         let size_scale = d3.scaleLinear()
-                           .range([2, 25])
+                           .range([2, 20])
                            .domain(d3.extent(this.scatter_selected, d => d.count));
 
         let xAxis = d3.axisBottom()
@@ -174,11 +176,11 @@ class ScatterBubble extends Graph{
 
         this.svg.append("g")
             .attr('class', 'x axis')
-            .attr('transform', 'translate (0,' + height + ")")
+            .attr('transform', 'translate (0,' + this.canvas_param.c_h + ")")
             .call(xAxis)
           .append('text')
             .attr('class', 'label')
-            .attr('x', width)
+            .attr('x', this.canvas_param.c_w)
             .attr('y', -6)
             .style("text-anchor", "end")
             .text('Female');
@@ -212,7 +214,7 @@ class ScatterBubble extends Graph{
 
                 tooltip.html(d.count)
                     .style("left", (x(d.x) +rect.left) + "px")  //+ size_scale(d.count)
-                    .style("top", (y(d.y) +margin.top) + "px"); //+ rect.top/3
+                    .style("top", (y(d.y) +this.canvas_param.c_margin.top) + "px"); //+ rect.top/3
 
             })
             .on('mouseout', function (d) {
@@ -221,7 +223,7 @@ class ScatterBubble extends Graph{
                     .duration(500)
                     .style("opacity", 0);
             });
-
+        
     }
 
     /**

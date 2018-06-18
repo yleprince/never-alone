@@ -275,6 +275,16 @@ function main(data) {
 
     let graph = new ScatterBubble("scatter_plot", data); // Example : a GraphExample object in the Wave tab
 
+    let selectList = document.getElementById('select_scatter_data');
+    selectList.addEventListener('change', function(event){
+        console.log(event.target.value);
+        /// PROBLEME ICI: >>>
+        graph.plot_data(event.target.value);
+
+        /// <<<< PROBLEME ICI
+    });
+
+
 
 }
 
