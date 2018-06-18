@@ -26,7 +26,7 @@ d3.csv("data/SpeedDating.csv")
                 imprelig: +d.imprelig,
                 from: d.from,
                 zipcode: d.zipcode,
-                income: +d.income,
+                income: parseFloat(d.income.replace(/,/g, '')),
                 goal: +d.goal,
                 date: +d.date,
                 go_out: +d.go_out,
@@ -303,7 +303,8 @@ function createPC(data) {
         graph.showMidLines("RR", checkBoxRR.checked);
     });
     let keys = [];
-    let no_feat = ["iid", "id", "idg", "wave", "round", "position", "speedDates", "gender", "condtn", "positin1", "field"];
+    let no_feat = ["iid", "id", "idg", "wave", "round", "position", "speedDates", "gender", "condtn", "positin1",
+        "field", "from", "zipcode", "career"];
     let axes = [];
 
     let ul = document.createElement("ul");

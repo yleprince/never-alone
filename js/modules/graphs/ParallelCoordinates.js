@@ -41,7 +41,7 @@ class ParallelCoordinates extends Graph {
      * Keep the interesting data for the Graph
      */
     preprocess() {
-        this.data = this.allData.filter(d => d.wave === this.wave && d.age > 0 && d.exphappy > 0 && d.interests.art > 0 && d.field_cd > 0)
+        this.data = this.allData.filter(d => d.wave === this.wave)
             .map(d => {
                 // return {
                 //     age: d.age,
@@ -94,9 +94,8 @@ class ParallelCoordinates extends Graph {
      * Fill SVG for the graph (implement the visualization here)
      */
     createGraph() {
-        console.log(this.data);
 
-        let margin = {top: 30, right: 10, bottom: 10, left: 30},
+        let margin = {top: 50, right: 10, bottom: 50, left: 30},
             innerWidth = this.width - margin.left - margin.right,
             innerHeight = this.height - margin.top - margin.bottom;
 
@@ -177,6 +176,20 @@ class ParallelCoordinates extends Graph {
 
         this._g = g;
 
+        g.append("line")
+            .attr("x1", 0)
+            .attr("y1", innerHeight + 40)
+            .attr("x2", innerWidth)
+            .attr("y2", innerHeight + 40)
+            .attr("class", "nanLine");
+
+        g.append("text")
+            .attr("class", "nd")
+            .attr("text-anchor", "middle")
+            .attr("transform", `translate(-5, ${innerHeight + 40}) rotate(-45)`)
+            .text("No val.");
+
+
         ParallelCoordinates.updateDimPos(dimPos, allDimensions, xscale);
 
         // Color
@@ -214,8 +227,7 @@ class ParallelCoordinates extends Graph {
                     .attr("y2", dec => (y1 + allDimensions[dest_idx].scale(dec.id_o)) / 2)
                     .style("opacity", this.opacityMiddle)
                     .classed("decided", dec => dec.d);
-                let proj = project(d);
-                return line(proj);
+                return line(project(d));
             })
             .style("stroke", d => colorAxis(d[this.colorByAxis]));
 
@@ -323,21 +335,13 @@ class ParallelCoordinates extends Graph {
         }
 
         function project(d) {
-            let projection = allDimensions.filter(dim => dim.gender === d.gender).map((p, i) => {
+            return allDimensions.filter(dim => dim.gender === d.gender).map((p, i) => {
                 // check if data element has property and contains a value
                 if (!(p.key in d) || d[p.key] === null) {
-                    return null;
+                    return [ParallelCoordinates.position(p.globalKey, dragging, dimPos), innerHeight + 40];
                 }
                 return [ParallelCoordinates.position(p.globalKey, dragging, dimPos), p.scale(d[p.key])];
-                // return [xscale(i), p.scale(d[p.key])];
             });
-            // if (d.gender === 0) {
-            //     d.dec.forEach(dec => projection.push([
-            //         allDimensions[((allDimensions.length - 1) / 2) - 1].scale(d.id),
-            //         allDimensions[((allDimensions.length - 1) / 2) + 1].scale(dec.id),
-            //     ]));
-            // }
-            return projection
         }
 
         function brushstart() {
