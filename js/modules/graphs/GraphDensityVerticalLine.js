@@ -25,10 +25,8 @@ class GraphDensityVerticalLine extends Graph{
         this.color = ["#1f78b4"];
         this.size = opts.size;
 
-        this.densityVarPerson1 = options.densityVarPerson1;
+        this.densityVarPerson1 = options.densityVarPersonContinuous;
         this.iid = options.iid;
-        console.log(this.densityVarPerson1);
-        console.log(this.iid);
 
         this.preprocess();
         this.createGraph();
@@ -106,12 +104,10 @@ class GraphDensityVerticalLine extends Graph{
 
         const x = d3.scaleLinear()
             .range([0, innerWidth])
-            // .domain([0, d3.max(this.dataFullContinuous, function(d) { return d.key; })]);
             .domain(d3.extent(data, d => d.key));
 
         const y = d3.scaleLinear()
             .range([innerHeight, 0])
-            // .domain([0, d3.max(this.dataFullContinuous, function(d) { return d.value; })]);
             .domain(d3.extent(data, d => d.value));
 
         let z = d3.scaleOrdinal().range(this.color);
@@ -141,9 +137,9 @@ class GraphDensityVerticalLine extends Graph{
 
         // Value Person
         g.append("line")
-            .attr("x1", x(valuePerson.key))  //<<== change your code here
+            .attr("x1", x(valuePerson.key))
             .attr("y1", y(0))
-            .attr("x2", x(valuePerson.key))  //<<== and here
+            .attr("x2", x(valuePerson.key))
             .attr("y2", y(valuePerson.value))
             .style("stroke-width", 2)
             .style("stroke", "red")
@@ -158,33 +154,7 @@ class GraphDensityVerticalLine extends Graph{
         // y axis
         g.append("g")
             .attr("class", "y axis")
-            // .attr("transform", "translate(0, " + innerWidth + ")")
             .call(d3.axisLeft(y));
-
-        // Keys
-        let keys = ["key", "Full"];
-
-        // Legend
-        let legend = g.append("g")
-            .attr("font-family", "sans-serif")
-            .attr("font-size", 10)
-            .attr("text-anchor", "end")
-            .selectAll("g")
-            .data(keys.slice(1))
-            .enter().append("g")
-            .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
-
-        legend.append("rect")
-            .attr("x", innerWidth - 19)
-            .attr("width", 19)
-            .attr("height", 19)
-            .attr("fill", z);
-
-        legend.append("text")
-            .attr("x", innerWidth - 24)
-            .attr("y", 9.5)
-            .attr("dy", "0.32em")
-            .text(function(d) { return d; });
     }
 
     /**

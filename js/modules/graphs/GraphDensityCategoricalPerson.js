@@ -10,7 +10,7 @@ const defaultOptions = {
     size : 5
 };
 
-class GraphDensityCategorical extends Graph{
+class GraphDensityCategoricalPerson extends Graph{
 
     /**
      * Constructor of the Graph
@@ -25,8 +25,8 @@ class GraphDensityCategorical extends Graph{
         this.color = ["#1f78b4", "#a6cee3"];
         this.size = opts.size;
 
-        this.currentCategoricalVar = options.currentCategoricalVar;
-        this.iidSelected = options.iidSelected;
+        this.currentCategoricalVar = options.densityVarPersonCategorical;
+        this.iid = options.iid;
 
         this.preprocess();
         this.createGraph();
@@ -39,47 +39,14 @@ class GraphDensityCategorical extends Graph{
     preprocess(){
         console.log("Preprocess Categorical Graph");
         // Get all data
-        this.dataFullCategorical = this.allData.map(d => {return {tmp_var : d[this.currentCategoricalVar]}});
+        this.dataCategorical = this.allData.map(d => {return {tmp_var : d[this.currentCategoricalVar]}});
 
         // Group data per age and get the counts for each age
-        this.dataFullCategorical = d3.nest()
+        this.dataCategorical = d3.nest()
             .key(function(d) { return d.tmp_var; })
             .sortKeys(d3.ascending)
             .rollup(function(v) { return v.length; })
-            .entries(this.dataFullCategorical);
-
-        // Get filter data
-        // Filter sur une autre variable !!!
-        this.dataFilterCategorical = this.allData.map(d => {return {tmp_var : d[this.currentCategoricalVar], iid : d["iid"]}})
-            // .filter(d => d.tmp_var_filter === this.filterValue);
-            .filter(d => d.iid in this.iidSelected);
-
-        // Group data per age and get the counts for each age
-        this.dataFilterCategorical = d3.nest()
-            .key(function(d) { return d.tmp_var; })
-            .sortKeys(d3.ascending)
-            .rollup(function(v) { return v.length; })
-            .entries(this.dataFilterCategorical);
-
-        // Concatenate array
-        // set array length
-        let nbLine = this.dataFullCategorical.length;
-        let nbColumn = 2;
-        // create array
-        this.dataCategorical = new Array(nbLine);
-        for (let i = 0; i < this.dataCategorical.length; i++) {
-            this.dataCategorical[i] = new Array(nbColumn);
-            this.dataCategorical[i]["key"] = this.dataFullCategorical[i].key; // key full
-            this.dataCategorical[i]["Full"] = this.dataFullCategorical[i].value; // value full
-            this.dataCategorical[i]["Selected"] = 0; // init value filter
-            // value filter
-            for (let elementFilter in this.dataFilterCategorical) {
-                if (this.dataFullCategorical[i].key === this.dataFilterCategorical[elementFilter].key) {
-                    this.dataCategorical[i]["Selected"] = this.dataFilterCategorical[elementFilter].value;
-                    break;
-                }
-            }
-        }
+            .entries(this.dataCategorical);
     }
 
     /**
@@ -95,33 +62,24 @@ class GraphDensityCategorical extends Graph{
             .attr("class", "ssf-cat")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        let keys = d3.keys(this.dataCategorical[0]);
-
-        let x0 = d3.scaleBand()
+        let x = d3.scaleBand()
             .rangeRound([0, innerWidth])
             .paddingInner(0.1)
-            .domain(this.dataCategorical.map(function(d) {return d["key"]; }));
-
-        let x1 = d3.scaleBand()
-            .padding(0.05)
-            .domain(keys.slice(1)).rangeRound([0, x0.bandwidth()]);
+            .domain(this.dataCategorical.map(function(d) {return d.key; }));
 
         let y = d3.scaleLinear()
             .rangeRound([innerHeight, 0])
-            .domain([0, d3.max(this.dataCategorical, function(d) { return d["Full"]; })]);
+            .domain([0, d3.max(this.dataCategorical, function(d) { return d.value; })]);
 
-        let z = d3.scaleOrdinal().range([this.color[1], this.color[0]]);
+        let z = d3.scaleOrdinal().range([this.color[0]]);
 
         // Plot the bars
         g.append("g")
             .selectAll("g")
             .data(this.dataCategorical)
-            .enter().append("g")
-            .attr("transform", function(d) { return "translate(" + x0(d["key"]) + ",0)"; })
-            .selectAll("rect")
-            .data(function(d) { return keys.map(function(key) { return {key: key, value: d[key]}; }); })
             .enter().append("rect")
-            .attr("x", function(d) { return x1(d.key); })
+            .attr("class", "bar")
+            .attr("x", function(d) { return x(d.key); })
             .attr("y", (function(d) {
                 if (y(d.value) >= 0) {
                     return y(d.value);
@@ -129,7 +87,7 @@ class GraphDensityCategorical extends Graph{
                     return 0;
                 }
             }))
-            .attr("width", x1.bandwidth())
+            .attr("width", x.bandwidth())
             .attr("height", function(d) {
                 let tmp_height = innerHeight - y(d.value);
                 if (tmp_height >= 0) {
@@ -154,7 +112,7 @@ class GraphDensityCategorical extends Graph{
         g.append("g")
             .attr("class", "axis")
             .attr("transform", "translate(0," + innerHeight + ")")
-            .call(d3.axisBottom(x0));
+            .call(d3.axisBottom(x));
 
 
         // Add vertical axis with graduation
@@ -169,28 +127,6 @@ class GraphDensityCategorical extends Graph{
             .attr("font-weight", "bold")
             .attr("text-anchor", "start")
             .text("Population");
-
-        // Legend
-        let legend = g.append("g")
-            .attr("font-family", "sans-serif")
-            .attr("font-size", 10)
-            .attr("text-anchor", "end")
-            .selectAll("g")
-            .data(keys.slice(1))
-            .enter().append("g")
-            .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
-
-        legend.append("rect")
-            .attr("x", innerWidth - 19)
-            .attr("width", 19)
-            .attr("height", 19)
-            .attr("fill", z);
-
-        legend.append("text")
-            .attr("x", innerWidth - 24)
-            .attr("y", 9.5)
-            .attr("dy", "0.32em")
-            .text(function(d) { return d; });
     }
 
     /**
@@ -199,4 +135,4 @@ class GraphDensityCategorical extends Graph{
     // resizeGraph();
 }
 
-export default GraphDensityCategorical;
+export default GraphDensityCategoricalPerson;
