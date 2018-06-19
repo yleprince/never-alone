@@ -20,21 +20,79 @@
 
 
 <article>
-    <div id="tab-wave" class="tab activeTab">
+    <div id="tab-home" class="tab activeTab">
+        Home
+        <h1>Speed Dating Data</h1>
+        <h2>Attractiveness, Sincerity, Intelligence, Hobbies</h2>
+    </div>
+    <div id="tab-wave" class="tab">
+        <div id="options-columns">
+            <div id="label-col-wave">
+                Columns :
+            </div>
+            <div id="list-col-wave">
 
+            </div>
+            <div id="list-sel-wave">
+
+            </div>
+        </div>
+        <div class="options" id="options-wave">
+            <input type="checkbox" id="GG" checked>
+            <label for="GG">Green-Green</label>
+            <input type="checkbox" id="GR" checked>
+            <label for="GR">Green-Red</label>
+            <input type="checkbox" id="RG" checked>
+            <label for="RG">Red-Green</label>
+            <input type="checkbox" id="RR" checked>
+            <label for="RR">Red-Red</label>
+        </div>
+
+        <div id="graph-container-wave">
+            <div id="graph-wave"></div>
+        </div>
     </div>
+
     <div id="tab-person" class="tab">
-        Ne doit pas s'afficher
+        <div id="radar-person"></div>
+        <div id="bar-person"></div>
+        <div id="rep-person"></div>
+        <div id="feat1-person" class="plot-density">
+            <div class="select-density">
+                <select class="selectFeature" id="densityVarPerson1"></select>
+            </div>
+            <div class="graph-density">
+            </div>
+        </div>
+        <div id="feat2-person" class="plot-density">
+            <div class="select-density">
+                <select class="selectFeature" id="densityVarPerson2"></select>
+            </div>
+            <div class="graph-density">
+            </div>
+        </div>
+        <div id="id-person"></div>
+        <!--Person-->
     </div>
+
     <div id="tab-success" class="tab">
 
-        <div id='success_primary_feature'></div>
-<!--         
-        <div id='scatter'>
-            <div id='scatter_plot'></div>
-        </div> -->
 
-        Ne doit pas s'afficher
+        <div id="success_primary_feature"></div>
+        <div id="feat1-success" class="plot-density">
+            <div class="select-density">
+                <select class="selectFeature" id="varDensityContinuous"></select>
+            </div>
+            <div class="graph-density">
+            </div>
+        </div>
+        <div id="feat2-success" class="plot-density">
+            <div class="select-density">
+                <select class="selectFeature" id="varDensityCategorical"></select>
+            </div>
+            <div class="graph-density">
+            </div>
+        </div>
     </div>
 </article>
 <script src="d3/d3.js"></script>
@@ -42,6 +100,10 @@
 <script type="module" src="js/menu.js"></script>
 <script type="module" src="js/modules/graphs/Graph.js"></script>
 <script type="module" src="js/modules/graphs/ScatterBubble.js"></script>
+<script type="module" src="js/modules/graphs/GraphExample.js"></script>
+<script type="module" src="js/modules/graphs/ParallelCoordinates.js"></script>
+<script type="module" src="js/modules/graphs/GraphDensityVerticalLine.js"></script>
+<script type="module" src="js/modules/graphs/GraphSuccessSecondaryFeature.js"></script>
 <script type="module" src="js/modules/defaultOptions.js"></script>
 
 </body>

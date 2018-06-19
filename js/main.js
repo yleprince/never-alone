@@ -1,10 +1,21 @@
 import Graph from "./modules/graphs/Graph.js";
 import ScatterBubble from "./modules/graphs/ScatterBubble.js";
+import GraphExample from "./modules/graphs/GraphExample.js";
+import ParallelCoordinates from "./modules/graphs/ParallelCoordinates.js";
+import GraphDensityVerticalLine from "./modules/graphs/GraphDensityVerticalLine.js";
+import GraphSuccessSecondaryFeature from "./modules/graphs/GraphSuccessSecondaryFeature.js";
+
+let setups = {
+    "home": true,
+    "person": false,
+    "wave": false,
+    "success": false
+};
 
 d3.csv("data/SpeedDating.csv")
     .row((d, i) => {
         return {
-            person:{
+            person: {
                 iid: +d.iid,
                 id: +d.id, // for the same wave there is two same id, one for a girl one for a boy
                 gender: +d.gender,
@@ -25,7 +36,7 @@ d3.csv("data/SpeedDating.csv")
                 imprelig: +d.imprelig,
                 from: d.from,
                 zipcode: d.zipcode,
-                income: +d.income,
+                income: parseFloat(d.income.replace(/,/g, '')),
                 goal: +d.goal,
                 date: +d.date,
                 go_out: +d.go_out,
@@ -255,7 +266,7 @@ d3.csv("data/SpeedDating.csv")
         let data = [];
         rows.forEach(r => {
             let p = data.find(d => d.iid === r.person.iid);
-            if(!p) {
+            if (!p) {
                 p = r.person;
                 p.speedDates = [];
                 data.push(p);
@@ -267,18 +278,302 @@ d3.csv("data/SpeedDating.csv")
     });
 
 function main(data) {
+    console.log(data);
     // Create the tabs
-    instantiateNavigation();
+    instantiateNavigation(data);
+}
 
-    // TODO : PUT YOUR GRAPHS HERE
+function createPC(data) {
+
+    let defaultAxes = ["age", "field_cd", "exphappy", "goal"];
+    let graph = new ParallelCoordinates("graph-wave", data, {axes: defaultAxes}); // Example : a GraphExample object in the Wave tab
+    let checkBoxGG = document.getElementById("GG");
+    let checkBoxGR = document.getElementById("GR");
+    let checkBoxRG = document.getElementById("RG");
+
+    let checkBoxRR = document.getElementById("RR");
+
+    checkBoxGG.addEventListener("input", e => {
+        graph.showMidLines("GG", checkBoxGG.checked);
+    });
+
+    checkBoxGR.addEventListener("input", e => {
+        graph.showMidLines("GR", checkBoxGR.checked);
+    });
+
+    checkBoxRG.addEventListener("input", e => {
+        graph.showMidLines("RG", checkBoxRG.checked);
+    });
+
+    checkBoxRR.addEventListener("input", e => {
+        graph.showMidLines("RR", checkBoxRR.checked);
+    });
+    let keys = [];
+    let no_feat = ["iid", "id", "idg", "wave", "round", "position", "speedDates", "gender", "condtn", "positin1",
+        "field", "from", "zipcode", "career"];
+    let axes = [];
+
+    let ul = document.createElement("ul");
+    let listCol = document.getElementById("list-col-wave");
+    let listSel = document.getElementById("list-sel-wave");
+    let graphDiv = document.getElementById("graph-wave");
 
 
-    // Success Yrieix
-    createSuccessPrimaryFeature(data, "success_primary_feature");
+    for (let feature in data[0]) {
+        if (data[0].hasOwnProperty(feature) && !no_feat.includes(feature)) {
+            let li = document.createElement("li");
+            li.innerHTML = feature;
+            li.val = feature;
+            ul.appendChild(li);
+            if (typeof(data[0][feature]) === "object") {
+                let subUl = document.createElement("ul");
+                for (let feat in data[0][feature]) {
+                    if (data[0][feature].hasOwnProperty(feat)) {
+                        keys.push([feature, feat]);
+                        let li = document.createElement("li");
+                        li.innerHTML = feat;
+                        li.val = feature + "/" + feat;
+                        subUl.appendChild(li);
+
+                        // Add listener on sub li
+                        li.addEventListener("click", e => {
+                            li.style.display = "none";
+                            addSelected(li);
+                        })
+                    }
+                }
+                li.appendChild(subUl);
+            } else {
+                // Add listener on li
+                li.addEventListener("click", e => {
+                    li.style.display = "none";
+                    addSelected(li);
+                });
+                keys.push(feature);
+                if (defaultAxes.includes(feature)) {
+                    li.style.display = "none";
+                    addSelected(li);
+                }
+            }
+        }
+    }
+
+    listCol.appendChild(ul);
+
+    function addSelected(li) {
+        let span = document.createElement("span");
+        span.innerHTML = li.val;
+        span.classList.add("col-tag");
+        let ax = li.val.split("/");
+        axes.push(ax);
+        graphDiv.innerHTML = "";
+        graph = new ParallelCoordinates("graph-wave", data, {axes: axes});
+
+
+        span.addEventListener("click", e => {
+            li.style.display = "block";
+            span.remove();
+            axes.splice(axes.indexOf(ax), 1);
+            graphDiv.innerHTML = "";
+            graph = new ParallelCoordinates("graph-wave", data, {axes: axes});
+        });
+        listSel.append(span)
+    }
+
 
 }
 
+
+function setUpHome(data) {
+    if (!setups.home) {
+        // Code for the tab goes here
+
+        setups.home = true;
+    }
+}
+
+function setUpPerson(data) {
+    if (!setups.person) {
+        // Code for the tab goes here
+
+        // Person chris
+        // createPersonDensityFeature(data, "tab-person");
+
+        setups.person = true;
+    }
+}
+
+function setUpWave(data) {
+    if (!setups.wave) {
+        // Code for the tab goes here
+
+        createPC(data);
+        setups.wave = true;
+    }
+}
+
+
+function setUpSuccess(data) {
+    if (!setups.success) {
+        // Code for the tab goes here
+
+      
+        //  Success Yrieix
+        createSuccessPrimaryFeature(data, "success_primary_feature");
+        // Success chris
+        // iidSelected Yrieix
+        let iidSelected = new Array(300);//create an empty array with length 45
+        for (let i = 0; i < iidSelected.length; i++) {
+            iidSelected[i] = i
+        }
+        // createSuccessSecondaryFeature(data, "tab-success", iidSelected);
+
+        setups.success = true;
+    }
+}
+
+
+function instantiateNavigation(data) {
+    let data_menu = [
+        {icon: "./data/menu/home.svg", action: "0"},
+        {icon: "./data/menu/wave.svg", action: "1"},
+        {icon: "./data/menu/person.svg", action: "2"},
+        {icon: "./data/menu/success.svg", action: "3"}
+    ];
+
+    // Show menu launch
+    let m = new d3.radialMenu().radius(50)
+        .thickness(30)
+        .appendTo("#menu-holder")
+        .show(data_menu);
+
+    let tabHome = document.getElementById("tab-home");
+    let tabPerson = document.getElementById("tab-person");
+    let tabWave = document.getElementById("tab-wave");
+    let tabSuccess = document.getElementById("tab-success");
+    tabHome.addEventListener("open", e => {
+        tabHome.classList.toggle("activeTab");
+        setUpHome(data)
+    });
+    tabPerson.addEventListener("open", e => {
+        tabPerson.classList.toggle("activeTab");
+        setUpPerson(data)
+    });
+    tabWave.addEventListener("open", e => {
+        tabWave.classList.toggle("activeTab");
+        setUpWave(data)
+    });
+    tabSuccess.addEventListener("open", e => {
+        tabSuccess.classList.toggle("activeTab");
+        setUpSuccess(data)
+    });
+}
+
+// Person Density Feature
+function createPersonDensityFeature(data, tabToDisplay) {
+    // Input to define
+    let iid = 1;
+
+    // Variables
+    let continuousVar = ["age", "date"]; // "income"
+    let categoricalVar = ["race", "goal"]; // "gender", "study", "career", "interest"
+    let densityVarPerson1 = continuousVar[0];
+    let densityVarPerson2 = categoricalVar[0];
+
+    // Button Continuous Variable
+    instantiateButtonFeature(continuousVar, "densityVarPerson1");
+    let buttonSucessContinuous = document.getElementById("densityVarPerson1");
+    buttonSucessContinuous.addEventListener("change", e => {
+        let x = document.getElementById("densityVarPerson1");
+        densityVarPerson1 = x.value;
+        console.log("Change, densityVarPerson1: " + densityVarPerson1);
+        // Update graph
+        instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, densityVarPerson2, iid);
+    });
+
+    // Button Categorical Variable
+    instantiateButtonFeature(categoricalVar, "densityVarPerson2");
+    let buttonSucessCategorical = document.getElementById("densityVarPerson2");
+    buttonSucessCategorical.addEventListener("change", e => {
+        let x = document.getElementById("densityVarPerson2");
+        densityVarPerson2 = x.value;
+        console.log("Change, currentCategoricalVar: " + densityVarPerson2);
+        // Update graph
+        instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, densityVarPerson2, iid);
+    });
+
+    // Create graph for the first time
+    instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, densityVarPerson2, iid);
+}
+
+function instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, densityVarPerson2, iid) {
+    let graphPersonDensityFeature = new GraphDensityVerticalLine(tabToDisplay, data,
+        {
+            densityVarPerson1: densityVarPerson1,
+            densityVarPerson2: densityVarPerson2,
+            iid: iid
+        });
+}
+
+// Success Secondary Feature
+function createSuccessSecondaryFeature(data, tabToDisplay, iidSelected) {
+    // Variables
+    let continuousVar = ["age", "date"]; // "income"
+    let categoricalVar = ["race", "goal"]; // "gender", "study", "career", "interest"
+    let currentContinuousVar = continuousVar[0];
+    let currentCategoricalVar = categoricalVar[0];
+
+    // Button Continuous Variable
+    instantiateButtonFeature(continuousVar, "varDensityContinuous");
+    let buttonSucessContinuous = document.getElementById("varDensityContinuous");
+    buttonSucessContinuous.addEventListener("change", e => {
+        let x = document.getElementById("varDensityContinuous");
+        currentContinuousVar = x.value;
+        console.log("Change, currentContinuousVar: " + currentContinuousVar);
+        // Update graph
+        instantiateSuccessSecondaryFeature(data, tabToDisplay, currentContinuousVar, currentCategoricalVar, iidSelected);
+    });
+
+    // Button Categorical Variable
+    instantiateButtonFeature(categoricalVar, "varDensityCategorical");
+    let buttonSucessCategorical = document.getElementById("varDensityCategorical");
+    buttonSucessCategorical.addEventListener("change", e => {
+        let x = document.getElementById("varDensityCategorical");
+        currentCategoricalVar = x.value;
+        console.log("Change, currentCategoricalVar: " + currentCategoricalVar);
+        // Update graph
+        instantiateSuccessSecondaryFeature(data, tabToDisplay, currentContinuousVar, currentCategoricalVar, iidSelected);
+    });
+
+    // Create graph for the first time
+    instantiateSuccessSecondaryFeature(data, tabToDisplay, currentContinuousVar, currentCategoricalVar, iidSelected);
+}
+
+function instantiateSuccessSecondaryFeature(data, tabToDisplay, currentContinuousVar, currentCategoricalVar, iidSelected) {
+    let graphSuccessSecondaryFeature = new GraphSuccessSecondaryFeature(tabToDisplay, data,
+        {
+            currentContinuousVar: currentContinuousVar,
+            currentCategoricalVar: currentCategoricalVar,
+            iidSelected: iidSelected
+        });
+}
+
+function instantiateButtonFeature(list, id) {
+    let elm = document.getElementById(id),
+        df = document.createDocumentFragment();
+    let count = list.length;
+    for (let i = 0; i < count; i++) {
+        let option = document.createElement('option');
+        option.value = list[i];
+        option.appendChild(document.createTextNode(list[i]));
+        df.appendChild(option);
+    }
+    elm.appendChild(df);
+}
+
+
 function createSuccessPrimaryFeature(data, tabToDisplay){
+  """ FUNCTION YRIEIX"""
 
     let explorable_variables = [{title:'Carreer', name:'career_c', values:['job1', 'job2']},
                                 {title:'Go out', name:'go_out', values:['very often', 'often']},
@@ -378,21 +673,4 @@ function instantiatePrimaryFeature(data, select_options, primary_div_id){
     btn.addEventListener('click', e => console.log(primary_plot.get_clicked()));
     primary_feature_interaction_div.appendChild(btn);
 
-}
-
-
-
-function instantiateNavigation(){
-    let data_menu = [
-        { icon : "./data/menu/home.svg", action: "4" },
-        { icon : "./data/menu/wave.svg", action: "0" },
-        { icon : "./data/menu/person.svg", action: "1" },
-        { icon : "./data/menu/success.svg", action: "2" }
-    ];
-
-    // Show menu launch
-    let m = new d3.radialMenu().radius(50)
-        .thickness(30)
-        .appendTo("#menu-holder")
-        .show(data_menu);
 }
