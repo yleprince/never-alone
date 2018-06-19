@@ -33,47 +33,53 @@ article .activeTab {
 
 /*WAVE*/
 #tab-wave {
-    grid-template-columns: 80% auto;
-    grid-template-rows: 5% 85% auto;
+    grid-template-columns: 40% 40% auto;
+    grid-template-rows: 5% 75% auto;
+    /*background-color: #66e0ff;*/
 }
 
 #graph-container-wave {
     grid-column-start: 1;
-    grid-column-end: 2;
+    grid-column-end: 3;
     grid-row-start: 2;
-    grid-row-end: 4;
+    grid-row-end: 3;
     display: flex;
     justify-content: center;
     align-items: center;
+    /*background-color: #ffcce6;*/
 }
 
 #graph-wave {
     width: 100%;
-    height: 60%;
+    height: 80%;
 }
 
 #select-wave {
     grid-column-start: 1;
-    grid-column-end: 2;
+    grid-column-end: 3;
     grid-row-start: 1;
     grid-row-end: 2;
     display: flex;
     justify-content: center;
     align-items: center;
+    /*background-color: #ff3385;*/
 }
 
 #options-wave {
-    grid-column-start: 2;
-    grid-column-end: 3;
+    grid-column-start: 1;
+    grid-column-end: 2;
     grid-row-start: 3;
     grid-row-end: 4;
+    /*background-color: #34495e;*/
 }
 
 #options-columns {
-    grid-column-start: 2;
-    grid-column-end: 3;
+    grid-column-start: 3;
+    grid-column-end: 4;
     grid-row-start: 1;
-    grid-row-end: 3;
+    grid-row-end: 4;
+    overflow-y: scroll;
+    /*background-color: #ffcce6;*/
 }
 
 #label-col-wave {
@@ -85,7 +91,7 @@ article .activeTab {
 
 #list-col-wave {
     width: 100%;
-    height: 65%;
+    height: 95%;
     overflow-y: scroll;
     /*overflow-wrap: break-word;*/
 }
@@ -99,7 +105,7 @@ article .activeTab {
 
 #list-sel-wave {
     width: 100%;
-    height: 30%;
+    height: 95%;
     display: flex;
     justify-content: center;
     /*justify-content: flex-start;*/
@@ -118,15 +124,16 @@ article .activeTab {
 #list-col-wave li {
     padding: 8px;
     /*border: 1px solid black;*/
-    background-color: #eee;
+    background-color: #ffcce6;
 }
 
 #list-col-wave li:nth-child(odd) {
-    background-color: #f9f9f9;
+    background-color: #ffb3da;
+;
 }
 
 #list-col-wave li:hover {
-    background-color: #ddd;
+    background-color: #ff80c1;
 }
 
 .col-tag {

@@ -326,6 +326,32 @@ class ParallelCoordinates extends Graph {
             .attr("text-anchor", "start")
             .text(d => d.globalKey !== "match" ? ("description" in d ? d.description : d.key) : "");
 
+        let size = 24;
+
+        axes
+            .filter(d => d.key === "id")
+            .append("image")
+            .attr("xlink:href", d => d.gender ? "./data/woman.svg" : "./data/man.svg")
+            .attr("transform", `translate(${-size / 2}, ${-size * 2})`)
+            .attr("width", size)
+            .attr("height", size);
+            // .attr("x", function (d) {
+            //     return calcMidPoint(d).x - iconSize / 2;
+            // })
+            // .attr("y", function (d) {
+            //     return calcMidPoint(d).y - iconSize / 2;
+            // })
+            // .attr("transform", function (d) {
+            //     // We need to rotate the images backwards to compensate for the rotation of the menu as a whole
+            //     let mp = calcMidPoint(d);
+            //     let angle = -offsetAngleDeg;
+            //     return "rotate(" + angle + "," + mp.x + "," + mp.y + ")";
+            // })
+            // .style("opacity", 0)
+            // .transition()
+            // .delay(animationDuration)
+            // .style("opacity", 1);
+
         // Add and store a brush for each axis.
         axes.append("g")
             .attr("class", "brush")
