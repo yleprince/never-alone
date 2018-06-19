@@ -117,7 +117,7 @@ class GroupedBarChart extends Graph{
             .rangeRound([cfg.height, 0]);
 
         let z = d3.scaleOrdinal()
-            .range(["#a6cee3", "#1f78b4", "#b2df8a"])
+            .range(["#6F257F", "#CA0D59", "#7CFC00"])
 
         let keys = d3.keys(this.data[0][0]);
         console.log("key: " + keys.slice(1));
@@ -127,32 +127,16 @@ class GroupedBarChart extends Graph{
         x1.domain(keys.slice(1)).rangeRound([0, x0.bandwidth()]);
 
         // TODO : decide if we keep a vertical axis with a fixed value
-        // y.domain([0, d3.max(this.data[0], function(d) {
-        //     return d3.max(keys.slice(1), function(key) {return d[key];});})]).nice();
-        y.domain([0, 10]).nice();
+        y.domain([0, d3.max(this.data[0], function(d) {
+            return d3.max(keys.slice(1), function(key) {return d[key];});})]).nice();
+        //y.domain([0, 10]).nice();
 
-
+        //------------------------------
         //BEGINNING OF GROUPED BAR CHART
-        //Defining mouseover and mouseout
-        // function mouseover(d, i){
-        //     d3.select(this)
-        //         .attr("fill", "red");
-        //
-        //     g.append("text")
-        //         .attr("id", "id"+i)
-        //         .attr("x", 100)
-        //         .attr("y", 100)
-        //         .text("test");
+        //------------------------------
+        // function mouseout(d, i){
+        //     d3.select("#id" + i).remove();
         // }
-
-        function mouseout(d, i){
-        //    d3.select(this)
-        //        .attr()
-        //         .attr()
-        //         .attr()
-        //
-            d3.select("#id" + i).remove();
-        }
 
         // Plot the bars
         g.append("g")
@@ -168,6 +152,9 @@ class GroupedBarChart extends Graph{
             .attr("width", x1.bandwidth())
             .attr("height", function(d) { return cfg.height - y(d.value); })
             .attr("fill", function(d) { return z(d.key); })
+            .style("stroke", "grey")
+            .style("stroke-opacity", "0.85")
+            .style("fill-opacity", "0.70")
             .on("mouseover", function(d, i){
                 //Change color when bar hovers
                 d3.select(this)
@@ -213,7 +200,7 @@ class GroupedBarChart extends Graph{
             .selectAll("g")
             .data(keys.slice(1))
             .enter().append("g")
-            .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+            .attr("transform", function(d, i) { return "translate(200," + i * 20 + ")"; });
 
         legend.append("rect")
             .attr("x", cfg.width - 19)

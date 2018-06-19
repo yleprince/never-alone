@@ -8,7 +8,7 @@ import fillWithDefault from "../defaultOptions.js";
 const defaultOptions = {
     color : "black",
     size : 5,
-    iid : 234
+    iid : 1
 };
 
 class RadarChart extends Graph{
@@ -51,19 +51,26 @@ class RadarChart extends Graph{
     preprocess(){
 
         //"self_traits"
-        this.dataThemself = this.allData.filter(d => d.iid === this.iid)
+        this.dataThemself1 = this.allData.filter(d => d.iid === this.iid)
             .map(d => {return {Ambitious : d.self_traits.amb, Fun : d.self_traits.fun,
             Attractive : d.self_traits.att, Intelligent : d.self_traits.int, Sincere : d.self_traits.sin}});
+        this.dataThemself = [{
+            "Ambitious": d3.mean(this.dataThemself1, d => 100*d.Ambitious/(d.Ambitious+d.Fun+d.Attractive+d.Intelligent+d.Sincere)),
+            "Fun": d3.mean(this.dataThemself1, d => 100*d.Fun/(d.Ambitious+d.Fun+d.Attractive+d.Intelligent+d.Sincere)),
+            "Attractive": d3.mean(this.dataThemself1, d => 100*d.Attractive/(d.Ambitious+d.Fun+d.Attractive+d.Intelligent+d.Sincere)),
+            "Sincere": d3.mean(this.dataThemself1, d => 100*d.Intelligent/(d.Ambitious+d.Fun+d.Attractive+d.Intelligent+d.Sincere)),
+            "Intelligent": d3.mean(this.dataThemself1, d => 100*d.Sincere/(d.Ambitious+d.Fun+d.Attractive+d.Intelligent+d.Sincere))
+        }];
 
 
         //"rating_o"
         let sd = this.allData.find(d => d.iid === this.iid).speedDates;
         this.dataOthers = [{
-            "Ambitious": d3.mean(sd, d => d.rating_o.amb),
-            "Fun": d3.mean(sd, d => d.rating_o.fun),
-            "Attractive": d3.mean(sd, d => d.rating_o.att),
-            "Sincere": d3.mean(sd, d => d.rating_o.sin),
-            "Intelligent": d3.mean(sd, d => d.rating_o.int)
+            "Ambitious": d3.mean(sd, d => 100*d.rating_o.amb/(d.rating_o.amb+d.rating_o.fun+d.rating_o.att+d.rating_o.sin+d.rating_o.int)),
+            "Fun": d3.mean(sd, d => 100*d.rating_o.fun/(d.rating_o.amb+d.rating_o.fun+d.rating_o.att+d.rating_o.sin+d.rating_o.int)),
+            "Attractive": d3.mean(sd, d => 100*d.rating_o.att/(d.rating_o.amb+d.rating_o.fun+d.rating_o.att+d.rating_o.sin+d.rating_o.int)),
+            "Sincere": d3.mean(sd, d => 100*d.rating_o.sin/(d.rating_o.amb+d.rating_o.fun+d.rating_o.att+d.rating_o.sin+d.rating_o.int)),
+            "Intelligent": d3.mean(sd, d => 100*d.rating_o.int/(d.rating_o.amb+d.rating_o.fun+d.rating_o.att+d.rating_o.sin+d.rating_o.int))
         }];
 
         //"self_look_traits"
@@ -71,31 +78,48 @@ class RadarChart extends Graph{
             .map(d => {return {Wave: d.wave, Ambitious : d.self_look_traits.amb, Fun : d.self_look_traits.fun,
                 Attractive : d.self_look_traits.att, Intelligent : d.self_look_traits.int, Sincere : d.self_look_traits.sin}});
 
+        //"same_gender_look_traits"
+        this.dataSame_gender_look_traits = this.allData.filter(d => d.iid === this.iid)
+            .map(d => {return {Wave: d.wave, Ambitious : d.same_gender_look_traits.amb, Fun : d.same_gender_look_traits.fun,
+                Attractive : d.same_gender_look_traits.att, Intelligent : d.same_gender_look_traits.int, Sincere : d.same_gender_look_traits.sin}});
+
+
+        //"opposite_gender_look_traits"
+        this.dataOpposite_gender_look_traits = this.allData.filter(d => d.iid === this.iid)
+            .map(d => {return {Wave: d.wave, Ambitious : d.opposite_gender_look_traits.amb, Fun : d.opposite_gender_look_traits.fun,
+                Attractive : d.opposite_gender_look_traits.att, Intelligent : d.opposite_gender_look_traits.int,
+                Sincere : d.opposite_gender_look_traits.sin}});
+
 
         //"opposite_gender_self_traits"
-        this.dataOpposite_gender_self_traits = this.allData.filter(d => d.iid === this.iid)
+        this.dataOpposite_gender_self_traits1 = this.allData.filter(d => d.iid === this.iid)
             .map(d => {return {Ambitious : d.opposite_gender_self_traits.amb, Fun : d.opposite_gender_self_traits.fun,
                 Attractive : d.opposite_gender_self_traits.att, Intelligent : d.opposite_gender_self_traits.int,
                 Sincere : d.opposite_gender_self_traits.sin}});
+        this.dataOpposite_gender_self_traits = [{
+            "Ambitious": d3.mean(this.dataOpposite_gender_self_traits1, d => 100*d.Ambitious/(d.Ambitious+d.Fun+d.Attractive+d.Intelligent+d.Sincere)),
+            "Fun": d3.mean(this.dataOpposite_gender_self_traits1, d => 100*d.Fun/(d.Ambitious+d.Fun+d.Attractive+d.Intelligent+d.Sincere)),
+            "Attractive": d3.mean(this.dataOpposite_gender_self_traits1, d => 100*d.Attractive/(d.Ambitious+d.Fun+d.Attractive+d.Intelligent+d.Sincere)),
+            "Sincere": d3.mean(this.dataOpposite_gender_self_traits1, d => 100*d.Intelligent/(d.Ambitious+d.Fun+d.Attractive+d.Intelligent+d.Sincere)),
+            "Intelligent": d3.mean(this.dataOpposite_gender_self_traits1, d => 100*d.Sincere/(d.Ambitious+d.Fun+d.Attractive+d.Intelligent+d.Sincere))
+        }];
 
 
-        console.log("this.dataThemself: " + JSON.stringify(this.dataThemself));
-        console.log("this.dataOthers: " + JSON.stringify(this.dataOthers));
-        console.log("this.dataSelf_look_traits: " + JSON.stringify(this.dataSelf_look_traits));
+        // console.log("this.dataThemself: " + JSON.stringify(this.dataThemself));
+        // console.log("this.dataOthers: " + JSON.stringify(this.dataOthers));
+        // console.log("this.dataSelf_look_traits: " + JSON.stringify(this.dataSelf_look_traits));
+        console.log("this.dataOpposite_gender_self_traits1: " + JSON.stringify(this.dataOpposite_gender_self_traits1));
         console.log("this.dataOpposite_gender_self_traits: " + JSON.stringify(this.dataOpposite_gender_self_traits));
-
     }
 
     /**
      * Fill SVG for the graph (implement the visualization here)
      */
     createGraph(id){
-        let margin = {top: 30, right: 10, bottom: 0, left: 30};
+        let margin = {top: 30, right: 10, bottom: 10, left: 30};
 
         let cfg = {
             radius: 5,
-            //w: 500,
-            //h: 500,
             w : 500 - margin.left - margin.right,
             h : 500 - margin.top - margin.bottom,
             factor: 1,
@@ -109,10 +133,10 @@ class RadarChart extends Graph{
             TranslateY: 30,
             ExtraWidthX: 100,
             ExtraWidthY: 100,
-            color: d3.scaleOrdinal().range(["#6F257F", "#CA0D59", "#ADFF2F"])
+            color: d3.scaleOrdinal().range(["#6F257F", "#CA0D59", "#7CFC00", "#FFA500", "#00BFFF", "#008080"])
         };
 
-        cfg.maxValue = 10;
+        cfg.maxValue = 50;
 
 
         // Defining some useful variables for afterwards
@@ -134,12 +158,11 @@ class RadarChart extends Graph{
                 //console.log("d: " + JSON.stringify(d))
                 for(var key in d){
                     var value = d[key];
-                    //console.log("key: " + key)
-                    //console.log("value: " + value)
+                    console.log("value: " + value)
                     dataDictSelf_traits.push({"area":key, "value":value})
                 }
             });
-        console.log("dataDictSelf_traits: " + JSON.stringify(dataDictSelf_traits));
+        //console.log("dataDictSelf_traits: " + JSON.stringify(dataDictSelf_traits));
 
         var dataDictRating_o = [];
         this.dataOthers.map(d => {return {Ambitious : d.Ambitious, Attractive : d.Attractive, Fun : d.Fun,
@@ -153,10 +176,10 @@ class RadarChart extends Graph{
                     dataDictRating_o.push({"area":key, "value":value})
                 }
             });
-        console.log("dataDictRating_o: " + JSON.stringify(dataDictRating_o));
+        //console.log("dataDictRating_o: " + JSON.stringify(dataDictRating_o));
 
         var dataDictSelf_look_traits = [];
-        this.dataSelf_look_traits.filter(d => d.wave > 5)
+        this.dataSelf_look_traits//.filter(d => d.wave > 5)
             .map(d => {return {Ambitious : d.Ambitious, Attractive : d.Attractive, Fun : d.Fun,
             Intelligent : d.Intelligent, Sincere : d.Sincere}})
             .forEach(function(d){
@@ -166,38 +189,10 @@ class RadarChart extends Graph{
                     dataDictSelf_look_traits.push({"area":key, "value":value})
                 }
             });
-        console.log("dataDictSelf_look_traits: " + JSON.stringify(dataDictSelf_look_traits));
+        //console.log("dataDictSelf_look_traits: " + JSON.stringify(dataDictSelf_look_traits));
 
-        // var dataDictRating_o = [];
-        // this.dataOthers.map(d => {return {Ambitious : d.Ambitious, Attractive : d.Attractive, Fun : d.Fun,
-        //     Intelligent : d.Intelligent, Sincere : d.Sincere}})
-        //     .forEach(function(d){
-        //         //console.log("d: " + JSON.stringify(d))
-        //         for(var key in d){
-        //             var value = d[key];
-        //             //console.log("key: " + key)
-        //             //console.log("value: " + value)
-        //             dataDictRating_o.push({"area":key, "value":value})
-        //         }
-        //     });
-        // console.log("dataDictRating_o: " + JSON.stringify(dataDictRating_o));
-
-        // var dataDictRating_o = [];
-        // this.dataOthers.map(d => {return {Ambitious : d.Ambitious, Attractive : d.Attractive, Fun : d.Fun,
-        //     Intelligent : d.Intelligent, Sincere : d.Sincere}})
-        //     .forEach(function(d){
-        //         //console.log("d: " + JSON.stringify(d))
-        //         for(var key in d){
-        //             var value = d[key];
-        //             //console.log("key: " + key)
-        //             //console.log("value: " + value)
-        //             dataDictRating_o.push({"area":key, "value":value})
-        //         }
-        //     });
-        // console.log("dataDictRating_o: " + JSON.stringify(dataDictRating_o));
-
-        var dataDictOpposite_gender_self_traits = [];
-        this.dataOpposite_gender_self_traits.map(d => {return {Ambitious : d.Ambitious, Attractive : d.Attractive, Fun : d.Fun,
+        var dataDictSame_gender_look_traits = [];
+        this.dataSame_gender_look_traits.map(d => {return {Ambitious : d.Ambitious, Attractive : d.Attractive, Fun : d.Fun,
             Intelligent : d.Intelligent, Sincere : d.Sincere}})
             .forEach(function(d){
                 //console.log("d: " + JSON.stringify(d))
@@ -205,7 +200,34 @@ class RadarChart extends Graph{
                     var value = d[key];
                     //console.log("key: " + key)
                     //console.log("value: " + value)
-                    dataDictOpposite_gender_self_traits.push({"area":key, "value":value})
+                    dataDictSame_gender_look_traits.push({"area":key, "value":value})
+                }
+            });
+        console.log("dataDictSame_gender_look_traits: " + JSON.stringify(dataDictSame_gender_look_traits));
+
+        var dataDictOpposite_gender_look_traits = [];
+        this.dataOpposite_gender_look_traits.map(d => {return {Ambitious : d.Ambitious, Attractive : d.Attractive,
+            Fun : d.Fun, Intelligent : d.Intelligent, Sincere : d.Sincere}})
+            .forEach(function(d){
+                //console.log("d: " + JSON.stringify(d))
+                for(var key in d){
+                    var value = d[key];
+                    //console.log("key: " + key)
+                    //console.log("value: " + value)
+                    dataDictOpposite_gender_look_traits.push({"area":key, "value":value})
+                }
+            });
+        console.log("dataDictOpposite_gender_look_traits: " + JSON.stringify(dataDictOpposite_gender_look_traits));
+
+        var dataDictOpposite_gender_self_traits = [];
+        this.dataOpposite_gender_self_traits.map(d => {return {Ambitious : d.Ambitious, Attractive : d.Attractive,
+            Fun : d.Fun, Intelligent : d.Intelligent, Sincere : d.Sincere}})
+            .forEach(function(d){
+                for(var key in d){
+                    var value = d[key];
+                    if(value){
+                        dataDictOpposite_gender_self_traits.push({"area":key, "value":value})
+                    }
                 }
             });
         console.log("dataDictOpposite_gender_self_traits: " + JSON.stringify(dataDictOpposite_gender_self_traits));
@@ -247,7 +269,7 @@ class RadarChart extends Graph{
                 .style("font-size", "10px")
                 .attr("transform", "translate(" + (cfg.w/2-levelFactor + cfg.ToRight) + ", " + (cfg.h/2-levelFactor) + ")")
                 .attr("fill", "#737373")
-                .text((j+1)*10/cfg.levels);
+                .text((j+1)*50/cfg.levels + "%");
         }
 
 
@@ -302,17 +324,33 @@ class RadarChart extends Graph{
 
         let series = 0;
         buildChart(dataDictSelf_traits);
-        console.log("series: " + series);
+        //console.log("series: " + series);
         series++;
         buildChart(dataDictRating_o);
-        console.log("series: " + series);
-
-        //if(Object.keys(dataDictSelf_look_traits).length){
-        //    series++;
-        //    buildChart(dataDictSelf_look_traits);};
+        //console.log("series: " + series);
         series++;
-        buildChart(dataDictOpposite_gender_self_traits);
-        console.log("series: " + series);
+        if(Object.keys(dataDictSelf_look_traits).length){
+            buildChart(dataDictSelf_look_traits);};
+        series++;
+
+        if(Object.keys(dataDictSame_gender_look_traits).length){
+            buildChart(dataDictSame_gender_look_traits);};
+        series++;
+
+
+        if(Object.keys(dataDictOpposite_gender_look_traits).length){
+            buildChart(dataDictOpposite_gender_look_traits);};
+        series++;
+
+        //console.log("this.dataThemself).length: " + Object.keys(this.dataThemself[0]).length);
+        //console.log("this.dataOpposite_gender_self_traits).length1: " + Object.keys(this.dataOpposite_gender_self_traits1[0]).length);
+        console.log("dataDictOpposite_gender_self_traits: " + Object.keys(dataDictOpposite_gender_self_traits).length);
+        if(Object.keys(dataDictOpposite_gender_self_traits).length>0){
+            buildChart(dataDictOpposite_gender_self_traits);
+
+        }
+
+        //console.log("series: " + series);
 
 
 
@@ -395,8 +433,6 @@ class RadarChart extends Graph{
                 .on("mouseout", function(d){ tooltip.style("display", "none");}
                 );
 
-            console.log("class: " + "class")
-
         }
 
     }
@@ -431,31 +467,51 @@ class RadarChart extends Graph{
                 }
                 break;
             case "self_look_traits":
-                // if (show===true){
-                //     console.log(this._g.selectAll((".radar-chart-serie2")));
-                //     this._g
-                //         .selectAll((".radar-chart-serie2"))
-                //         .style("opacity", 1);
-                // } else {
-                //     this._g
-                //         .selectAll((".radar-chart-serie2"))
-                //         .style("opacity", 0);
-                // }
-                    break;
-            case "same_gender_look_traits":
-                break;
-            case "opposite_gender_look_traits":
-                break;
-            case "opposite_gender_self_traits":
-                //Available from wave 10
                 if (show===true){
-                    console.log(".radar-chart-serie2: " + this._g.selectAll((".radar-chart-serie2")));
+                    console.log(this._g.selectAll((".radar-chart-serie2")));
                     this._g
                         .selectAll((".radar-chart-serie2"))
                         .style("opacity", 1);
                 } else {
                     this._g
                         .selectAll((".radar-chart-serie2"))
+                        .style("opacity", 0);
+                }
+                    break;
+            case "same_gender_look_traits":
+                if (show===true){
+                    console.log(".radar-chart-serie3: " + this._g.selectAll((".radar-chart-serie3")));
+                    this._g
+                        .selectAll((".radar-chart-serie3"))
+                        .style("opacity", 1);
+                } else {
+                    this._g
+                        .selectAll((".radar-chart-serie3"))
+                        .style("opacity", 0);
+                }
+                break;
+            case "opposite_gender_look_traits":
+                if (show===true){
+                    console.log(".radar-chart-serie4: " + this._g.selectAll((".radar-chart-serie4")));
+                    this._g
+                        .selectAll((".radar-chart-serie4"))
+                        .style("opacity", 1);
+                } else {
+                    this._g
+                        .selectAll((".radar-chart-serie4"))
+                        .style("opacity", 0);
+                }
+                break;
+            case "opposite_gender_self_traits":
+                //Available from wave 10
+                if (show===true){
+                    console.log(".radar-chart-serie5: " + this._g.selectAll((".radar-chart-serie5")));
+                    this._g
+                        .selectAll((".radar-chart-serie5"))
+                        .style("opacity", 1);
+                } else {
+                    this._g
+                        .selectAll((".radar-chart-serie5"))
                         .style("opacity", 0);
                 }
                 break;
