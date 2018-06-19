@@ -10,8 +10,7 @@ const defaultOptions = {
     size : 5
 };
 
-class GraphDensityVerticalLine extends Graph{
-
+class GraphDensityContinuous extends Graph{
     /**
      * Constructor of the Graph
      * @param id the div id in which we draw the Graph
@@ -20,86 +19,60 @@ class GraphDensityVerticalLine extends Graph{
      */
     constructor(id, allData, options = {}){
         super(id, allData);
-
         let opts = fillWithDefault(options, defaultOptions);
-        this.color = ["#1f78b4"];
+
+        this.color = ["#1f78b4", "#a6cee3"];
         this.size = opts.size;
 
-        this.densityVarPerson1 = options.densityVarPerson1;
-        this.iid = options.iid;
-        console.log(this.densityVarPerson1);
-        console.log(this.iid);
+        this.currentContinuousVar = options.currentContinuousVar;
+        this.iidSelected = options.iidSelected;
 
         this.preprocess();
         this.createGraph();
     }
 
     // -- METHODS TO IMPLEMENT ---
-
     /**
      * Keep the interesting data for the Graph
      */
     preprocess(){
-        this.dataDensityVarPerson1 = this.preprocessDensityVarPerson(this.densityVarPerson1);
-        console.log("dataDensityVarPerson1");
-        console.log(this.dataDensityVarPerson1);
-
-        this.valueDensityVarPerson1 = this.preprocessValueDensityVarPerson(this.densityVarPerson1, this.iid, this.dataDensityVarPerson1);
-        console.log("valueDensityVarPerson1");
-        console.log(this.valueDensityVarPerson1);
-    }
-
-    preprocessDensityVarPerson(current_tmp_var){
         // Get all data
-        let tmp_data = this.allData.map(d => {return {tmp_var : d[current_tmp_var]}});
+        this.dataFullContinuous = this.allData.map(d => {return {tmp_var : d[this.currentContinuousVar]}});
+        //.filter(d => d.tmp_var > 0);
 
         // Group data per age and get the counts for each age
-        tmp_data = d3.nest()
+        this.dataFullContinuous = d3.nest()
             .key(function(d) { return d.tmp_var; })
             .sortKeys(d3.ascending)
             .rollup(function(v) { return v.length; })
-            .entries(tmp_data);
+            .entries(this.dataFullContinuous);
 
-        return tmp_data;
+        console.log("dataFull Continuous Graph: ");
+        console.log(this.dataFullContinuous);
+
+        // Get filter data
+        this.dataFilterContinuous = this.allData.map(d => {return {tmp_var : d[this.currentContinuousVar], iid : d["iid"]}})
+        // .filter(d => d.tmp_var > 0)
+            .filter(d => d.iid in this.iidSelected);
+
+
+        // Group data per age and get the counts for each age
+        this.dataFilterContinuous = d3.nest()
+            .key(function(d) { return d.tmp_var; })
+            .sortKeys(d3.ascending)
+            .rollup(function(v) { return v.length; })
+            .entries(this.dataFilterContinuous);
+
+        console.log("dataFilter Continuous Graph: ");
+        console.log(this.dataFilterContinuous);
     }
 
-    preprocessValueDensityVarPerson(current_tmp_var, tmp_iid, tmp_density){
-        // Get all data
-        console.log("preprocessValueDensityVarPerson");
-        console.log(current_tmp_var);
-        console.log(tmp_iid);
-        console.log(tmp_density);
-
-        let tmp_element = this.allData.map(d => {return {key : d[current_tmp_var], iid : d["iid"]}})
-            .filter(d => d.iid === tmp_iid);
-
-        console.log("tmp_element");
-        console.log(tmp_element);
-
-        let tmp_value = new Array(2);
-        tmp_value["key"] = tmp_element[0].key;
-        tmp_value["value"] = 0;
-
-        for (let i = 0; i < tmp_density.length; i++) {
-            if (tmp_density[i].key ==  tmp_value["key"]) {
-                tmp_value["value"] = tmp_density[i].value;
-                break;
-            }
-        }
-
-        return tmp_value;
-    }
 
     /**
      * Fill SVG for the graph (implement the visualization here)
      */
-    createGraph() {
-        // Define data
-        this.createContinuousGraph(this.dataDensityVarPerson1, this.valueDensityVarPerson1);
-    }
-
-    createContinuousGraph(data, valuePerson){
-        // TODO : implement margin, axis according to your needs
+    createGraph(){
+        // margin continuous var
         let margin = {top: this.height*(5/100), right: this.width*(5/100), bottom: this.height*(10/100), left: this.width*(10/100)};
         let innerWidth = this.width - margin.left - margin.right,
             innerHeight = this.height - margin.top - margin.bottom;
@@ -107,17 +80,15 @@ class GraphDensityVerticalLine extends Graph{
         const x = d3.scaleLinear()
             .range([0, innerWidth])
             // .domain([0, d3.max(this.dataFullContinuous, function(d) { return d.key; })]);
-            .domain(d3.extent(data, d => d.key));
+            .domain(d3.extent(this.dataFullContinuous, d => d.key));
 
         const y = d3.scaleLinear()
             .range([innerHeight, 0])
             // .domain([0, d3.max(this.dataFullContinuous, function(d) { return d.value; })]);
-            .domain(d3.extent(data, d => d.value));
-
-        let z = d3.scaleOrdinal().range(this.color);
+            .domain(d3.extent(this.dataFullContinuous, d => d.value));
 
         let g = this.svg.append("g")
-            .attr("class", "dv-cont")
+            .attr("class", "ssf-cont")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         // Full data
@@ -133,21 +104,30 @@ class GraphDensityVerticalLine extends Graph{
             });
 
         g.append("path")
-            .datum(data)
+            .datum(this.dataFullContinuous)
             .attr("class", "line")
             .attr("d", lineFull)
             .style("fill", "None")
-            .style("stroke", z);
+            .style("stroke", this.color[0]);
 
-        // Value Person
-        g.append("line")
-            .attr("x1", x(valuePerson.key))  //<<== change your code here
-            .attr("y1", y(0))
-            .attr("x2", x(valuePerson.key))  //<<== and here
-            .attr("y2", y(valuePerson.value))
-            .style("stroke-width", 2)
-            .style("stroke", "red")
-            .style("fill", "none");
+        // Selected data
+        let lineFilter = d3.line()
+            .curve(d3.curveCardinal)
+            .x(function(d) { return x(d.key); })
+            .y(function(d) {
+                if (y(d.value) >= 0) {
+                    return y(d.value);
+                } else {
+                    return 0;
+                }
+            });
+
+        g.append("path")
+            .datum(this.dataFilterContinuous)
+            .attr("class", "line")
+            .attr("d", lineFilter)
+            .style("fill", "None")
+            .style("stroke", this.color[1]);
 
         // x axis
         g.append("g")
@@ -162,7 +142,7 @@ class GraphDensityVerticalLine extends Graph{
             .call(d3.axisLeft(y));
 
         // Keys
-        let keys = ["key", "Full"];
+        let keys = ["key", "Full", "Selected"];
 
         // Legend
         let legend = g.append("g")
@@ -178,7 +158,7 @@ class GraphDensityVerticalLine extends Graph{
             .attr("x", innerWidth - 19)
             .attr("width", 19)
             .attr("height", 19)
-            .attr("fill", z);
+            .attr("fill", (d, i) => this.color[i]);
 
         legend.append("text")
             .attr("x", innerWidth - 24)
@@ -187,10 +167,11 @@ class GraphDensityVerticalLine extends Graph{
             .text(function(d) { return d; });
     }
 
+
     /**
      * Actions that need to be done when the Graph is resized
      */
     // resizeGraph();
 }
 
-export default GraphDensityVerticalLine;
+export default GraphDensityContinuous;

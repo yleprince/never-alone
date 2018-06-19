@@ -3,7 +3,8 @@ import ScatterBubble from "./modules/graphs/ScatterBubble.js";
 import GraphExample from "./modules/graphs/GraphExample.js";
 import ParallelCoordinates from "./modules/graphs/ParallelCoordinates.js";
 import GraphDensityVerticalLine from "./modules/graphs/GraphDensityVerticalLine.js";
-import GraphSuccessSecondaryFeature from "./modules/graphs/GraphSuccessSecondaryFeature.js";
+import GraphDensityContinuous from "./modules/graphs/GraphDensityContinuous.js";
+import GraphDensityCategorical from "./modules/graphs/GraphDensityCategorical.js";
 
 let setups = {
     "home": true,
@@ -396,7 +397,9 @@ function setUpPerson(data) {
         // Code for the tab goes here
 
         // Person chris
-        // createPersonDensityFeature(data, "tab-person");
+        // Input to define
+        let iid = 1;
+        createPersonDensityFeature(data, iid);
 
         setups.person = true;
     }
@@ -416,26 +419,22 @@ function setUpSuccess(data) {
     if (!setups.success) {
         // Code for the tab goes here
 
-      
         //  Success Yrieix
         let primary_plot = createSuccessPrimaryFeature(data, "sbc-success");
-
-        
-
         let button_iids = document.getElementById('button_get_iids');
+
+        //  Success Chris Button
+        let continuousVar = ["age", "date"]; // "income"
+        let categoricalVar = ["race", "goal"]; // "gender", "study", "career", "interest"
+        instantiateButtonFeature(continuousVar, "varDensityContinuous"); // Button Continuous Variable
+        instantiateButtonFeature(categoricalVar, "varDensityCategorical"); // Button Categorical Variable
 
         button_iids.addEventListener('click', e => {
             let iidSelected = primary_plot.get_clicked();
-            createSuccessSecondaryFeature(data, "feat1-success", iidSelected);
-
+            createSuccessSecondaryFeature(data, iidSelected);
         });
 
-
-
-
-
         // Success chris
-
         setups.success = true;
     }
 }
@@ -478,10 +477,7 @@ function instantiateNavigation(data) {
 }
 
 // Person Density Feature
-function createPersonDensityFeature(data, tabToDisplay) {
-    // Input to define
-    let iid = 1;
-
+function createPersonDensityFeature(data, iid) {
     // Variables
     let continuousVar = ["age", "date"]; // "income"
     let categoricalVar = ["race", "goal"]; // "gender", "study", "career", "interest"
@@ -496,7 +492,7 @@ function createPersonDensityFeature(data, tabToDisplay) {
         densityVarPerson1 = x.value;
         console.log("Change, densityVarPerson1: " + densityVarPerson1);
         // Update graph
-        instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, densityVarPerson2, iid);
+        instantiatePersonDensityFeature(data, "graphVarPersonContinuous", densityVarPerson1, iid);
     });
 
     // Button Categorical Variable
@@ -507,60 +503,60 @@ function createPersonDensityFeature(data, tabToDisplay) {
         densityVarPerson2 = x.value;
         console.log("Change, currentCategoricalVar: " + densityVarPerson2);
         // Update graph
-        instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, densityVarPerson2, iid);
+        instantiatePersonDensityFeature(data, "graphVarPersonCategorical", densityVarPerson2, iid);
     });
 
     // Create graph for the first time
-    instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, densityVarPerson2, iid);
+    instantiatePersonDensityFeature(data, "graphVarPersonContinuous", densityVarPerson1, iid);
+    instantiatePersonDensityFeature(data, "graphVarPersonCategorical", densityVarPerson2, iid);
 }
 
-function instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, densityVarPerson2, iid) {
+function instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, iid) {
     let graphPersonDensityFeature = new GraphDensityVerticalLine(tabToDisplay, data,
         {
             densityVarPerson1: densityVarPerson1,
-            densityVarPerson2: densityVarPerson2,
             iid: iid
         });
 }
 
 // Success Secondary Feature
-function createSuccessSecondaryFeature(data, tabToDisplay, iidSelected) {
-    // Variables
-    let continuousVar = ["age", "date"]; // "income"
-    let categoricalVar = ["race", "goal"]; // "gender", "study", "career", "interest"
-    let currentContinuousVar = continuousVar[0];
-    let currentCategoricalVar = categoricalVar[0];
-
-    // Button Continuous Variable
-    instantiateButtonFeature(continuousVar, "varDensityContinuous");
+function createSuccessSecondaryFeature(data, iidSelected) {
+    // Change Button Continuous Variable
     let buttonSucessContinuous = document.getElementById("varDensityContinuous");
     buttonSucessContinuous.addEventListener("change", e => {
         let x = document.getElementById("varDensityContinuous");
-        currentContinuousVar = x.value;
+        let currentContinuousVar = x.value;
         console.log("Change, currentContinuousVar: " + currentContinuousVar);
         // Update graph
-        instantiateSuccessSecondaryFeature(data, tabToDisplay, currentContinuousVar, currentCategoricalVar, iidSelected);
+        instantiateGraphDensityContinuous(data, "graphDensityContinuous", currentContinuousVar, iidSelected);
     });
 
-    // Button Categorical Variable
-    instantiateButtonFeature(categoricalVar, "varDensityCategorical");
+    // Change Button Categorical Variable
     let buttonSucessCategorical = document.getElementById("varDensityCategorical");
     buttonSucessCategorical.addEventListener("change", e => {
         let x = document.getElementById("varDensityCategorical");
-        currentCategoricalVar = x.value;
+        let currentCategoricalVar = x.value;
         console.log("Change, currentCategoricalVar: " + currentCategoricalVar);
         // Update graph
-        instantiateSuccessSecondaryFeature(data, tabToDisplay, currentContinuousVar, currentCategoricalVar, iidSelected);
+        instantiateGraphDensityCategorical(data, "graphDensityCategorical", currentCategoricalVar, iidSelected);
     });
 
     // Create graph for the first time
-    instantiateSuccessSecondaryFeature(data, tabToDisplay, currentContinuousVar, currentCategoricalVar, iidSelected);
+    instantiateGraphDensityContinuous(data, "graphDensityContinuous", buttonSucessContinuous.value, iidSelected);
+    instantiateGraphDensityCategorical(data, "graphDensityCategorical", buttonSucessCategorical.value, iidSelected);
 }
 
-function instantiateSuccessSecondaryFeature(data, tabToDisplay, currentContinuousVar, currentCategoricalVar, iidSelected) {
-    let graphSuccessSecondaryFeature = new GraphSuccessSecondaryFeature(tabToDisplay, data,
+function instantiateGraphDensityContinuous(data, tabToDisplay, currentContinuousVar, iidSelected) {
+    new GraphDensityContinuous(tabToDisplay, data,
         {
             currentContinuousVar: currentContinuousVar,
+            iidSelected: iidSelected
+        });
+}
+
+function instantiateGraphDensityCategorical(data, tabToDisplay, currentCategoricalVar, iidSelected) {
+    new GraphDensityCategorical(tabToDisplay, data,
+        {
             currentCategoricalVar: currentCategoricalVar,
             iidSelected: iidSelected
         });
