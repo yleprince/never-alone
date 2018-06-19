@@ -418,7 +418,9 @@ function setUpSuccess(data) {
 
       
         //  Success Yrieix
-        let primary_plot = createSuccessPrimaryFeature(data, "sbc-success");
+        let primary_plot = createSuccessPrimaryFeature(data, 
+                                            'sbc-success-plot', 
+                                            'sbc-success-interaction');
 
         
 
@@ -429,10 +431,6 @@ function setUpSuccess(data) {
             createSuccessSecondaryFeature(data, "feat1-success", iidSelected);
 
         });
-
-
-
-
 
         // Success chris
 
@@ -580,53 +578,36 @@ function instantiateButtonFeature(list, id) {
 }
 
 
-function createSuccessPrimaryFeature(data, primary_div_id){
+function createSuccessPrimaryFeature(data, plot_div){
+
+    instantiatePrimaryFeatureInteraction();
+
+    let primary_plot = new ScatterBubble(plot_div, data, 'go_out');
+
+
+
+
+    let selectPrimaryFeature = document.getElementById('primary_feature_select');
+    selectPrimaryFeature.addEventListener('change', function(event){
+        let selected_data = event.target.value; 
+        primary_plot.plot_data(selected_data);
+    });
+
+    return primary_plot;
+}
+
+function instantiatePrimaryFeatureInteraction(){
+
+    let info_div = document.getElementById('sbc-success-info');
+    let interaction_div = document.getElementById('sbc-success-interaction');
+
     let explorable_variables = [{title:'Carreer', name:'career_c', values:['job1', 'job2']},
                                 {title:'Go out', name:'go_out', values:['very often', 'often']},
                                 {title:'Happiness expectation', name:'exphappy', values:['very happy', 'happy']},
                                 {title:'Age', name:'age', values:[]}
                                 ];
 
-    return instantiatePrimaryFeature(data, explorable_variables, primary_div_id);
-
-
-
-}
-
-function instantiatePrimaryFeature(data, select_options, primary_div_id){
-    let primary_div = document.getElementById(primary_div_id)
-
-
-    //Add Primary figure title
-    // let primary_title = document.createElement('h2');
-    // primary_title.innerHTML = 'Success exploration: Males vs Females'
-    // primary_div.appendChild(primary_title);
-
-
-    //Create Interaction div
-    let primary_feature_interaction_div = document.createElement('div');
-    primary_feature_interaction_div.id = 'primary_feature_interaction_div';
-    primary_div.appendChild(primary_feature_interaction_div);
-
-    //Create Select
-    let selectPrimaryFeature = document.createElement("select");
-    selectPrimaryFeature.id = 'primary_feature_select';
-    
-    //Create and append the options
-    for (let property of select_options){
-        let option = document.createElement("option");
-        option.value = property.name;
-        option.text = property.title;
-        selectPrimaryFeature.appendChild(option);
-    }    
-    primary_feature_interaction_div.appendChild(selectPrimaryFeature);
-    selectPrimaryFeature.addEventListener('change', function(event){
-        let selected_data = event.target.value; 
-        console.log('selected_data', selected_data);
-        primary_plot.plot_data(selected_data);
-    });
-
-    // add text info
+    // add Table hover info
     let infos = [
         {label: 'Female value', id: 'female'},
         {label: 'Male value', id: 'male'},
@@ -665,24 +646,24 @@ function instantiatePrimaryFeature(data, select_options, primary_div_id){
         tbdy.appendChild(tr);
     }
     tble.appendChild(tbdy);
-    primary_feature_interaction_div.appendChild(tble);
+    info_div.appendChild(tble);
 
-
-    //Create Plot div
-    let primary_plot_div = document.createElement('div');
-    primary_plot_div.id = 'primary_plot_div';
-    primary_div.appendChild(primary_plot_div);
-    let primary_plot = new ScatterBubble('primary_plot_div', data, 'go_out');
+    //Create Select
+    let selectPrimaryFeature = document.createElement("select");
+    selectPrimaryFeature.id = 'primary_feature_select';
     
+    //Create and append the options
+    for (let property of explorable_variables){
+        let option = document.createElement("option");
+        option.value = property.name;
+        option.text = property.title;
+        selectPrimaryFeature.appendChild(option);
+    }    
+    interaction_div.appendChild(selectPrimaryFeature);
 
     let btn = document.createElement("button");
     btn.id = 'button_get_iids';
-    btn.appendChild(document.createTextNode("GET CLICKED"));
-//    btn.addEventListener('click', e => console.log(primary_plot.get_clicked()));
-    primary_feature_interaction_div.appendChild(btn);
-
-
-
-    return primary_plot;
+    btn.appendChild(document.createTextNode("GET SELECTED"));
+    interaction_div.appendChild(btn);
 
 }
