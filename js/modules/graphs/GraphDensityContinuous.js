@@ -38,7 +38,6 @@ class GraphDensityContinuous extends Graph{
     preprocess(){
         // Get all data
         this.dataFullContinuous = this.allData.map(d => {return {tmp_var : d[this.currentContinuousVar]}});
-        //.filter(d => d.tmp_var > 0);
 
         // Group data per age and get the counts for each age
         this.dataFullContinuous = d3.nest()
@@ -47,14 +46,9 @@ class GraphDensityContinuous extends Graph{
             .rollup(function(v) { return v.length; })
             .entries(this.dataFullContinuous);
 
-        console.log("dataFull Continuous Graph: ");
-        console.log(this.dataFullContinuous);
-
         // Get filter data
         this.dataFilterContinuous = this.allData.map(d => {return {tmp_var : d[this.currentContinuousVar], iid : d["iid"]}})
-        // .filter(d => d.tmp_var > 0)
             .filter(d => d.iid in this.iidSelected);
-
 
         // Group data per age and get the counts for each age
         this.dataFilterContinuous = d3.nest()
@@ -62,9 +56,6 @@ class GraphDensityContinuous extends Graph{
             .sortKeys(d3.ascending)
             .rollup(function(v) { return v.length; })
             .entries(this.dataFilterContinuous);
-
-        console.log("dataFilter Continuous Graph: ");
-        console.log(this.dataFilterContinuous);
     }
 
 
@@ -72,19 +63,17 @@ class GraphDensityContinuous extends Graph{
      * Fill SVG for the graph (implement the visualization here)
      */
     createGraph(){
-        // margin continuous var
         let margin = {top: this.height*(5/100), right: this.width*(5/100), bottom: this.height*(10/100), left: this.width*(10/100)};
+
         let innerWidth = this.width - margin.left - margin.right,
             innerHeight = this.height - margin.top - margin.bottom;
 
         const x = d3.scaleLinear()
             .range([0, innerWidth])
-            // .domain([0, d3.max(this.dataFullContinuous, function(d) { return d.key; })]);
             .domain(d3.extent(this.dataFullContinuous, d => d.key));
 
         const y = d3.scaleLinear()
             .range([innerHeight, 0])
-            // .domain([0, d3.max(this.dataFullContinuous, function(d) { return d.value; })]);
             .domain(d3.extent(this.dataFullContinuous, d => d.value));
 
         let g = this.svg.append("g")
@@ -138,7 +127,6 @@ class GraphDensityContinuous extends Graph{
         // y axis
         g.append("g")
             .attr("class", "y axis")
-            // .attr("transform", "translate(0, " + innerWidth + ")")
             .call(d3.axisLeft(y));
 
         // Keys

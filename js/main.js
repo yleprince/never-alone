@@ -5,6 +5,7 @@ import ParallelCoordinates from "./modules/graphs/ParallelCoordinates.js";
 import GraphDensityVerticalLine from "./modules/graphs/GraphDensityVerticalLine.js";
 import GraphDensityContinuous from "./modules/graphs/GraphDensityContinuous.js";
 import GraphDensityCategorical from "./modules/graphs/GraphDensityCategorical.js";
+import GraphDensityCategoricalPerson from "./modules/graphs/GraphDensityCategoricalPerson.js";
 
 let setups = {
     "home": true,
@@ -399,6 +400,14 @@ function setUpPerson(data) {
         // Person chris
         // Input to define
         let iid = 1;
+
+        // Button Person
+        let continuousVar = ["age", "date"]; // "income"
+        let categoricalVar = ["race", "goal"]; // "gender", "study", "career", "interest"
+        instantiateButtonFeature(continuousVar, "densityVarPersonContinuous"); // Button Continuous Variable
+        instantiateButtonFeature(categoricalVar, "densityVarPersonCategorical"); // Button Categorical Variable
+
+        // Create Person Density Feature
         createPersonDensityFeature(data, iid);
 
         setups.person = true;
@@ -478,43 +487,43 @@ function instantiateNavigation(data) {
 
 // Person Density Feature
 function createPersonDensityFeature(data, iid) {
-    // Variables
-    let continuousVar = ["age", "date"]; // "income"
-    let categoricalVar = ["race", "goal"]; // "gender", "study", "career", "interest"
-    let densityVarPerson1 = continuousVar[0];
-    let densityVarPerson2 = categoricalVar[0];
-
-    // Button Continuous Variable
-    instantiateButtonFeature(continuousVar, "densityVarPerson1");
-    let buttonSucessContinuous = document.getElementById("densityVarPerson1");
+    // Change Button Continuous Variable
+    let buttonSucessContinuous = document.getElementById("densityVarPersonContinuous");
     buttonSucessContinuous.addEventListener("change", e => {
-        let x = document.getElementById("densityVarPerson1");
-        densityVarPerson1 = x.value;
-        console.log("Change, densityVarPerson1: " + densityVarPerson1);
+        let x = document.getElementById("densityVarPersonContinuous");
+        let densityVarPersonContinuous = x.value;
+        console.log("Change, densityVarPersonContinuous: " + densityVarPersonContinuous);
         // Update graph
-        instantiatePersonDensityFeature(data, "graphVarPersonContinuous", densityVarPerson1, iid);
+        instantiatePersonDensityContinuous(data, "graphVarPersonContinuous", densityVarPersonContinuous, iid);
     });
 
-    // Button Categorical Variable
-    instantiateButtonFeature(categoricalVar, "densityVarPerson2");
-    let buttonSucessCategorical = document.getElementById("densityVarPerson2");
+    // Change Button Categorical Variable
+    let buttonSucessCategorical = document.getElementById("densityVarPersonCategorical");
     buttonSucessCategorical.addEventListener("change", e => {
-        let x = document.getElementById("densityVarPerson2");
-        densityVarPerson2 = x.value;
-        console.log("Change, currentCategoricalVar: " + densityVarPerson2);
+        let x = document.getElementById("densityVarPersonCategorical");
+        let densityVarPersonCategorical = x.value;
+        console.log("Change, densityVarPersonCategorical: " + densityVarPersonCategorical);
         // Update graph
-        instantiatePersonDensityFeature(data, "graphVarPersonCategorical", densityVarPerson2, iid);
+        instantiatePersonDensityCategorical(data, "graphVarPersonCategorical", densityVarPersonCategorical, iid);
     });
 
     // Create graph for the first time
-    instantiatePersonDensityFeature(data, "graphVarPersonContinuous", densityVarPerson1, iid);
-    instantiatePersonDensityFeature(data, "graphVarPersonCategorical", densityVarPerson2, iid);
+    instantiatePersonDensityContinuous(data, "graphVarPersonContinuous", buttonSucessContinuous.value, iid);
+    instantiatePersonDensityCategorical(data, "graphVarPersonCategorical", buttonSucessCategorical.value, iid);
 }
 
-function instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, iid) {
-    let graphPersonDensityFeature = new GraphDensityVerticalLine(tabToDisplay, data,
+function instantiatePersonDensityContinuous(data, tabToDisplay, densityVarPersonContinuous, iid) {
+    new GraphDensityVerticalLine(tabToDisplay, data,
         {
-            densityVarPerson1: densityVarPerson1,
+            densityVarPersonContinuous: densityVarPersonContinuous,
+            iid: iid
+        });
+}
+
+function instantiatePersonDensityCategorical(data, tabToDisplay, densityVarPersonCategorical, iid) {
+    new GraphDensityCategoricalPerson(tabToDisplay, data,
+        {
+            densityVarPersonCategorical: densityVarPersonCategorical,
             iid: iid
         });
 }
