@@ -280,10 +280,6 @@ function main(data) {
     console.log(data);
     // Create the tabs
     instantiateNavigation(data);
-
-    // TODO : PUT YOUR GRAPHS HERE
-    // --- PAR COORDS ---
-    createPC(data);
 }
 
 function createPC(data) {
@@ -353,7 +349,7 @@ function createPC(data) {
                     addSelected(li);
                 });
                 keys.push(feature);
-                if(defaultAxes.includes(feature)) {
+                if (defaultAxes.includes(feature)) {
                     li.style.display = "none";
                     addSelected(li);
                 }
@@ -384,18 +380,11 @@ function createPC(data) {
     }
 
 
-
 }
 
-function instantiateNavigation() {
-    let tabs = document.getElementsByClassName("tab");
-    let btnTabWave = document.getElementById("btn-tab-wave");
-    let btnTabPerson = document.getElementById("btn-tab-person");
-    let btnTabSuccess = document.getElementById("btn-tab-success");
-}
 
 function setUpHome(data) {
-    if(!setups.home) {
+    if (!setups.home) {
         // Code for the tab goes here
 
         setups.home = true;
@@ -403,7 +392,7 @@ function setUpHome(data) {
 }
 
 function setUpPerson(data) {
-    if(!setups.person) {
+    if (!setups.person) {
         // Code for the tab goes here
 
         // Person chris
@@ -414,10 +403,10 @@ function setUpPerson(data) {
 }
 
 function setUpWave(data) {
-    if(!setups.wave) {
+    if (!setups.wave) {
         // Code for the tab goes here
 
-        let graph = new GraphExample("tab-wave", data); // Example : a GraphExample object in the Wave tab
+        createPC(data);
 
         setups.wave = true;
     }
@@ -425,13 +414,13 @@ function setUpWave(data) {
 
 
 function setUpSuccess(data) {
-    if(!setups.success) {
+    if (!setups.success) {
         // Code for the tab goes here
 
         // Success chris
         // iidSelected Yrieix
         let iidSelected = new Array(300);//create an empty array with length 45
-        for(let i=0;i<iidSelected.length;i++){
+        for (let i = 0; i < iidSelected.length; i++) {
             iidSelected[i] = i
         }
         createSuccessSecondaryFeature(data, "tab-success", iidSelected);
@@ -440,12 +429,13 @@ function setUpSuccess(data) {
     }
 }
 
-function instantiateNavigation(data){
+
+function instantiateNavigation(data) {
     let data_menu = [
-        { icon : "./data/menu/home.svg", action: "0" },
-        { icon : "./data/menu/wave.svg", action: "1" },
-        { icon : "./data/menu/person.svg", action: "2" },
-        { icon : "./data/menu/success.svg", action: "3" }
+        {icon: "./data/menu/home.svg", action: "0"},
+        {icon: "./data/menu/wave.svg", action: "1"},
+        {icon: "./data/menu/person.svg", action: "2"},
+        {icon: "./data/menu/success.svg", action: "3"}
     ];
 
     // Show menu launch
@@ -493,7 +483,7 @@ function createPersonDensityFeature(data, tabToDisplay) {
     buttonSucessContinuous.addEventListener("change", e => {
         let x = document.getElementById("densityVarPerson1");
         densityVarPerson1 = x.value;
-        console.log("Change, densityVarPerson1: "+ densityVarPerson1);
+        console.log("Change, densityVarPerson1: " + densityVarPerson1);
         // Update graph
         instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, densityVarPerson2, iid);
     });
@@ -504,7 +494,7 @@ function createPersonDensityFeature(data, tabToDisplay) {
     buttonSucessCategorical.addEventListener("change", e => {
         let x = document.getElementById("densityVarPerson2");
         densityVarPerson2 = x.value;
-        console.log("Change, currentCategoricalVar: "+ densityVarPerson2);
+        console.log("Change, currentCategoricalVar: " + densityVarPerson2);
         // Update graph
         instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, densityVarPerson2, iid);
     });
@@ -515,7 +505,8 @@ function createPersonDensityFeature(data, tabToDisplay) {
 
 function instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, densityVarPerson2, iid) {
     let graphPersonDensityFeature = new GraphDensityVerticalLine(tabToDisplay, data,
-        {densityVarPerson1: densityVarPerson1,
+        {
+            densityVarPerson1: densityVarPerson1,
             densityVarPerson2: densityVarPerson2,
             iid: iid
         });
@@ -535,7 +526,7 @@ function createSuccessSecondaryFeature(data, tabToDisplay, iidSelected) {
     buttonSucessContinuous.addEventListener("change", e => {
         let x = document.getElementById("varDensityContinuous");
         currentContinuousVar = x.value;
-        console.log("Change, currentContinuousVar: "+ currentContinuousVar);
+        console.log("Change, currentContinuousVar: " + currentContinuousVar);
         // Update graph
         instantiateSuccessSecondaryFeature(data, tabToDisplay, currentContinuousVar, currentCategoricalVar, iidSelected);
     });
@@ -546,7 +537,7 @@ function createSuccessSecondaryFeature(data, tabToDisplay, iidSelected) {
     buttonSucessCategorical.addEventListener("change", e => {
         let x = document.getElementById("varDensityCategorical");
         currentCategoricalVar = x.value;
-        console.log("Change, currentCategoricalVar: "+ currentCategoricalVar);
+        console.log("Change, currentCategoricalVar: " + currentCategoricalVar);
         // Update graph
         instantiateSuccessSecondaryFeature(data, tabToDisplay, currentContinuousVar, currentCategoricalVar, iidSelected);
     });
@@ -557,13 +548,14 @@ function createSuccessSecondaryFeature(data, tabToDisplay, iidSelected) {
 
 function instantiateSuccessSecondaryFeature(data, tabToDisplay, currentContinuousVar, currentCategoricalVar, iidSelected) {
     let graphSuccessSecondaryFeature = new GraphSuccessSecondaryFeature(tabToDisplay, data,
-        {currentContinuousVar: currentContinuousVar,
+        {
+            currentContinuousVar: currentContinuousVar,
             currentCategoricalVar: currentCategoricalVar,
             iidSelected: iidSelected
         });
 }
 
-function instantiateButtonFeature(list, id){
+function instantiateButtonFeature(list, id) {
     let elm = document.getElementById(id),
         df = document.createDocumentFragment();
     let count = list.length;

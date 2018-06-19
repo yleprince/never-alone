@@ -156,6 +156,7 @@ class GraphSuccessSecondaryFeature extends Graph{
             .domain(d3.extent(this.dataFullContinuous, d => d.value));
 
         let g = this.svg.append("g")
+            .attr("class", "ssf-cont")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         // Full data
@@ -241,6 +242,7 @@ class GraphSuccessSecondaryFeature extends Graph{
             innerHeight = this.height - margin.top - margin.bottom;
 
         let g = this.svg.append("g")
+            .attr("class", "ssf-cat")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         let keys = d3.keys(this.dataCategorical[0]);

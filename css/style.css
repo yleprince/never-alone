@@ -118,36 +118,37 @@ article .activeTab {
 }
 
 /*---------------------- PARALLEL COORDINATES ----------------------*/
-.background path {
+.pc .background path {
     fill: none;
     stroke: #ddd;
     shape-rendering: crispEdges;
 }
 
-.foreground path {
+.pc .foreground path {
     fill: none;
     stroke-width: 1.5;
 }
 
-.axis line,
-.axis path {
+.pc .axis line,
+.pc .axis path {
     fill: none;
     stroke: #000;
+    stroke-width: 2px;
     shape-rendering: crispEdges;
 }
 
-.axis .title {
+.pc .axis .title {
     font-size: 10px;
     transform: rotate(-21deg) translate(-5px, -6px);
     fill: #222;
 }
 
-line {
+.pc line {
     fill: none;
     stroke: #ff884d;
 }
 
-.decided {
+.pc .decided {
     fill: none;
     stroke: #00ccff;
 }
@@ -182,6 +183,7 @@ line {
     fill: black;
     opacity: 0;
     pointer-events: none;
+    font-weight: bold;
 }
 
 .pc .axis.manufac_name .tick text,
@@ -195,7 +197,7 @@ line {
 .pc .axis.active path {
     fill: none;
     stroke: black;
-    stroke-width: 1px;
+    stroke-width: 2px;
 }
 
 .pc .axis:hover .title {
@@ -233,11 +235,6 @@ line {
     height: 100%;
 }
 
-.graph {
-    /*width: 100%;
-    height: 100%;*/
-}
-
 .menu-segment {
     fill: #4679bd;
 }
@@ -251,15 +248,44 @@ line {
 }
 
 
-.axis path,
-.axis line {
+/*---------------------- SSF ----------------------*/
+.ssf-cont .axis path,
+.ssf-cont .axis line {
     fill: none;
     stroke: black;
     stroke-width: 2px;
     shape-rendering: crispEdges;
 }
 
-.line {
+.ssf-cont .line {
+    fill: none;
+    stroke: gray;
+    stroke-width: 5px;
+}
+
+.ssf-cat .axis path,
+.ssf-cat .axis line {
+    fill: none;
+    stroke: black;
+    stroke-width: 2px;
+    shape-rendering: crispEdges;
+}
+
+.ssf-cat .line {
+    fill: none;
+    stroke: gray;
+    stroke-width: 5px;
+}
+
+.dv-cont .axis path,
+.dv-cont .axis line {
+    fill: none;
+    stroke: black;
+    stroke-width: 2px;
+    shape-rendering: crispEdges;
+}
+
+.dv-cont .line {
     fill: none;
     stroke: gray;
     stroke-width: 5px;

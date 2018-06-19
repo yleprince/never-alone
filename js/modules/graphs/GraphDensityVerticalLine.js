@@ -121,6 +121,7 @@ class GraphDensityVerticalLine extends Graph{
         let z = d3.scaleOrdinal().range(this.color);
 
         let g = this.svg.append("g")
+            .attr("class", "dv-cont")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         // Full data
