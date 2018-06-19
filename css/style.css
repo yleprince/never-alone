@@ -35,6 +35,7 @@ article .activeTab {
 #tab-wave {
     grid-template-columns: 80% auto;
     grid-template-rows: 90% auto;
+    background-color: #ffe1df;
 }
 
 #graph-container-wave {
@@ -59,9 +60,16 @@ article .activeTab {
     grid-row-end: 3;
 }
 
+#label-col-wave {
+    width: 100%;
+    height: 5%;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
 #list-col-wave {
     width: 100%;
-    height: 70%;
+    height: 65%;
     overflow-y: scroll;
     /*overflow-wrap: break-word;*/
 }
