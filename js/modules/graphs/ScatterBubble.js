@@ -126,8 +126,8 @@ class ScatterBubble extends Graph{
     createGraph(){
         // TODO : implement margin, axis according to your needs
         let margin = {top: 20, right: 30, bottom: 40, left: 40};
-        let width = 800 - margin.left - margin.right;
-        let height = 600 - margin.top - margin.bottom;
+        let width = 500 - margin.left - margin.right;
+        let height = 300 - margin.top - margin.bottom;
 
         this.canvas_param = {c_margin:margin, c_w: width, c_h: height};
 
