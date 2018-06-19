@@ -62,8 +62,6 @@ class GraphDensityCategoricalPerson extends Graph{
             .attr("class", "ssf-cat")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        let keys = d3.keys(this.dataCategorical[0]);
-
         let x = d3.scaleBand()
             .rangeRound([0, innerWidth])
             .paddingInner(0.1)
