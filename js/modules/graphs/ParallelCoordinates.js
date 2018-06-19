@@ -11,6 +11,7 @@ const defaultOptions = {
     wave: 2,
     opacityMiddle: 0.5,
     axes: ["age", "field_cd", "exphappy", "goal"],
+    cb: [true, true, true, true]
 };
 
 class ParallelCoordinates extends Graph {
@@ -29,6 +30,7 @@ class ParallelCoordinates extends Graph {
         this.wave = opts.wave;
         this.opacityMiddle = opts.opacityMiddle;
         this.axes = opts.axes;
+        this.cb = opts.cb;
         // this.colorByAxis = Array.isArray(this.axes[0]) ? this.axes[0][0] + "/" + this.axes[0][1]: this.axes[0];
 
         this.preprocess();
@@ -94,6 +96,7 @@ class ParallelCoordinates extends Graph {
      * Fill SVG for the graph (implement the visualization here)
      */
     createGraph() {
+        console.log(this.cb);
 
         let margin = {top: 50, right: 10, bottom: 50, left: 30},
             innerWidth = this.width - margin.left - margin.right,
@@ -225,7 +228,17 @@ class ParallelCoordinates extends Graph {
                     .attr("y1", y1)
                     .attr("x2", xscale(mid_idx))
                     .attr("y2", dec => (y1 + allDimensions[dest_idx].scale(dec.id_o)) / 2)
-                    .style("opacity", this.opacityMiddle)
+                    .style("opacity", dec => {
+                        if (dec.d === dec.d_o && dec.d === 1) {
+                            return this.cb[0] ? this.opacityMiddle : 0
+                        } else if ((dec.g === 0 && dec.d === 1 && dec.d_o === 0) || (dec.g === 1 && dec.d === 0 && dec.d_o === 1)) {
+                            return this.cb[1] ? this.opacityMiddle : 0
+                        } else if ((dec.g === 0 && dec.d === 0 && dec.d_o === 1) || (dec.g === 1 && dec.d === 1 && dec.d_o === 0)) {
+                            return this.cb[2] ? this.opacityMiddle : 0
+                        } else {
+                            return this.cb[3] ? this.opacityMiddle : 0
+                        }
+                    })
                     .classed("decided", dec => dec.d);
                 return line(project(d));
             })

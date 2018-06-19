@@ -285,12 +285,16 @@ function main(data) {
 function createPC(data) {
 
     let defaultAxes = ["age", "field_cd", "exphappy", "goal"];
-    let graph = new ParallelCoordinates("graph-wave", data, {axes: defaultAxes}); // Example : a GraphExample object in the Wave tab
     let checkBoxGG = document.getElementById("GG");
     let checkBoxGR = document.getElementById("GR");
     let checkBoxRG = document.getElementById("RG");
 
     let checkBoxRR = document.getElementById("RR");
+
+    let graph = new ParallelCoordinates("graph-wave", data, {
+        axes: defaultAxes,
+        cb: [checkBoxGG.checked, checkBoxGR.checked, checkBoxRG.checked, checkBoxRR.checked]
+    }); // Example : a GraphExample object in the Wave tab
 
     checkBoxGG.addEventListener("input", e => {
         graph.showMidLines("GG", checkBoxGG.checked);
@@ -307,6 +311,7 @@ function createPC(data) {
     checkBoxRR.addEventListener("input", e => {
         graph.showMidLines("RR", checkBoxRR.checked);
     });
+
     let keys = [];
     let no_feat = ["iid", "id", "idg", "wave", "round", "position", "speedDates", "gender", "condtn", "positin1",
         "field", "from", "zipcode", "career"];
@@ -366,7 +371,10 @@ function createPC(data) {
         let ax = li.val.split("/");
         axes.push(ax);
         graphDiv.innerHTML = "";
-        graph = new ParallelCoordinates("graph-wave", data, {axes: axes});
+        graph = new ParallelCoordinates("graph-wave", data, {
+            axes: axes,
+            cb: [checkBoxGG.checked, checkBoxGR.checked, checkBoxRG.checked, checkBoxRR.checked]
+        });
 
 
         span.addEventListener("click", e => {
@@ -374,7 +382,10 @@ function createPC(data) {
             span.remove();
             axes.splice(axes.indexOf(ax), 1);
             graphDiv.innerHTML = "";
-            graph = new ParallelCoordinates("graph-wave", data, {axes: axes});
+            graph = new ParallelCoordinates("graph-wave", data, {
+                axes: axes,
+                cb: [checkBoxGG.checked, checkBoxGR.checked, checkBoxRG.checked, checkBoxRR.checked]
+            });
         });
         listSel.append(span)
     }
