@@ -1,6 +1,15 @@
 import Graph from "./modules/graphs/Graph.js";
 import GraphExample from "./modules/graphs/GraphExample.js";
 import ParallelCoordinates from "./modules/graphs/ParallelCoordinates.js";
+import GraphDensityVerticalLine from "./modules/graphs/GraphDensityVerticalLine.js";
+import GraphSuccessSecondaryFeature from "./modules/graphs/GraphSuccessSecondaryFeature.js";
+
+let setups = {
+    "home": true,
+    "person": false,
+    "wave": false,
+    "success": false
+};
 
 d3.csv("data/SpeedDating.csv")
     .row((d, i) => {
@@ -270,7 +279,7 @@ d3.csv("data/SpeedDating.csv")
 function main(data) {
     console.log(data);
     // Create the tabs
-    instantiateNavigation();
+    instantiateNavigation(data);
 
     // TODO : PUT YOUR GRAPHS HERE
     // --- PAR COORDS ---
@@ -383,16 +392,186 @@ function instantiateNavigation() {
     let btnTabWave = document.getElementById("btn-tab-wave");
     let btnTabPerson = document.getElementById("btn-tab-person");
     let btnTabSuccess = document.getElementById("btn-tab-success");
+}
 
-    btnTabWave.addEventListener("click", () => openTab(0));
-    btnTabPerson.addEventListener("click", () => openTab(1));
-    btnTabSuccess.addEventListener("click", () => openTab(2));
+function setUpHome(data) {
+    if(!setups.home) {
+        // Code for the tab goes here
 
-    function openTab(i) {
-        console.log(tabs);
-        for (let tab of tabs) {
-            tab.classList.toggle("activeTab", false);
-        }
-        tabs[i].classList.toggle("activeTab");
+        setups.home = true;
     }
+}
+
+function setUpPerson(data) {
+    if(!setups.person) {
+        // Code for the tab goes here
+
+        // Person chris
+        createPersonDensityFeature(data, "tab-person");
+
+        setups.person = true;
+    }
+}
+
+function setUpWave(data) {
+    if(!setups.wave) {
+        // Code for the tab goes here
+
+        let graph = new GraphExample("tab-wave", data); // Example : a GraphExample object in the Wave tab
+
+        setups.wave = true;
+    }
+}
+
+
+function setUpSuccess(data) {
+    if(!setups.success) {
+        // Code for the tab goes here
+
+        // Success chris
+        // iidSelected Yrieix
+        let iidSelected = new Array(300);//create an empty array with length 45
+        for(let i=0;i<iidSelected.length;i++){
+            iidSelected[i] = i
+        }
+        createSuccessSecondaryFeature(data, "tab-success", iidSelected);
+
+        setups.success = true;
+    }
+}
+
+function instantiateNavigation(data){
+    let data_menu = [
+        { icon : "./data/menu/home.svg", action: "0" },
+        { icon : "./data/menu/wave.svg", action: "1" },
+        { icon : "./data/menu/person.svg", action: "2" },
+        { icon : "./data/menu/success.svg", action: "3" }
+    ];
+
+    // Show menu launch
+    let m = new d3.radialMenu().radius(50)
+        .thickness(30)
+        .appendTo("#menu-holder")
+        .show(data_menu);
+
+    let tabHome = document.getElementById("tab-home");
+    let tabPerson = document.getElementById("tab-person");
+    let tabWave = document.getElementById("tab-wave");
+    let tabSuccess = document.getElementById("tab-success");
+    tabHome.addEventListener("open", e => {
+        tabHome.classList.toggle("activeTab");
+        setUpHome(data)
+    });
+    tabPerson.addEventListener("open", e => {
+        tabPerson.classList.toggle("activeTab");
+        setUpPerson(data)
+    });
+    tabWave.addEventListener("open", e => {
+        tabWave.classList.toggle("activeTab");
+        setUpWave(data)
+    });
+    tabSuccess.addEventListener("open", e => {
+        tabSuccess.classList.toggle("activeTab");
+        setUpSuccess(data)
+    });
+}
+
+// Person Density Feature
+function createPersonDensityFeature(data, tabToDisplay) {
+    // Input to define
+    let iid = 1;
+
+    // Variables
+    let continuousVar = ["age", "date"]; // "income"
+    let categoricalVar = ["race", "goal"]; // "gender", "study", "career", "interest"
+    let densityVarPerson1 = continuousVar[0];
+    let densityVarPerson2 = categoricalVar[0];
+
+    // Button Continuous Variable
+    instantiateButtonFeature(continuousVar, "densityVarPerson1");
+    let buttonSucessContinuous = document.getElementById("densityVarPerson1");
+    buttonSucessContinuous.addEventListener("change", e => {
+        let x = document.getElementById("densityVarPerson1");
+        densityVarPerson1 = x.value;
+        console.log("Change, densityVarPerson1: "+ densityVarPerson1);
+        // Update graph
+        instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, densityVarPerson2, iid);
+    });
+
+    // Button Categorical Variable
+    instantiateButtonFeature(categoricalVar, "densityVarPerson2");
+    let buttonSucessCategorical = document.getElementById("densityVarPerson2");
+    buttonSucessCategorical.addEventListener("change", e => {
+        let x = document.getElementById("densityVarPerson2");
+        densityVarPerson2 = x.value;
+        console.log("Change, currentCategoricalVar: "+ densityVarPerson2);
+        // Update graph
+        instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, densityVarPerson2, iid);
+    });
+
+    // Create graph for the first time
+    instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, densityVarPerson2, iid);
+}
+
+function instantiatePersonDensityFeature(data, tabToDisplay, densityVarPerson1, densityVarPerson2, iid) {
+    let graphPersonDensityFeature = new GraphDensityVerticalLine(tabToDisplay, data,
+        {densityVarPerson1: densityVarPerson1,
+            densityVarPerson2: densityVarPerson2,
+            iid: iid
+        });
+}
+
+// Success Secondary Feature
+function createSuccessSecondaryFeature(data, tabToDisplay, iidSelected) {
+    // Variables
+    let continuousVar = ["age", "date"]; // "income"
+    let categoricalVar = ["race", "goal"]; // "gender", "study", "career", "interest"
+    let currentContinuousVar = continuousVar[0];
+    let currentCategoricalVar = categoricalVar[0];
+
+    // Button Continuous Variable
+    instantiateButtonFeature(continuousVar, "varDensityContinuous");
+    let buttonSucessContinuous = document.getElementById("varDensityContinuous");
+    buttonSucessContinuous.addEventListener("change", e => {
+        let x = document.getElementById("varDensityContinuous");
+        currentContinuousVar = x.value;
+        console.log("Change, currentContinuousVar: "+ currentContinuousVar);
+        // Update graph
+        instantiateSuccessSecondaryFeature(data, tabToDisplay, currentContinuousVar, currentCategoricalVar, iidSelected);
+    });
+
+    // Button Categorical Variable
+    instantiateButtonFeature(categoricalVar, "varDensityCategorical");
+    let buttonSucessCategorical = document.getElementById("varDensityCategorical");
+    buttonSucessCategorical.addEventListener("change", e => {
+        let x = document.getElementById("varDensityCategorical");
+        currentCategoricalVar = x.value;
+        console.log("Change, currentCategoricalVar: "+ currentCategoricalVar);
+        // Update graph
+        instantiateSuccessSecondaryFeature(data, tabToDisplay, currentContinuousVar, currentCategoricalVar, iidSelected);
+    });
+
+    // Create graph for the first time
+    instantiateSuccessSecondaryFeature(data, tabToDisplay, currentContinuousVar, currentCategoricalVar, iidSelected);
+}
+
+function instantiateSuccessSecondaryFeature(data, tabToDisplay, currentContinuousVar, currentCategoricalVar, iidSelected) {
+    let graphSuccessSecondaryFeature = new GraphSuccessSecondaryFeature(tabToDisplay, data,
+        {currentContinuousVar: currentContinuousVar,
+            currentCategoricalVar: currentCategoricalVar,
+            iidSelected: iidSelected
+        });
+}
+
+function instantiateButtonFeature(list, id){
+    let elm = document.getElementById(id),
+        df = document.createDocumentFragment();
+    let count = list.length;
+    for (let i = 0; i < count; i++) {
+        let option = document.createElement('option');
+        option.value = list[i];
+        option.appendChild(document.createTextNode(list[i]));
+        df.appendChild(option);
+    }
+    elm.appendChild(df);
 }

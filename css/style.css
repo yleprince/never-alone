@@ -27,6 +27,10 @@ article .activeTab {
 }
 
 /*---------------------- TABS ----------------------*/
+#tab-home {
+    background-color: gray;
+}
+
 #tab-wave {
     grid-template-columns: 80% auto;
     grid-template-rows: 90% auto;
@@ -216,3 +220,87 @@ line {
 /*stroke: #fff;*/
 /*stroke-width: 1px;*/
 /*}*/
+
+#menu {
+     position: absolute;
+     width: 25%;
+     height: 25%;
+ }
+
+#menu-holder {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.graph {
+    /*width: 100%;
+    height: 100%;*/
+}
+
+.menu-segment {
+    fill: #4679bd;
+}
+
+.menu-segment:hover {
+    fill: #5689cd;
+}
+
+.menu-icon {
+    pointer-events: none;
+}
+
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: black;
+    stroke-width: 2px;
+    shape-rendering: crispEdges;
+}
+
+.line {
+    fill: none;
+    stroke: gray;
+    stroke-width: 5px;
+}
+
+.selectFeature {
+    display:block;
+    width:20%;
+    font-weight:500;
+    margin-left:10px;
+    line-height:40px;
+}
+
+#varDensityContinuous {
+    position: absolute;
+    left:74%;
+    top:7%;
+}
+
+#varDensityCategorical {
+    position: absolute;
+    left:74%;
+    top:63%;
+}
+
+#densityVarPerson1 {
+    position: absolute;
+    left:74%;
+    top:7%;
+}
+
+#densityVarPerson2 {
+    position: absolute;
+    left:74%;
+    top:27%;
+}
+
+h1 {
+    text-align: center;
+}
+
+h2 {
+    text-align: center;
+}

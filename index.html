@@ -7,12 +7,16 @@
 </head>
 <body>
 
-<nav>
-    <button id="btn-tab-wave">Wave</button>
-    <button id="btn-tab-person">Person</button>
-    <button id="btn-tab-success">Success</button>
-</nav>
+<svg id="menu">
+    <g id="menu-holder" transform="translate(100,100)"></g>
+</svg>
+
 <article>
+  <div id="tab-home" class="tab activeTab">
+        Home
+        <h1>Speed Dating Data</h1>
+        <h2>Attractiveness, Sincerity, Intelligence, Hobbies</h2>
+    </div>
     <div id="tab-wave" class="tab activeTab">
         <div id="options-columns">
             <div id="list-col-wave">
@@ -37,18 +41,28 @@
             <div id="graph-wave"></div>
         </div>
     </div>
+
     <div id="tab-person" class="tab">
-        Ne doit pas s'afficher
+        Person
+        <select class="selectFeature" id="densityVarPerson1"></select>
+        <select class="selectFeature" id="densityVarPerson2"></select>
     </div>
+
     <div id="tab-success" class="tab">
-        Ne doit pas s'afficher
+        Success
+        <select class="selectFeature" id="varDensityContinuous"></select>
+        <select class="selectFeature" id="varDensityCategorical"></select>
     </div>
 </article>
 <script src="d3/d3.js"></script>
 <script type="module" src="js/main.js"></script>
+<script type="module" src="js/menu.js"></script>
 <script type="module" src="js/modules/graphs/Graph.js"></script>
 <script type="module" src="js/modules/graphs/GraphExample.js"></script>
 <script type="module" src="js/modules/graphs/ParallelCoordinates.js"></script>
+<script type="module" src="js/modules/graphs/GraphDensityVerticalLine.js"></script>
+<script type="module" src="js/modules/graphs/GraphSuccessSecondaryFeature.js"></script>
 <script type="module" src="js/modules/defaultOptions.js"></script>
+
 </body>
 </html>
