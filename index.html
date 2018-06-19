@@ -12,7 +12,7 @@
 </svg>
 
 <article>
-  <div id="tab-home" class="tab activeTab">
+    <div id="tab-home" class="tab activeTab">
         Home
         <h1>Speed Dating Data</h1>
         <h2>Attractiveness, Sincerity, Intelligence, Hobbies</h2>
@@ -43,15 +43,44 @@
     </div>
 
     <div id="tab-person" class="tab">
-        Person
-        <select class="selectFeature" id="densityVarPerson1"></select>
-        <select class="selectFeature" id="densityVarPerson2"></select>
+        <div id="radar-person"></div>
+        <div id="bar-person"></div>
+        <div id="rep-person"></div>
+        <div id="feat1-person" class="plot-density">
+            <div class="select-density">
+                <select class="selectFeature" id="densityVarPerson1"></select>
+            </div>
+            <div class="graph-density">
+            </div>
+        </div>
+        <div id="feat2-person" class="plot-density">
+            <div class="select-density">
+                <select class="selectFeature" id="densityVarPerson2"></select>
+            </div>
+            <div class="graph-density">
+            </div>
+        </div>
+        <div id="id-person"></div>
+        <!--Person-->
     </div>
 
     <div id="tab-success" class="tab">
-        Success
-        <select class="selectFeature" id="varDensityContinuous"></select>
-        <select class="selectFeature" id="varDensityCategorical"></select>
+        <div id="sbc-success"></div>
+        <div id="feat1-success" class="plot-density">
+            <div class="select-density">
+                <select class="selectFeature" id="varDensityContinuous"></select>
+            </div>
+            <div class="graph-density">
+            </div>
+        </div>
+        <div id="feat2-success" class="plot-density">
+            <div class="select-density">
+                <select class="selectFeature" id="varDensityCategorical"></select>
+            </div>
+            <div class="graph-density">
+            </div>
+        </div>
+
     </div>
 </article>
 <script src="d3/d3.js"></script>

@@ -396,7 +396,7 @@ function setUpPerson(data) {
         // Code for the tab goes here
 
         // Person chris
-        createPersonDensityFeature(data, "tab-person");
+        // createPersonDensityFeature(data, "tab-person");
 
         setups.person = true;
     }
@@ -423,7 +423,7 @@ function setUpSuccess(data) {
         for (let i = 0; i < iidSelected.length; i++) {
             iidSelected[i] = i
         }
-        createSuccessSecondaryFeature(data, "tab-success", iidSelected);
+        // createSuccessSecondaryFeature(data, "tab-success", iidSelected);
 
         setups.success = true;
     }
