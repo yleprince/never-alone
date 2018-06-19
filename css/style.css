@@ -26,12 +26,14 @@ article .activeTab {
     display: grid;
 }
 
+/*---------------------- TABS ----------------------*/
 #tab-home {
     background-color: gray;
 }
 
 #tab-wave {
-    background-color: hotpink;
+    grid-template-columns: 80% auto;
+    grid-template-rows: 90% auto;
 }
 
 #tab-person {
@@ -41,6 +43,183 @@ article .activeTab {
 #tab-success {
     background-color: deepskyblue;
 }
+
+#graph-container-wave {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: 3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#graph-wave {
+    width: 100%;
+    height: 60%;
+}
+
+#options-wave {
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 2;
+    grid-row-end: 3;
+}
+
+#list-col-wave {
+    width: 100%;
+    height: 70%;
+    overflow-y: scroll;
+    /*overflow-wrap: break-word;*/
+}
+
+#list-sel-wave {
+    width: 100%;
+    height: 30%;
+    display: flex;
+    justify-content: center;
+    /*justify-content: flex-start;*/
+    align-items: center;
+    /*align-items: flex-start;*/
+    flex-wrap: wrap;
+    align-content: center;
+}
+
+.graph {
+    /*width: 99%;*/
+    /*height: 99%;*/
+}
+
+#list-col-wave ul {
+    list-style-type: none;
+    padding: 0 10px 0 10px;
+    margin: 0;
+}
+
+#list-col-wave li {
+    padding: 8px;
+    /*border: 1px solid black;*/
+    background-color: #eee;
+}
+
+#list-col-wave li:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+#list-col-wave li:hover {
+    background-color: #ddd;
+}
+
+.col-tag {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px dotted hotpink;
+    background-color: rgba(255, 179, 204, 0.3);
+}
+
+/*---------------------- PARALLEL COORDINATES ----------------------*/
+.background path {
+    fill: none;
+    stroke: #ddd;
+    shape-rendering: crispEdges;
+}
+
+.foreground path {
+    fill: none;
+    stroke-width: 1.5;
+}
+
+.axis line,
+.axis path {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.axis .title {
+    font-size: 10px;
+    transform: rotate(-21deg) translate(-5px, -6px);
+    fill: #222;
+}
+
+line {
+    fill: none;
+    stroke: #ff884d;
+}
+
+.decided {
+    fill: none;
+    stroke: #00ccff;
+}
+
+.pc .nanLine {
+    stroke-dasharray: 3, 3;
+    stroke-width: 1px;
+    stroke: black;
+    fill: none;
+}
+
+.pc .axis .title {
+    font-size: 10px;
+    transform: rotate(-21deg) translate(-5px, -6px);
+    fill: black;
+}
+
+.pc .nd {
+    font-size: 10px;
+    /*transform: rotate(90deg);*/
+    fill: black;
+}
+
+/*.pc .axis line,*/
+/*.pc .axis path {*/
+/*fill: none;*/
+/*stroke: #ccc;*/
+/*stroke-width: 1px;*/
+/*}*/
+
+.pc .axis .tick text {
+    fill: black;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.pc .axis.manufac_name .tick text,
+.pc .axis.food_group .tick text {
+    opacity: 1;
+}
+
+.pc .axis:hover line,
+.pc .axis:hover path,
+.pc .axis.active line,
+.pc .axis.active path {
+    fill: none;
+    stroke: black;
+    stroke-width: 1px;
+}
+
+.pc .axis:hover .title {
+    font-weight: bold;
+}
+
+.pc .axis:hover .tick text {
+    opacity: 1;
+}
+
+.pc .axis.active .title {
+    font-weight: bold;
+}
+
+.pc .axis.active .tick text {
+    opacity: 1;
+    font-weight: bold;
+}
+
+/*.pc .brush .extent {*/
+/*fill-opacity: .3;*/
+/*stroke: #fff;*/
+/*stroke-width: 1px;*/
+/*}*/
 
 #menu {
      position: absolute;

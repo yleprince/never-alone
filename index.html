@@ -12,14 +12,34 @@
 </svg>
 
 <article>
-    <div id="tab-home" class="tab activeTab">
+  <div id="tab-home" class="tab activeTab">
         Home
         <h1>Speed Dating Data</h1>
         <h2>Attractiveness, Sincerity, Intelligence, Hobbies</h2>
     </div>
+    <div id="tab-wave" class="tab activeTab">
+        <div id="options-columns">
+            <div id="list-col-wave">
 
-    <div id="tab-wave" class="tab">
-        Wave
+            </div>
+            <div id="list-sel-wave">
+
+            </div>
+        </div>
+        <div class="options" id="options-wave">
+            <input type="checkbox" id="GG" checked>
+            <label for="GG">Green-Green</label>
+            <input type="checkbox" id="GR" checked>
+            <label for="GR">Green-Red</label>
+            <input type="checkbox" id="RG" checked>
+            <label for="RG">Red-Green</label>
+            <input type="checkbox" id="RR" checked>
+            <label for="RR">Red-Red</label>
+        </div>
+
+        <div id="graph-container-wave">
+            <div id="graph-wave"></div>
+        </div>
     </div>
 
     <div id="tab-person" class="tab">
@@ -39,6 +59,7 @@
 <script type="module" src="js/menu.js"></script>
 <script type="module" src="js/modules/graphs/Graph.js"></script>
 <script type="module" src="js/modules/graphs/GraphExample.js"></script>
+<script type="module" src="js/modules/graphs/ParallelCoordinates.js"></script>
 <script type="module" src="js/modules/graphs/GraphDensityVerticalLine.js"></script>
 <script type="module" src="js/modules/graphs/GraphSuccessSecondaryFeature.js"></script>
 <script type="module" src="js/modules/defaultOptions.js"></script>

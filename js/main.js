@@ -1,5 +1,6 @@
 import Graph from "./modules/graphs/Graph.js";
 import GraphExample from "./modules/graphs/GraphExample.js";
+import ParallelCoordinates from "./modules/graphs/ParallelCoordinates.js";
 import GraphDensityVerticalLine from "./modules/graphs/GraphDensityVerticalLine.js";
 import GraphSuccessSecondaryFeature from "./modules/graphs/GraphSuccessSecondaryFeature.js";
 
@@ -13,7 +14,7 @@ let setups = {
 d3.csv("data/SpeedDating.csv")
     .row((d, i) => {
         return {
-            person:{
+            person: {
                 iid: +d.iid,
                 id: +d.id, // for the same wave there is two same id, one for a girl one for a boy
                 gender: +d.gender,
@@ -34,7 +35,7 @@ d3.csv("data/SpeedDating.csv")
                 imprelig: +d.imprelig,
                 from: d.from,
                 zipcode: d.zipcode,
-                income: +d.income,
+                income: parseFloat(d.income.replace(/,/g, '')),
                 goal: +d.goal,
                 date: +d.date,
                 go_out: +d.go_out,
@@ -264,7 +265,7 @@ d3.csv("data/SpeedDating.csv")
         let data = [];
         rows.forEach(r => {
             let p = data.find(d => d.iid === r.person.iid);
-            if(!p) {
+            if (!p) {
                 p = r.person;
                 p.speedDates = [];
                 data.push(p);
@@ -276,12 +277,121 @@ d3.csv("data/SpeedDating.csv")
     });
 
 function main(data) {
+    console.log(data);
     // Create the tabs
     instantiateNavigation(data);
 
     // TODO : PUT YOUR GRAPHS HERE
-    console.log(data);
+    // --- PAR COORDS ---
+    createPC(data);
+}
 
+function createPC(data) {
+
+    let defaultAxes = ["age", "field_cd", "exphappy", "goal"];
+    let graph = new ParallelCoordinates("graph-wave", data, {axes: defaultAxes}); // Example : a GraphExample object in the Wave tab
+    let checkBoxGG = document.getElementById("GG");
+    let checkBoxGR = document.getElementById("GR");
+    let checkBoxRG = document.getElementById("RG");
+
+    let checkBoxRR = document.getElementById("RR");
+
+    checkBoxGG.addEventListener("input", e => {
+        graph.showMidLines("GG", checkBoxGG.checked);
+    });
+
+    checkBoxGR.addEventListener("input", e => {
+        graph.showMidLines("GR", checkBoxGR.checked);
+    });
+
+    checkBoxRG.addEventListener("input", e => {
+        graph.showMidLines("RG", checkBoxRG.checked);
+    });
+
+    checkBoxRR.addEventListener("input", e => {
+        graph.showMidLines("RR", checkBoxRR.checked);
+    });
+    let keys = [];
+    let no_feat = ["iid", "id", "idg", "wave", "round", "position", "speedDates", "gender", "condtn", "positin1",
+        "field", "from", "zipcode", "career"];
+    let axes = [];
+
+    let ul = document.createElement("ul");
+    let listCol = document.getElementById("list-col-wave");
+    let listSel = document.getElementById("list-sel-wave");
+    let graphDiv = document.getElementById("graph-wave");
+
+
+    for (let feature in data[0]) {
+        if (data[0].hasOwnProperty(feature) && !no_feat.includes(feature)) {
+            let li = document.createElement("li");
+            li.innerHTML = feature;
+            li.val = feature;
+            ul.appendChild(li);
+            if (typeof(data[0][feature]) === "object") {
+                let subUl = document.createElement("ul");
+                for (let feat in data[0][feature]) {
+                    if (data[0][feature].hasOwnProperty(feat)) {
+                        keys.push([feature, feat]);
+                        let li = document.createElement("li");
+                        li.innerHTML = feat;
+                        li.val = feature + "/" + feat;
+                        subUl.appendChild(li);
+
+                        // Add listener on sub li
+                        li.addEventListener("click", e => {
+                            li.style.display = "none";
+                            addSelected(li);
+                        })
+                    }
+                }
+                li.appendChild(subUl);
+            } else {
+                // Add listener on li
+                li.addEventListener("click", e => {
+                    li.style.display = "none";
+                    addSelected(li);
+                });
+                keys.push(feature);
+                if(defaultAxes.includes(feature)) {
+                    li.style.display = "none";
+                    addSelected(li);
+                }
+            }
+        }
+    }
+
+    listCol.appendChild(ul);
+
+    function addSelected(li) {
+        let span = document.createElement("span");
+        span.innerHTML = li.val;
+        span.classList.add("col-tag");
+        let ax = li.val.split("/");
+        axes.push(ax);
+        graphDiv.innerHTML = "";
+        graph = new ParallelCoordinates("graph-wave", data, {axes: axes});
+
+
+        span.addEventListener("click", e => {
+            li.style.display = "block";
+            span.remove();
+            axes.splice(axes.indexOf(ax), 1);
+            graphDiv.innerHTML = "";
+            graph = new ParallelCoordinates("graph-wave", data, {axes: axes});
+        });
+        listSel.append(span)
+    }
+
+
+
+}
+
+function instantiateNavigation() {
+    let tabs = document.getElementsByClassName("tab");
+    let btnTabWave = document.getElementById("btn-tab-wave");
+    let btnTabPerson = document.getElementById("btn-tab-person");
+    let btnTabSuccess = document.getElementById("btn-tab-success");
 }
 
 function setUpHome(data) {
@@ -313,6 +423,7 @@ function setUpWave(data) {
     }
 }
 
+
 function setUpSuccess(data) {
     if(!setups.success) {
         // Code for the tab goes here
@@ -342,8 +453,6 @@ function instantiateNavigation(data){
         .thickness(30)
         .appendTo("#menu-holder")
         .show(data_menu);
-
-    console.log(m.onClick)
 
     let tabHome = document.getElementById("tab-home");
     let tabPerson = document.getElementById("tab-person");
