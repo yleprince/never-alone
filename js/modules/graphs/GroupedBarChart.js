@@ -91,11 +91,11 @@ class GroupedBarChart extends Graph{
      */
     createGraph(){
 
-        let margin = {top: 30, right: 10, bottom: 10, left: 30};
+        let margin = {top: 10, right: 10, bottom: 10, left: 30};
 
         var cfg = {
-            width : 700 - margin.left - margin.right,
-            height : 500 - margin.top - margin.bottom,
+            width : 500 - margin.left - margin.right,
+            height : 400 - margin.top - margin.bottom,
         };
 
         // Declare a SVG

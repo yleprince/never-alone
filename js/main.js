@@ -289,6 +289,8 @@ function createRC(data){
     let checkboxRating_o = document.getElementById("rating_o");
     let checkboxSelf_look_traits = document.getElementById("self_look_traits");
     let checkboxSame_gender_look_traits = document.getElementById("same_gender_look_traits");
+    let checkboxOpposite_gender_look_traits = document.getElementById("opposite_gender_look_traits");
+    let checkboxOpposite_gender_self_traits = document.getElementById("opposite_gender_self_traits");
 
     checkboxSelf_traits.addEventListener("input", e => {
         graph.showRadarChart("self_traits", checkboxSelf_traits.checked);
@@ -304,6 +306,14 @@ function createRC(data){
 
     checkboxSame_gender_look_traits.addEventListener("input", e => {
         graph.showRadarChart("same_gender_look_traits", checkboxSame_gender_look_traits.checked);
+    });
+
+    checkboxOpposite_gender_look_traits.addEventListener("input", e => {
+        graph.showRadarChart("opposite_gender_look_traits", checkboxOpposite_gender_look_traits.checked);
+    });
+
+    checkboxOpposite_gender_self_traits.addEventListener("input", e => {
+        graph.showRadarChart("opposite_gender_self_traits", checkboxOpposite_gender_self_traits.checked);
     });
 }
 
