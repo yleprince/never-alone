@@ -380,7 +380,6 @@ function createPC(data) {
         listSel.append(span)
     }
 
-
 }
 
 
@@ -419,14 +418,23 @@ function setUpSuccess(data) {
 
       
         //  Success Yrieix
-        createSuccessPrimaryFeature(data, "success_primary_feature");
+        let primary_plot = createSuccessPrimaryFeature(data, "sbc-success");
+
+        
+
+        let button_iids = document.getElementById('button_get_iids');
+
+        button_iids.addEventListener('click', e => {
+            let iidSelected = primary_plot.get_clicked();
+            createSuccessSecondaryFeature(data, "feat1-success", iidSelected);
+
+        });
+
+
+
+
+
         // Success chris
-        // iidSelected Yrieix
-        let iidSelected = new Array(300);//create an empty array with length 45
-        for (let i = 0; i < iidSelected.length; i++) {
-            iidSelected[i] = i
-        }
-        // createSuccessSecondaryFeature(data, "tab-success", iidSelected);
 
         setups.success = true;
     }
@@ -572,16 +580,14 @@ function instantiateButtonFeature(list, id) {
 }
 
 
-function createSuccessPrimaryFeature(data, tabToDisplay){
-  """ FUNCTION YRIEIX"""
-
+function createSuccessPrimaryFeature(data, primary_div_id){
     let explorable_variables = [{title:'Carreer', name:'career_c', values:['job1', 'job2']},
                                 {title:'Go out', name:'go_out', values:['very often', 'often']},
                                 {title:'Happiness expectation', name:'exphappy', values:['very happy', 'happy']},
                                 {title:'Age', name:'age', values:[]}
                                 ];
 
-    instantiatePrimaryFeature(data, explorable_variables, 'success_primary_feature');
+    return instantiatePrimaryFeature(data, explorable_variables, primary_div_id);
 
 
 
@@ -668,9 +674,15 @@ function instantiatePrimaryFeature(data, select_options, primary_div_id){
     primary_div.appendChild(primary_plot_div);
     let primary_plot = new ScatterBubble('primary_plot_div', data, 'go_out');
     
-    var btn = document.createElement("button");
+
+    let btn = document.createElement("button");
+    btn.id = 'button_get_iids';
     btn.appendChild(document.createTextNode("GET CLICKED"));
-    btn.addEventListener('click', e => console.log(primary_plot.get_clicked()));
+//    btn.addEventListener('click', e => console.log(primary_plot.get_clicked()));
     primary_feature_interaction_div.appendChild(btn);
+
+
+
+    return primary_plot;
 
 }
