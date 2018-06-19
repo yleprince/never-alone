@@ -25,7 +25,8 @@ class Graph{
 
         // Test for update christopher
         this.div.select("svg").remove();
-
+      
+      
         this.svg = this.div.append("svg")
             .attr("class", "graph")
             .attr("width", this.width)

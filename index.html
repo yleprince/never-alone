@@ -4,12 +4,20 @@
     <meta charset="UTF-8">
     <title>Never Alone</title>
     <link rel="stylesheet" href="css/style.css">
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <!-- <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script> -->
+</head>
 </head>
 <body>
+
+
 
 <svg id="menu">
     <g id="menu-holder" transform="translate(100,100)"></g>
 </svg>
+
+
+
 
 <article>
     <div id="tab-home" class="tab activeTab">
@@ -68,7 +76,9 @@
     </div>
 
     <div id="tab-success" class="tab">
-        <div id="sbc-success"></div>
+
+
+        <div id="success_primary_feature"></div>
         <div id="feat1-success" class="plot-density">
             <div class="select-density">
                 <select class="selectFeature" id="varDensityContinuous"></select>
@@ -83,13 +93,13 @@
             <div class="graph-density">
             </div>
         </div>
-
     </div>
 </article>
 <script src="d3/d3.js"></script>
 <script type="module" src="js/main.js"></script>
 <script type="module" src="js/menu.js"></script>
 <script type="module" src="js/modules/graphs/Graph.js"></script>
+<script type="module" src="js/modules/graphs/ScatterBubble.js"></script>
 <script type="module" src="js/modules/graphs/GraphExample.js"></script>
 <script type="module" src="js/modules/graphs/ParallelCoordinates.js"></script>
 <script type="module" src="js/modules/graphs/GraphDensityVerticalLine.js"></script>
