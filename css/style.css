@@ -34,15 +34,14 @@ article .activeTab {
 /*WAVE*/
 #tab-wave {
     grid-template-columns: 80% auto;
-    grid-template-rows: 90% auto;
-    background-color: #ffe1df;
+    grid-template-rows: 5% 85% auto;
 }
 
 #graph-container-wave {
     grid-column-start: 1;
     grid-column-end: 2;
-    grid-row-start: 1;
-    grid-row-end: 3;
+    grid-row-start: 2;
+    grid-row-end: 4;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -53,10 +52,27 @@ article .activeTab {
     height: 60%;
 }
 
+#select-wave {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 #options-wave {
     grid-column-start: 2;
     grid-column-end: 3;
-    grid-row-start: 2;
+    grid-row-start: 3;
+    grid-row-end: 4;
+}
+
+#options-columns {
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 1;
     grid-row-end: 3;
 }
 
@@ -72,6 +88,13 @@ article .activeTab {
     height: 65%;
     overflow-y: scroll;
     /*overflow-wrap: break-word;*/
+}
+
+#label-sel-wave {
+    width: 100%;
+    height: 5%;
+    text-align: center;
+    border: 1px solid #ddd;
 }
 
 #list-sel-wave {

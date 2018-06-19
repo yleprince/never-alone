@@ -96,8 +96,6 @@ class ParallelCoordinates extends Graph {
      * Fill SVG for the graph (implement the visualization here)
      */
     createGraph() {
-        console.log(this.cb);
-
         let margin = {top: 50, right: 10, bottom: 50, left: 30},
             innerWidth = this.width - margin.left - margin.right,
             innerHeight = this.height - margin.top - margin.bottom;
