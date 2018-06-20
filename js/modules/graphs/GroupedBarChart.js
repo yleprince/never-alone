@@ -8,7 +8,7 @@ import fillWithDefault from "../defaultOptions.js";
 const defaultOptions = {
     color : "crimson",
     size : 5,
-    iid : 1
+    iid : 232
 };
 
 class GroupedBarChart extends Graph{
@@ -27,8 +27,8 @@ class GroupedBarChart extends Graph{
         this.size = opts.size;
         this.iid = opts.iid;
 
-        this.preprocess();
-        this.createGraph();
+        // this.preprocess();
+        // this.createGraph();
     }
 
     // -- METHODS TO IMPLEMENT ---
@@ -36,24 +36,29 @@ class GroupedBarChart extends Graph{
     /**
      * Keep the interesting data for the Graph
      */
-    preprocess(){
-        //this.data = this.allData.map(d => {return {age : d.age, exphappy : d.exphappy}})
-        //    .filter(d => d.age > 0);
+    preprocess(variable_time1, variable_time2, variable_time3){
 
+        // let variable_time1 = "self_traits";
+        // let variable_time2 = "self_traits"+"_2";
+        // let variable_time3 = "self_traits"+"_3";
+
+        ///!\ rating_o : pas de notion de notes evolutives au cours du temps
+
+        //self_traits
         this.dataDuringEvent = this.allData.filter(d => d.iid === this.iid)
-            .map(d => {return {Ambitious : d.self_traits.amb, Fun : d.self_traits.fun,
-            Attractive : d.self_traits.att, Intelligent : d.self_traits.int, Sincere : d.self_traits.sin}});
+            .map(d => {return {Ambitious : d[variable_time1].amb, Fun : d[variable_time1].fun,
+            Attractive : d[variable_time1].att, Intelligent : d[variable_time1].int, Sincere : d[variable_time1].sin}});
 
         this.data1DayAftEvent = this.allData.filter(d => d.iid === this.iid)
-            .map(d => {return {Ambitious : d.self_traits_2.amb, Fun : d.self_traits_2.fun,
-                Attractive : d.self_traits_2.att, Intelligent : d.self_traits_2.int, Sincere : d.self_traits_2.sin}});
+            .map(d => {return {Ambitious : d[variable_time2].amb, Fun : d[variable_time2].fun,
+                Attractive : d[variable_time2].att, Intelligent : d[variable_time2].int, Sincere : d[variable_time2].sin}});
 
         this.data3WeeksAftEvent = this.allData.filter(d => d.iid === this.iid)
-            .map(d => {return {Ambitious : d.self_traits_3.amb, Fun : d.self_traits_3.fun,
-                Attractive : d.self_traits_3.att, Intelligent : d.self_traits_3.int, Sincere : d.self_traits_3.sin}});
+            .map(d => {return {Ambitious : d[variable_time3].amb, Fun : d[variable_time3].fun,
+                Attractive : d[variable_time3].att, Intelligent : d[variable_time3].int, Sincere : d[variable_time3].sin}});
 
 
-        this.data = [
+        this.dataSelf_traits = [
             [
                 {"Attribute": "Ambitious",
                     "During the event": this.dataDuringEvent[0].Ambitious,
@@ -79,10 +84,10 @@ class GroupedBarChart extends Graph{
         ];
 
 
-        console.log(this.dataDuringEvent);
-        console.log(this.data1DayAftEvent);
-        console.log(this.data3WeeksAftEvent);
-        console.log(this.data[0]);
+        //console.log(this.dataDuringEvent);
+        //console.log(this.data1DayAftEvent);
+        //console.log(this.data3WeeksAftEvent);
+        console.log(this.dataSelf_traits[0]);
 
     }
 
@@ -102,9 +107,7 @@ class GroupedBarChart extends Graph{
         let g = this.svg.append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
-        // var x0 = d3.scaleBand()
-        //     .rangeRound([0, cfg.width])
-        //     .paddingInner(0.1);
+        this._g = g;
 
         let x0 = d3.scaleBand()
             .rangeRound([0, cfg.width])
@@ -119,100 +122,146 @@ class GroupedBarChart extends Graph{
         let z = d3.scaleOrdinal()
             .range(["#6F257F", "#CA0D59", "#7CFC00"])
 
-        let keys = d3.keys(this.data[0][0]);
-        console.log("key: " + keys.slice(1));
+
+        //"self_traits"
+        // let series = 0;
+        // buildChart(this.dataSelf_traits[0]);
+        //series++;
 
 
-        x0.domain(this.data[0].map(function(d) {return d.Attribute; }));
-        x1.domain(keys.slice(1)).rangeRound([0, x0.bandwidth()]);
+        this.buildChart = function (data){
+            let keys = d3.keys(data[0]);
+            console.log("key: " + keys.slice(1));
 
-        // TODO : decide if we keep a vertical axis with a fixed value
-        y.domain([0, d3.max(this.data[0], function(d) {
-            return d3.max(keys.slice(1), function(key) {return d[key];});})]).nice();
-        //y.domain([0, 10]).nice();
 
-        //------------------------------
-        //BEGINNING OF GROUPED BAR CHART
-        //------------------------------
-        // function mouseout(d, i){
-        //     d3.select("#id" + i).remove();
-        // }
+            x0.domain(data.map(function(d) {return d.Attribute; }));
+            x1.domain(keys.slice(1)).rangeRound([0, x0.bandwidth()]);
 
-        // Plot the bars
-        g.append("g")
-            .selectAll("g")
-            .data(this.data[0])
-            .enter().append("g")
-            .attr("transform", function(d) { return "translate(" + x0(d.Attribute) + ",0)"; })
-            .selectAll("rect")
-            .data(function(d) { return keys.slice(1).map(function(key) { return {key: key, value: d[key]}; }); })
-            .enter().append("rect")
-            .attr("x", function(d) { return x1(d.key); })
-            .attr("y", function(d) { return y(d.value); })
-            .attr("width", x1.bandwidth())
-            .attr("height", function(d) { return cfg.height - y(d.value); })
-            .attr("fill", function(d) { return z(d.key); })
-            .style("stroke", "grey")
-            .style("stroke-opacity", "0.85")
-            .style("fill-opacity", "0.70")
-            .on("mouseover", function(d, i){
-                //Change color when bar hovers
-                d3.select(this)
-                    .attr("fill", "grey");})
+            // TODO : decide if we keep a vertical axis with a fixed value
+            y.domain([0, d3.max(data, function(d) {
+                return d3.max(keys.slice(1), function(key) {return d[key];});})]).nice();
+            //y.domain([0, 10]).nice();
+
+            // Plot the bars
+            g.append("g")
+                .selectAll("g")
+                .data(data)
+                .enter().append("g")
+                .attr("transform", function(d) { return "translate(" + x0(d.Attribute) + ",0)"; })
+                .selectAll("rect")
+                .data(function(d) { return keys.slice(1).map(function(key) { return {key: key, value: d[key]}; }); })
+                .enter().append("rect")
+                .attr("x", function(d) { return x1(d.key); })
+                .attr("y", function(d) { return y(d.value); })
+                .attr("width", x1.bandwidth())
+                .attr("height", function(d) { return cfg.height - y(d.value); })
+                .attr("fill", function(d) { return z(d.key); })
+                .style("stroke", "grey")
+                .style("stroke-opacity", "0.9")
+                .style("fill-opacity", "0.75")
+                .on("mouseover", function(d, i){
+                    //Change color when bar hovers
+                    d3.select(this)
+                        .attr("fill", "grey");})
                 //Append some text
                 // g.append("text")
                 //     .attr("id", "id"+i)
                 //     .attr("x", 100)
                 //     .attr("y", 100)
                 //     .text("test");})
-            .on("mouseout", function(d, i){
-                //Go back to initial settings when user unhovers
-                d3.select(this)
-                    .attr("fill", function(d) { return z(d.key); })
+                .on("mouseout", function(d, i){
+                    //Go back to initial settings when user unhovers
+                    d3.select(this)
+                        .attr("fill", function(d) { return z(d.key); })
 
-                d3.select("#id" + i).remove();});
-
-
-        // Add horizontal axis with name of the attributes
-        g.append("g")
-            .attr("class", "axis")
-            .attr("transform", "translate(0," + cfg.height + ")")
-            .call(d3.axisBottom(x0));
+                    d3.select("#id" + i).remove();});
 
 
-        // Add vertical axis with graduation
-        g.append("g")
-            .attr("class", "axis")
-            .call(d3.axisLeft(y).ticks(null, "s"))
-            .append("test")
-            .attr("x", 2)
-            .attr("y", y(y.ticks().pop()) + 0.5)
-            .attr("dy", "0.32em")
-            .attr("fill", "#000")
-            .attr("font-weight", "bold")
-            .attr("text-anchor", "start")
-            .text("Score")
+            // Add horizontal axis with name of the attributes
+            g.append("g")
+                .attr("class", "axis")
+                .attr("transform", "translate(0," + cfg.height + ")")
+                .call(d3.axisBottom(x0));
 
-        let legend = g.append("g")
-            .attr("font-family", "sans-serif")
-            .attr("font-size", 10)
-            .attr("text-anchor", "end")
-            .selectAll("g")
-            .data(keys.slice(1))
-            .enter().append("g")
-            .attr("transform", function(d, i) { return "translate(200," + i * 20 + ")"; });
 
-        legend.append("rect")
-            .attr("x", cfg.width - 19)
-            .attr("width", 19)
-            .attr("height", 19)
-            .attr("fill", z);
+            // Add vertical axis with graduation
+            g.append("g")
+                .attr("class", "axis")
+                .call(d3.axisLeft(y).ticks(null, "s"))
+                .append("test")
+                .attr("x", 2)
+                .attr("y", y(y.ticks().pop()) + 0.5)
+                .attr("dy", "0.32em")
+                .attr("fill", "#000")
+                .attr("font-weight", "bold")
+                .attr("text-anchor", "start")
+                .text("Score")
 
-        legend.append("text")
-            .attr("x", cfg.width - 24)
-            .attr("y", 9.5)
-            .attr("dy", "0.32em")
-            .text(function(d) { return d; });
+            let legend = g.append("g")
+                .attr("font-family", "sans-serif")
+                .attr("font-size", 10)
+                .attr("text-anchor", "end")
+                .selectAll("g")
+                .data(keys.slice(1))
+                .enter().append("g")
+                .attr("transform", function(d, i) { return "translate(200," + i * 20 + ")"; });
+
+            legend.append("rect")
+                .attr("x", cfg.width - 19)
+                .attr("width", 19)
+                .attr("height", 19)
+                .attr("fill", z);
+
+            legend.append("text")
+                .attr("x", cfg.width - 24)
+                .attr("y", 9.5)
+                .attr("dy", "0.32em")
+                .text(function(d) { return d; });
+        }
+
+    }
+
+
+    showRadarChart(type, show) {
+        console.log("type: " + type);
+        console.log("show: " + show);
+
+
+        let variable_time1 = type;
+        let variable_time2 = type+"_2";
+        let variable_time3 = type+"_3";
+
+        this.preprocess(variable_time1, variable_time2, variable_time3);
+        this.createGraph();
+
+        switch (type) {
+            //case (type==="self_traits" && show===true):
+            case "self_traits":
+                console.log("this._g.selectAll(\"g\")" + JSON.stringify(this._g));
+                this._g.selectAll("g")
+                    .selectAll("rect")
+                    .style("opacity", 0)
+                this.buildChart(this.dataSelf_traits[0]);
+                break;
+            case "rating_o":
+                ///!\ rating_o : pas de notion de notes evolutives au cours du temps
+                break;
+            case "self_look_traits":
+                this.buildChart(this.dataSelf_traits[0]);
+                break;
+            case "same_gender_look_traits":
+                this.buildChart(this.dataSelf_traits[0]);
+                break;
+            case "opposite_gender_look_traits":
+                this.buildChart(this.dataSelf_traits[0]);
+                break;
+            case "opposite_gender_self_traits":
+                this.buildChart(this.dataSelf_traits[0]);
+                break;
+            //default:
+            //    console.error("None of the above");
+        }
+
     }
 
     /**

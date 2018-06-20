@@ -321,37 +321,47 @@ class RadarChart extends Graph{
         // });
 
 
-
+        //Self_traits
         let series = 0;
         buildChart(dataDictSelf_traits);
-        //console.log("series: " + series);
         series++;
+
+        //Rating_o
         buildChart(dataDictRating_o);
-        //console.log("series: " + series);
         series++;
+
+        //Self_look_traits
         if(Object.keys(dataDictSelf_look_traits).length){
             buildChart(dataDictSelf_look_traits);};
+        this._g
+            .selectAll((".radar-chart-serie2"))
+            .style("opacity", 0);
         series++;
 
+        //Same_gender_look_traits
         if(Object.keys(dataDictSame_gender_look_traits).length){
             buildChart(dataDictSame_gender_look_traits);};
+        this._g
+            .selectAll((".radar-chart-serie3"))
+            .style("opacity", 0);
         series++;
 
-
+        //Opposite_gender_look_traits
         if(Object.keys(dataDictOpposite_gender_look_traits).length){
             buildChart(dataDictOpposite_gender_look_traits);};
+        this._g
+            .selectAll((".radar-chart-serie4"))
+            .style("opacity", 0);
         series++;
 
-        //console.log("this.dataThemself).length: " + Object.keys(this.dataThemself[0]).length);
-        //console.log("this.dataOpposite_gender_self_traits).length1: " + Object.keys(this.dataOpposite_gender_self_traits1[0]).length);
-        console.log("dataDictOpposite_gender_self_traits: " + Object.keys(dataDictOpposite_gender_self_traits).length);
+        //Opposite_gender_self_traits
         if(Object.keys(dataDictOpposite_gender_self_traits).length>0){
             buildChart(dataDictOpposite_gender_self_traits);
+            this._g
+                .selectAll((".radar-chart-serie5"))
+                .style("opacity", 0);
 
         }
-
-        //console.log("series: " + series);
-
 
 
         function buildChart (data) {
@@ -438,13 +448,12 @@ class RadarChart extends Graph{
     }
 
     showRadarChart(type, show) {
-        console.log("type: " + type);
-        console.log("show: " + show);
+        // console.log("type: " + type);
+        // console.log("show: " + show);
         switch (type) {
-            //case (type==="self_traits" && show===true):
             case "self_traits":
                 if (show===true){
-                    console.log(".radar-chart-serie0: " + this._g.selectAll((".radar-chart-serie0")));
+                    console.log(".radar-chart-serie0: " + JSON.stringify(this._g.selectAll((".radar-chart-serie0"))));
                     this._g
                         .selectAll((".radar-chart-serie0"))
                         .style("opacity", 1);
@@ -456,7 +465,7 @@ class RadarChart extends Graph{
                 break;
             case "rating_o":
                 if (show===true){
-                    console.log(".radar-chart-serie1: " + this._g.selectAll((".radar-chart-serie1")));
+                    //console.log(".radar-chart-serie1: " + this._g.selectAll((".radar-chart-serie1")));
                     this._g
                         .selectAll((".radar-chart-serie1"))
                         .style("opacity", 1);
@@ -468,7 +477,7 @@ class RadarChart extends Graph{
                 break;
             case "self_look_traits":
                 if (show===true){
-                    console.log(this._g.selectAll((".radar-chart-serie2")));
+                    //console.log(this._g.selectAll((".radar-chart-serie2")));
                     this._g
                         .selectAll((".radar-chart-serie2"))
                         .style("opacity", 1);
@@ -480,7 +489,7 @@ class RadarChart extends Graph{
                     break;
             case "same_gender_look_traits":
                 if (show===true){
-                    console.log(".radar-chart-serie3: " + this._g.selectAll((".radar-chart-serie3")));
+                    //console.log(".radar-chart-serie3: " + this._g.selectAll((".radar-chart-serie3")));
                     this._g
                         .selectAll((".radar-chart-serie3"))
                         .style("opacity", 1);
@@ -492,7 +501,7 @@ class RadarChart extends Graph{
                 break;
             case "opposite_gender_look_traits":
                 if (show===true){
-                    console.log(".radar-chart-serie4: " + this._g.selectAll((".radar-chart-serie4")));
+                    //console.log(".radar-chart-serie4: " + this._g.selectAll((".radar-chart-serie4")));
                     this._g
                         .selectAll((".radar-chart-serie4"))
                         .style("opacity", 1);
@@ -505,7 +514,7 @@ class RadarChart extends Graph{
             case "opposite_gender_self_traits":
                 //Available from wave 10
                 if (show===true){
-                    console.log(".radar-chart-serie5: " + this._g.selectAll((".radar-chart-serie5")));
+                    //console.log(".radar-chart-serie5: " + this._g.selectAll((".radar-chart-serie5")));
                     this._g
                         .selectAll((".radar-chart-serie5"))
                         .style("opacity", 1);
@@ -515,8 +524,6 @@ class RadarChart extends Graph{
                         .style("opacity", 0);
                 }
                 break;
-
-
             //default:
             //    console.error("None of the above");
         }
