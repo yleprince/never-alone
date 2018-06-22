@@ -37,7 +37,6 @@ class ScatterBubble extends Graph{
         // this.properties = ["career_c","go_out","exphappy","age"];
 
         this.preprocess();
-
         this.createGraph();
 
         // console.log('this.allData', this.allData);
@@ -125,17 +124,23 @@ class ScatterBubble extends Graph{
      */
     createGraph(){
         // TODO : implement margin, axis according to your needs
-        let margin = {top: 20, right: 30, bottom: 40, left: 40};
-        let width = 500 - margin.left - margin.right;
-        let height = 300 - margin.top - margin.bottom;
+        
+        this.margin = {top: this.height*(5/100), right: this.width*(5/100), bottom: this.height*(10/100), left: this.width*(10/100)};
 
-        this.canvas_param = {c_margin:margin, c_w: width, c_h: height};
+        this.innerWidth = this.width - margin.left - margin.right,
+            this.innerHeight = this.height - margin.top - margin.bottom;
 
-        this.svg.attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom);
+        // let margin = {top: 20, right: 30, bottom: 40, left: 40};
+        // let width = 500 - margin.left - margin.right;
+        // let height = 300 - margin.top - margin.bottom;
+
+        // this.canvas_param = {c_margin:margin, c_w: width, c_h: height};
+
+        // this.svg.attr("width", width + margin.left + margin.right)
+                // .attr("height", height + margin.top + margin.bottom);
         this.g = this.svg.append("g")
                     .attr('id', 'scatter_container')
-                    .attr("transform", "translate(" + 100 + "," + margin.top + ")");
+                    .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
 
 
         this.plot_data('career_c');
@@ -151,13 +156,13 @@ class ScatterBubble extends Graph{
         console.log('Scattered data', this.scat);
         
         const x = d3.scaleLinear()
-            .range([0, this.canvas_param.c_w])
+            .range([0, this.innerWidth])
             .domain([d3.min(this.scat, d => d.x) -0.5,
                      d3.max(this.scat, d => d.x) +0.5]);
 
             // .domain(d3.extent(this.scatter_selected, d => d.x));
         const y = d3.scaleLinear()
-            .range([this.canvas_param.c_h, 0])
+            .range([this.innerHeight, 0])
             .domain([d3.min(this.scat, d => d.y) -0.5,
                      d3.max(this.scat, d => d.y) +0.5]);
             // .domain(d3.extent(this.scatter_selected, d => d.y));
@@ -177,12 +182,12 @@ class ScatterBubble extends Graph{
 
         this.g.append("g")
             .attr('class', 'x axis')
-            .attr('transform', 'translate (0,' + this.canvas_param.c_h + ")")
+            .attr('transform', 'translate (0,' + this.innerHeight + ")")
             .call(xAxis);
 
         this.g.append("text")             
             .attr("transform",
-                    "translate(" + (this.canvas_param.c_w - 2*this.canvas_param.c_margin.right) + " ," + (this.canvas_param.c_h + this.canvas_param.c_margin.top + 15) + ")")
+                    "translate(" + (this.innerWidth - 2*this.margin.right) + " ," + (this.innerHeight + this.margin.top + 15) + ")")
             .style("text-anchor", "end")
             .text("Female");
 
@@ -192,8 +197,8 @@ class ScatterBubble extends Graph{
 
         this.g.append("text")
             .attr("transform", "rotate(-90)")
-            .attr("y", 0 - this.canvas_param.c_margin.left)
-            .attr("x",0 - this.canvas_param.c_margin.top)
+            .attr("y", 0 - this.margin.left)
+            .attr("x",0 - this.margin.top)
             .attr("dy", "1em")
             .style("text-anchor", "end")
             .text("Male");   
