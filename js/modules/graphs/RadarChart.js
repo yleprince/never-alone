@@ -140,7 +140,7 @@ class RadarChart extends Graph {
      * Fill SVG for the graph (implement the visualization here)
      */
     createGraph(id) {
-        let margin = {top: 30, right: 10, bottom: 10, left: 30};
+        let margin = {top: 30, right: 50, bottom: 10, left: 50};
 
         let cfg = {
             radius: 5,

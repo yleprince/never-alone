@@ -443,7 +443,7 @@ class ParallelCoordinates extends Graph {
         this._g.selectAll(".midLine")
             .filter(d => filtering(d))
             .transition()
-            .duration(500)
+            .duration(200)
             .style("opacity", show ? this.opacityMiddle : 0);
     }
 
