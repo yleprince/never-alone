@@ -6,12 +6,12 @@ import Graph from "./Graph.js";
 import fillWithDefault from "../defaultOptions.js";
 
 const defaultOptions = {
-    color : "crimson",
-    size : 5,
-    iid : 1
+    color: "crimson",
+    size: 5,
+    iid: 1
 };
 
-class GroupedBarChart extends Graph{
+class GroupedBarChart extends Graph {
 
     /**
      * Constructor of the Graph
@@ -19,7 +19,7 @@ class GroupedBarChart extends Graph{
      * @param allData the data used to draw the Graph
      * @param options optional variables for the Graph
      */
-    constructor(id, allData, options = {}){
+    constructor(id, allData, options = {}) {
         super(id, allData);
 
         let opts = fillWithDefault(options, defaultOptions);
@@ -36,7 +36,7 @@ class GroupedBarChart extends Graph{
     /**
      * Keep the interesting data for the Graph
      */
-    preprocess(variable_time1, variable_time2, variable_time3){
+    preprocess(variable_time1, variable_time2, variable_time3) {
 
         // let variable_time1 = "self_traits";
         // let variable_time2 = "self_traits"+"_2";
@@ -46,40 +46,71 @@ class GroupedBarChart extends Graph{
 
         //self_traits
         this.dataDuringEvent = this.allData.filter(d => d.iid === this.iid)
-            .map(d => {return {Ambitious : d[variable_time1].amb, Fun : d[variable_time1].fun,
-            Attractive : d[variable_time1].att, Intelligent : d[variable_time1].int, Sincere : d[variable_time1].sin}});
+            .map(d => {
+                return {
+                    Ambitious: d[variable_time1].amb,
+                    Fun: d[variable_time1].fun,
+                    Attractive: d[variable_time1].att,
+                    Intelligent: d[variable_time1].int,
+                    Sincere: d[variable_time1].sin
+                }
+            });
 
         this.data1DayAftEvent = this.allData.filter(d => d.iid === this.iid)
-            .map(d => {return {Ambitious : d[variable_time2].amb, Fun : d[variable_time2].fun,
-                Attractive : d[variable_time2].att, Intelligent : d[variable_time2].int, Sincere : d[variable_time2].sin}});
+            .map(d => {
+                return {
+                    Ambitious: d[variable_time2].amb,
+                    Fun: d[variable_time2].fun,
+                    Attractive: d[variable_time2].att,
+                    Intelligent: d[variable_time2].int,
+                    Sincere: d[variable_time2].sin
+                }
+            });
 
         this.data3WeeksAftEvent = this.allData.filter(d => d.iid === this.iid)
-            .map(d => {return {Ambitious : d[variable_time3].amb, Fun : d[variable_time3].fun,
-                Attractive : d[variable_time3].att, Intelligent : d[variable_time3].int, Sincere : d[variable_time3].sin}});
+            .map(d => {
+                return {
+                    Ambitious: d[variable_time3].amb,
+                    Fun: d[variable_time3].fun,
+                    Attractive: d[variable_time3].att,
+                    Intelligent: d[variable_time3].int,
+                    Sincere: d[variable_time3].sin
+                }
+            });
 
 
         this.data = [
             [
-                {"Attribute": "Ambitious",
+                {
+                    "Attribute": "Ambitious",
                     "During the event": this.dataDuringEvent[0].Ambitious,
                     "One day after the event": this.data1DayAftEvent[0].Ambitious,
-                    "Three-Four weeks after the event": this.data3WeeksAftEvent[0].Ambitious},
-                {"Attribute": "Fun",
+                    "Three-Four weeks after the event": this.data3WeeksAftEvent[0].Ambitious
+                },
+                {
+                    "Attribute": "Fun",
                     "During the event": this.dataDuringEvent[0].Fun,
                     "One day after the event": this.data1DayAftEvent[0].Fun,
-                    "Three-Four weeks after the event": this.data3WeeksAftEvent[0].Fun},
-                {"Attribute": "Attractive",
+                    "Three-Four weeks after the event": this.data3WeeksAftEvent[0].Fun
+                },
+                {
+                    "Attribute": "Attractive",
                     "During the event": this.dataDuringEvent[0].Attractive,
                     "One day after the event": this.data1DayAftEvent[0].Attractive,
-                    "Three-Four weeks after the event": this.data3WeeksAftEvent[0].Attractive},
-                {"Attribute": "Intelligent",
+                    "Three-Four weeks after the event": this.data3WeeksAftEvent[0].Attractive
+                },
+                {
+                    "Attribute": "Intelligent",
                     "During the event": this.dataDuringEvent[0].Intelligent,
                     "One day after the event": this.data1DayAftEvent[0].Intelligent,
-                    "Three-Four weeks after the event": this.data3WeeksAftEvent[0].Intelligent},
-                {"Attribute": "Sincere",
+                    "Three-Four weeks after the event": this.data3WeeksAftEvent[0].Intelligent
+                },
+                {
+                    "Attribute": "Sincere",
                     "During the event": this.dataDuringEvent[0].Sincere,
                     "One day after the event": this.data1DayAftEvent[0].Sincere,
-                    "Three-Four weeks after the event": this.data3WeeksAftEvent[0].Sincere}
+                    "Three-Four weeks after the event": this.data3WeeksAftEvent[0].Sincere
+                }
             ]
         ];
     }
@@ -87,13 +118,13 @@ class GroupedBarChart extends Graph{
     /**
      * Fill SVG for the graph (implement the visualization here)
      */
-    createGraph(){
+    createGraph() {
 
         let margin = {top: 10, right: 10, bottom: 20, left: 30};
 
         let cfg = {
-            width : this.width - margin.left - margin.right,
-            height : this.height- margin.top - margin.bottom,
+            width: this.width - margin.left - margin.right,
+            height: this.height - margin.top - margin.bottom,
         };
 
         // Declare a SVG
@@ -124,15 +155,20 @@ class GroupedBarChart extends Graph{
 
 
         //this.buildChart = function (data){
-        function buildChart(data){
+        function buildChart(data) {
             let keys = d3.keys(data[0]);
 
-            x0.domain(data.map(function(d) {return d.Attribute; }));
+            x0.domain(data.map(function (d) {
+                return d.Attribute;
+            }));
             x1.domain(keys.slice(1)).rangeRound([0, x0.bandwidth()]);
 
             // TODO : decide if we keep a vertical axis with a fixed value
-            y.domain([0, d3.max(data, function(d) {
-                return d3.max(keys.slice(1), function(key) {return d[key];});})]).nice();
+            y.domain([0, d3.max(data, function (d) {
+                return d3.max(keys.slice(1), function (key) {
+                    return d[key];
+                });
+            })]).nice();
             //y.domain([0, 10]).nice();
 
             // Plot the bars
@@ -140,36 +176,54 @@ class GroupedBarChart extends Graph{
                 .selectAll(".bars")
                 .data(data)
                 .enter().append("g")
-                // .attr("class", "g" + series)
+            // .attr("class", "g" + series)
                 .attr("class", "bars")
-                .attr("transform", function(d) { return "translate(" + x0(d.Attribute) + ",0)"; })
+                .attr("transform", function (d) {
+                    return "translate(" + x0(d.Attribute) + ",0)";
+                })
                 .selectAll("rect")
-                .data(function(d) { return keys.slice(1).map(function(key) { return {key: key, value: d[key]}; }); })
+                .data(function (d) {
+                    return keys.slice(1).map(function (key) {
+                        return {key: key, value: d[key]};
+                    });
+                })
                 .enter().append("rect")
-                .attr("x", function(d) { return x1(d.key); })
-                .attr("y", function(d) { return y(d.value); })
+                .attr("x", function (d) {
+                    return x1(d.key);
+                })
+                .attr("y", function (d) {
+                    return y(d.value);
+                })
                 .attr("width", x1.bandwidth())
-                .attr("height", function(d) { return cfg.height - y(d.value); })
-                .attr("fill", function(d) { return z(d.key); })
+                .attr("height", function (d) {
+                    return cfg.height - y(d.value);
+                })
+                .attr("fill", function (d) {
+                    return z(d.key);
+                })
                 .style("stroke", "grey")
                 .style("stroke-opacity", "0.9")
                 .style("fill-opacity", "0.75")
-                .on("mouseover", function(d, i){
+                .on("mouseover", function (d, i) {
                     //Change color when bar hovers
                     d3.select(this)
-                        .attr("fill", "grey");})
+                        .attr("fill", "grey");
+                })
                 //Append some text
                 // g.append("text")
                 //     .attr("id", "id"+i)
                 //     .attr("x", 100)
                 //     .attr("y", 100)
                 //     .text("test");})
-                .on("mouseout", function(d, i){
+                .on("mouseout", function (d, i) {
                     //Go back to initial settings when user unhovers
                     d3.select(this)
-                        .attr("fill", function(d) { return z(d.key); })
+                        .attr("fill", function (d) {
+                            return z(d.key);
+                        })
 
-                    d3.select("#id" + i).remove();});
+                    d3.select("#id" + i).remove();
+                });
 
 
             // Add horizontal axis with name of the attributes
@@ -199,7 +253,9 @@ class GroupedBarChart extends Graph{
                 .selectAll("g")
                 .data(keys.slice(1))
                 .enter().append("g")
-                .attr("transform", function(d, i) { return "translate(200," + i * 20 + ")"; });
+                .attr("transform", function (d, i) {
+                    return "translate(200," + i * 20 + ")";
+                });
 
             legend.append("rect")
                 .attr("x", cfg.width - 19)
@@ -211,8 +267,9 @@ class GroupedBarChart extends Graph{
                 .attr("x", cfg.width - 24)
                 .attr("y", 9.5)
                 .attr("dy", "0.32em")
-                .text(function(d) { return d; });
-
+                .text(function (d) {
+                    return d;
+                });
 
 
             g.selectAll("g")
@@ -224,8 +281,8 @@ class GroupedBarChart extends Graph{
 
     showRadarChart(type, show) {
         let variable_time1 = type;
-        let variable_time2 = type+"_2";
-        let variable_time3 = type+"_3";
+        let variable_time2 = type + "_2";
+        let variable_time3 = type + "_3";
 
         this.preprocess(variable_time1, variable_time2, variable_time3);
         d3.select("#main_g").remove();

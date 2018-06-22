@@ -41,14 +41,19 @@
             </div>
         </div>
         <div class="options" id="options-wave">
-            <input type="checkbox" id="GG" checked>
-            <label for="GG">Green-Green</label>
-            <input type="checkbox" id="GR" checked>
-            <label for="GR">Green-Red</label>
-            <input type="checkbox" id="RG" checked>
-            <label for="RG">Red-Green</label>
-            <input type="checkbox" id="RR" checked>
-            <label for="RR">Red-Red</label>
+            <div id="options-wave-container">
+                <div id="label-middle-line-wave">
+                    Middle lines selection
+                </div>
+                <input type="checkbox" id="GG" checked>
+                <label for="GG"><span></span>Match</label><br>
+                <input type="checkbox" id="GR" checked>
+                <label for="GR"><span></span>Man accepted - Woman refused</label><br>
+                <input type="checkbox" id="RG" checked>
+                <label for="RG"><span></span>Man refused - Woman accepted</label><br>
+                <input type="checkbox" id="RR" checked>
+                <label for="RR"><span></span>No match</label>
+            </div>
         </div>
         <div id="graph-container-wave">
             <div id="graph-wave"></div>

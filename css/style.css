@@ -2,6 +2,8 @@ body {
     width: 100vw;
     height: 100vh;
     margin: 0;
+    font-variant: small-caps;
+    font-family: sans-serif;
 }
 
 body > nav {
@@ -26,8 +28,6 @@ article .activeTab {
     display: grid;
 }
 
-
-
 /*---------------------- TABS ----------------------*/
 .title {
     padding: 5px;
@@ -40,7 +40,7 @@ article .activeTab {
 /*WAVE*/
 #tab-wave {
     grid-template-columns: 40% 40% auto;
-    grid-template-rows: 5% 75% auto;
+    grid-template-rows: 5% 75% auto 5%;
     /*background-color: #66e0ff;*/
 }
 
@@ -76,7 +76,15 @@ article .activeTab {
     grid-column-end: 2;
     grid-row-start: 3;
     grid-row-end: 4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     /*background-color: #34495e;*/
+}
+
+#options-wave-container {
+    width: 90%;
+    height: 100%;
 }
 
 #options-columns-wave {
@@ -92,6 +100,9 @@ article .activeTab {
     width: 100%;
     height: 5%;
     text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     /*border: 1px solid #ddd;*/
 }
 
@@ -121,6 +132,11 @@ article .activeTab {
     align-content: center;
 }
 
+#nb-wave {
+    right: 2%;
+    position: absolute;
+}
+
 #list-col-wave ul {
     list-style-type: none;
     padding: 0 10px 0 10px;
@@ -134,8 +150,7 @@ article .activeTab {
 }
 
 #list-col-wave li:nth-child(odd) {
-    background-color: #ffb3da;
-;
+    background-color: #ffb3da;;
 }
 
 #list-col-wave li:hover {
@@ -149,11 +164,15 @@ article .activeTab {
     background-color: rgba(255, 179, 204, 0.3);
 }
 
+label > span {
+    padding-right: 5px;
+}
+
 /*PERSON*/
 #tab-person {
     background-color: white;
-    grid-template-columns: 40% 30% auto;
-    grid-template-rows: 5% 30% 30% auto;
+    grid-template-columns: 40% 30% 30%;
+    grid-template-rows: 5% 30% 30% 35%;
 }
 
 #select-person {
@@ -215,6 +234,11 @@ article .activeTab {
     background-color: #96cd85;
 }
 
+#iid-person {
+    right: 2%;
+    position: absolute;
+}
+
 .plot-density {
     display: grid;
     grid-template-rows: 10% 90%;
@@ -272,7 +296,7 @@ article .activeTab {
     margin: auto;
 }
 
-#sbc-success-plot{
+#sbc-success-plot {
     width: 100%;
     flex: 1.4;
     display: flex;
@@ -283,54 +307,50 @@ article .activeTab {
     display: flex;
 }
 
-#success_primary_feature_table{
+#success_primary_feature_table {
     margin: auto;
 }
 
-#button_get_iids{
+#button_get_iids {
     margin: auto;
 }
-
 
 th {
-  color:#D5DDE5;;
-  background:#1b1e24;
-  font-size:1.3em;
-  font-weight: 100;
-  padding:0.7em;
-  vertical-align:middle;
+    color: #D5DDE5;;
+    background: #1b1e24;
+    font-size: 1.3em;
+    font-weight: 100;
+    padding: 0.7em;
+    vertical-align: middle;
 }
 
 tr {
-  color:#666B85;
-  font-size:0.8em;
-  font-weight:normal;
+    color: #666B85;
+    font-size: 0.8em;
+    font-weight: normal;
 }
- 
+
 tr:hover td {
-  background:#5689cd;
-  color:#FFFFFF;
+    background: #5689cd;
+    color: #FFFFFF;
 }
- 
 
 tr:nth-child(odd) td {
-  background:#EBEBEB;
+    background: #EBEBEB;
 }
- 
+
 tr:nth-child(odd):hover td {
-  background:#5689cd;
+    background: #5689cd;
 }
- 
+
 td {
-  background:#FFFFFF;
-  padding:0.7em;
-  text-align:right;
-  vertical-align:middle;
-  font-weight:300;
-  font-size: 1.1em;
+    background: #FFFFFF;
+    padding: 0.7em;
+    text-align: right;
+    vertical-align: middle;
+    font-weight: 300;
+    font-size: 1.1em;
 }
-
-
 
 #feat1-success {
     grid-column-start: 2;
@@ -340,13 +360,14 @@ td {
     background-color: #698bcd;
 }
 
-#feat2-success{
+#feat2-success {
     grid-column-start: 2;
     grid-column-end: 3;
     grid-row-start: 3;
     grid-row-end: 4;
     background-color: #4f2bcd;
 }
+
 /*---------------------- PARALLEL COORDINATES ----------------------*/
 .pc .background path {
     fill: none;
