@@ -127,8 +127,8 @@ class ScatterBubble extends Graph{
         
         this.margin = {top: this.height*(5/100), right: this.width*(5/100), bottom: this.height*(10/100), left: this.width*(10/100)};
 
-        this.innerWidth = this.width - margin.left - margin.right,
-            this.innerHeight = this.height - margin.top - margin.bottom;
+        this.innerWidth = this.width - this.margin.left - this.margin.right,
+            this.innerHeight = this.height - this.margin.top - this.margin.bottom;
 
         // let margin = {top: 20, right: 30, bottom: 40, left: 40};
         // let width = 500 - margin.left - margin.right;

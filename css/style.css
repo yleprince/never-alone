@@ -27,21 +27,6 @@ article .activeTab {
 }
 
 
-/* YRIEIX ----> */
-#success_primary_feature {
-    position: absolute;
-    margin: 10% 20%;
-    display: flex;
-    align-items: center;
-}
-
-/*#scatter_plot{
-    margin: auto;
-}
-*/
-
-
-/* <------ YRIEIX */
 
 /*---------------------- TABS ----------------------*/
 #tab-home {
@@ -216,6 +201,8 @@ article .activeTab {
     grid-row-start: 1;
     grid-row-end: 3;
     background-color: #3882cd;
+    display: flex;
+    flex-direction: column;
 }
 
 #sbc-success-interaction-div{
@@ -230,8 +217,12 @@ article .activeTab {
 
 #sbc-success-interaction{
     flex: 1;
-    /*display: flex;*/
-    /*flex-direction: column; */
+}
+
+#sbc-success-plot{
+    width: 100%;
+    flex: 1;
+    display: flex;
 }
 
 #success_primary_feature_table{
