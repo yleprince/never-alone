@@ -288,14 +288,37 @@ function main(data) {
 }
 
 function createPC(data) {
+    let waves = new Set();
+    data.forEach(d => waves.add(d.wave));
+
+    let selectWaves = document.getElementById("nb-wave");
+    waves.forEach(w => {
+        let opt = document.createElement("option");
+        opt.innerHTML = "Wave " + w;
+        opt.value = w;
+        selectWaves.appendChild(opt);
+    });
+
+    selectWaves.addEventListener("input", e =>{
+        graph = new ParallelCoordinates("graph-wave", data, {
+            axes: axes,
+            cb: [checkBoxGG.checked, checkBoxGR.checked, checkBoxRG.checked, checkBoxRR.checked],
+            wave: parseInt(selectWaves.value)
+        });
+    });
 
     let defaultAxes = ["age", "field_cd", "exphappy", "goal"];
-    let graph = new ParallelCoordinates("graph-wave", data, {axes: defaultAxes}); // Example : a GraphExample object in the Wave tab
     let checkBoxGG = document.getElementById("GG");
     let checkBoxGR = document.getElementById("GR");
     let checkBoxRG = document.getElementById("RG");
 
     let checkBoxRR = document.getElementById("RR");
+
+    let graph = new ParallelCoordinates("graph-wave", data, {
+        axes: defaultAxes,
+        cb: [checkBoxGG.checked, checkBoxGR.checked, checkBoxRG.checked, checkBoxRR.checked],
+        wave: parseInt(selectWaves.value)
+    });
 
     checkBoxGG.addEventListener("input", e => {
         graph.showMidLines("GG", checkBoxGG.checked);
@@ -312,6 +335,7 @@ function createPC(data) {
     checkBoxRR.addEventListener("input", e => {
         graph.showMidLines("RR", checkBoxRR.checked);
     });
+
     let keys = [];
     let no_feat = ["iid", "id", "idg", "wave", "round", "position", "speedDates", "gender", "condtn", "positin1",
         "field", "from", "zipcode", "career"];
@@ -356,7 +380,7 @@ function createPC(data) {
                 keys.push(feature);
                 if (defaultAxes.includes(feature)) {
                     li.style.display = "none";
-                    addSelected(li);
+                    addSelected(li, false);
                 }
             }
         }
@@ -364,22 +388,33 @@ function createPC(data) {
 
     listCol.appendChild(ul);
 
-    function addSelected(li) {
+    function addSelected(li, regular=true) {
         let span = document.createElement("span");
         span.innerHTML = li.val;
         span.classList.add("col-tag");
         let ax = li.val.split("/");
         axes.push(ax);
-        graphDiv.innerHTML = "";
-        graph = new ParallelCoordinates("graph-wave", data, {axes: axes});
 
+
+        if(regular) {
+            graphDiv.innerHTML = "";
+            graph = new ParallelCoordinates("graph-wave", data, {
+                axes: axes,
+                cb: [checkBoxGG.checked, checkBoxGR.checked, checkBoxRG.checked, checkBoxRR.checked],
+                wave: parseInt(selectWaves.value)
+            });
+        }
 
         span.addEventListener("click", e => {
             li.style.display = "block";
             span.remove();
             axes.splice(axes.indexOf(ax), 1);
             graphDiv.innerHTML = "";
-            graph = new ParallelCoordinates("graph-wave", data, {axes: axes});
+            graph = new ParallelCoordinates("graph-wave", data, {
+                axes: axes,
+                cb: [checkBoxGG.checked, checkBoxGR.checked, checkBoxRG.checked, checkBoxRR.checked],
+                wave: parseInt(selectWaves.value)
+            });
         });
         listSel.append(span)
     }

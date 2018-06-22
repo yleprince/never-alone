@@ -11,6 +11,7 @@ const defaultOptions = {
     wave: 2,
     opacityMiddle: 0.5,
     axes: ["age", "field_cd", "exphappy", "goal"],
+    cb: [true, true, true, true]
 };
 
 class ParallelCoordinates extends Graph {
@@ -29,6 +30,7 @@ class ParallelCoordinates extends Graph {
         this.wave = opts.wave;
         this.opacityMiddle = opts.opacityMiddle;
         this.axes = opts.axes;
+        this.cb = opts.cb;
         // this.colorByAxis = Array.isArray(this.axes[0]) ? this.axes[0][0] + "/" + this.axes[0][1]: this.axes[0];
 
         this.preprocess();
@@ -94,7 +96,6 @@ class ParallelCoordinates extends Graph {
      * Fill SVG for the graph (implement the visualization here)
      */
     createGraph() {
-
         let margin = {top: 50, right: 10, bottom: 50, left: 30},
             innerWidth = this.width - margin.left - margin.right,
             innerHeight = this.height - margin.top - margin.bottom;
@@ -225,7 +226,17 @@ class ParallelCoordinates extends Graph {
                     .attr("y1", y1)
                     .attr("x2", xscale(mid_idx))
                     .attr("y2", dec => (y1 + allDimensions[dest_idx].scale(dec.id_o)) / 2)
-                    .style("opacity", this.opacityMiddle)
+                    .style("opacity", dec => {
+                        if (dec.d === dec.d_o && dec.d === 1) {
+                            return this.cb[0] ? this.opacityMiddle : 0
+                        } else if ((dec.g === 0 && dec.d === 1 && dec.d_o === 0) || (dec.g === 1 && dec.d === 0 && dec.d_o === 1)) {
+                            return this.cb[1] ? this.opacityMiddle : 0
+                        } else if ((dec.g === 0 && dec.d === 0 && dec.d_o === 1) || (dec.g === 1 && dec.d === 1 && dec.d_o === 0)) {
+                            return this.cb[2] ? this.opacityMiddle : 0
+                        } else {
+                            return this.cb[3] ? this.opacityMiddle : 0
+                        }
+                    })
                     .classed("decided", dec => dec.d);
                 return line(project(d));
             })
@@ -314,6 +325,32 @@ class ParallelCoordinates extends Graph {
             .attr("class", "title")
             .attr("text-anchor", "start")
             .text(d => d.globalKey !== "match" ? ("description" in d ? d.description : d.key) : "");
+
+        let size = 24;
+
+        axes
+            .filter(d => d.key === "id")
+            .append("image")
+            .attr("xlink:href", d => d.gender ? "./data/woman.svg" : "./data/man.svg")
+            .attr("transform", `translate(${-size / 2}, ${-size * 2})`)
+            .attr("width", size)
+            .attr("height", size);
+            // .attr("x", function (d) {
+            //     return calcMidPoint(d).x - iconSize / 2;
+            // })
+            // .attr("y", function (d) {
+            //     return calcMidPoint(d).y - iconSize / 2;
+            // })
+            // .attr("transform", function (d) {
+            //     // We need to rotate the images backwards to compensate for the rotation of the menu as a whole
+            //     let mp = calcMidPoint(d);
+            //     let angle = -offsetAngleDeg;
+            //     return "rotate(" + angle + "," + mp.x + "," + mp.y + ")";
+            // })
+            // .style("opacity", 0)
+            // .transition()
+            // .delay(animationDuration)
+            // .style("opacity", 1);
 
         // Add and store a brush for each axis.
         axes.append("g")
