@@ -1,4 +1,4 @@
-d3.radialMenu = function() {
+d3.radialMenu = function () {
 
     // Protect against missing new keyword
     if (!(this instanceof d3.radialMenu)) {
@@ -14,7 +14,9 @@ d3.radialMenu = function() {
     let thickness = 20;
     let iconSize = 16;
     let animationDuration = 250;                // The duration to run animations for
-    let onClick = function(a) { alert(a); };
+    let onClick = function (a) {
+        alert(a);
+    };
 
     // Private Variables
     let offsetAngleDeg = -180 / data.length;    // Initial rotation angle designed to put centre the first segment at the top
@@ -121,7 +123,9 @@ d3.radialMenu = function() {
 
         // Create pie layout 
         pie = d3.pie()
-            .value(function(d) { return data.length; })
+            .value(function (d) {
+                return data.length;
+            })
             .padAngle(padding * Math.PI / 180);
 
         // Create the arc function
@@ -152,7 +156,7 @@ d3.radialMenu = function() {
      * Display the menu
      * @returns {object} The control
      */
-    control.show = function(_) {
+    control.show = function (_) {
 
         // Calculate the new offset angle based on the number of data items and
         // then rotate the menu to re-centre the first segment
@@ -161,7 +165,7 @@ d3.radialMenu = function() {
         segmentLayer.attr("transform", "rotate(" + offsetAngleDeg + ")");
 
         // Join the data to the elements
-        let dataJoin = segmentLayer .selectAll(".menu-segment-container")
+        let dataJoin = segmentLayer.selectAll(".menu-segment-container")
             .data(pie(data));
 
         // Updates first
@@ -170,12 +174,12 @@ d3.radialMenu = function() {
         dataJoin.select(".menu-segment")
             .transition()
             .duration(animationDuration)
-            .attrTween("d", function(a) {
+            .attrTween("d", function (a) {
                 // interpolate the objects - which is going to allow updating 
                 // the angles of the segments within the arc function
                 let i = d3.interpolate(this._current, a);
                 this._current = i(0);
-                return function(t) {
+                return function (t) {
                     return arc(i(t));
                 };
             });
@@ -183,9 +187,13 @@ d3.radialMenu = function() {
         // Update the location of the icons
         dataJoin.select(".menu-icon")
             .transition()
-            .attr("x", function(d) { return calcMidPoint(d).x - iconSize / 2; })
-            .attr("y", function(d) { return calcMidPoint(d).y - iconSize / 2; })
-            .attr("transform", function(d) {
+            .attr("x", function (d) {
+                return calcMidPoint(d).x - iconSize / 2;
+            })
+            .attr("y", function (d) {
+                return calcMidPoint(d).y - iconSize / 2;
+            })
+            .attr("transform", function (d) {
                 let mp = calcMidPoint(d);
                 let angle = -offsetAngleDeg;
                 return "rotate(" + angle + "," + mp.x + "," + mp.y + ")";
@@ -194,32 +202,44 @@ d3.radialMenu = function() {
         // Enter new actors
 
         // Enter the groups
-        let menuSegments = dataJoin .enter()
+        let menuSegments = dataJoin.enter()
             .append("g")
             .attr("class", "menu-segment-container");
 
-        // Add the segments
+        // Chris
         let tabs = document.getElementsByClassName("tab");
+
+        // Add the segments
         menuSegments.append("path")
             .attr("class", "menu-segment")
-            .each(function(d) { this._current = d; }) // store the initial data value for later
+            .each(function (d) {
+                this._current = d;
+            })                   // store the initial data value for later
             // .on("click", function(d) { alert(d.data.action); })
-            .on("click", function(d) {
-                console.log("menuSegments");
-                console.log(tabs);
+            // Chris
+            .on("click", function (d) {
+                // console.log("menuSegments");
+                // console.log(tabs);
+                // console.log(d);
                 for (let tab of tabs) {
                     console.log("tab:" + tab);
                     tab.classList.toggle("activeTab", false);
                 }
-                tabs[d.data.action].classList.toggle("activeTab");
+                let actualTab = tabs[d.data.action];
+                let event = new CustomEvent("open", {
+                    detail: {
+                        type: "activate"
+                    }
+                });
+                actualTab.dispatchEvent(event);
             })
             .transition()
             .duration(animationDuration)
-            .attrTween("d", function(a) {
+            .attrTween("d", function (a) {
                 // Create interpolations from the 0 to radius - to give the impression of an expanding menu
-                let innerTween = d3.interpolate(0, radius);
-                let outerTween = d3.interpolate(0, arc.outerRadius()());
-                return function(t) {
+                var innerTween = d3.interpolate(0, radius);
+                var outerTween = d3.interpolate(0, arc.outerRadius()());
+                return function (t) {
                     // Re-configure the radius of the arc
                     return arc.innerRadius(innerTween(t)).outerRadius(outerTween(t))(a);
                 };
@@ -228,12 +248,18 @@ d3.radialMenu = function() {
         // Add the icons   
         menuSegments.append("image")
             .attr("class", "menu-icon")
-            .attr("xlink:href", function(d) { return d.data.icon; })
+            .attr("xlink:href", function (d) {
+                return d.data.icon;
+            })
             .attr("width", iconSize)
             .attr("height", iconSize)
-            .attr("x", function(d) { return calcMidPoint(d).x - iconSize / 2; })
-            .attr("y", function(d) { return calcMidPoint(d).y - iconSize / 2; })
-            .attr("transform", function(d) {
+            .attr("x", function (d) {
+                return calcMidPoint(d).x - iconSize / 2;
+            })
+            .attr("y", function (d) {
+                return calcMidPoint(d).y - iconSize / 2;
+            })
+            .attr("transform", function (d) {
                 // We need to rotate the images backwards to compensate for the rotation of the menu as a whole
                 let mp = calcMidPoint(d);
                 let angle = -offsetAngleDeg;
@@ -254,10 +280,10 @@ d3.radialMenu = function() {
      * Hide the menu
      * @returns {object} The control
      */
-    control.hide = function() {
+    control.hide = function () {
 
         // Join the data with an empty array so that we'll exit all actors
-        let dataJoin = segmentLayer .selectAll(".menu-segment-container")
+        let dataJoin = segmentLayer.selectAll(".menu-segment-container")
             .data(pie([]))
             .exit();
 
@@ -273,16 +299,16 @@ d3.radialMenu = function() {
             .transition()
             .delay(animationDuration)       // wait for the icons to fade
             .duration(animationDuration)
-            .attrTween("d", function(a) {
+            .attrTween("d", function (a) {
                 // Create interpolations from the radius to 0 - to give the impression of a shrinking menu
                 let innerTween = d3.interpolate(radius, 0);
                 let outerTween = d3.interpolate(arc.outerRadius()(), 0);
-                return function(t) {
+                return function (t) {
                     // Re-configure the radius of the arc
                     return arc.innerRadius(innerTween(t)).outerRadius(outerTween(t))(a);
                 };
             })
-            .each("end", function(d) {
+            .each("end", function (d) {
                 dataJoin.remove();      // Remove all of the segment groups once the transition has completed
             });
 

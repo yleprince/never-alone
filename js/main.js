@@ -1,12 +1,25 @@
 import Graph from "./modules/graphs/Graph.js";
+import ScatterBubble from "./modules/graphs/ScatterBubble.js";
 import GraphExample from "./modules/graphs/GraphExample.js";
 import RadarChart from "./modules/graphs/RadarChart.js";
 import GroupedBarChart from "./modules/graphs/GroupedBarChart.js";
+import ParallelCoordinates from "./modules/graphs/ParallelCoordinates.js";
+import GraphDensityVerticalLine from "./modules/graphs/GraphDensityVerticalLine.js";
+import GraphDensityContinuous from "./modules/graphs/GraphDensityContinuous.js";
+import GraphDensityCategorical from "./modules/graphs/GraphDensityCategorical.js";
+import GraphDensityCategoricalPerson from "./modules/graphs/GraphDensityCategoricalPerson.js";
+
+let setups = {
+    "home": true,
+    "person": false,
+    "wave": false,
+    "success": false
+};
 
 d3.csv("data/SpeedDating.csv")
     .row((d, i) => {
         return {
-            person:{
+            person: {
                 iid: +d.iid,
                 id: +d.id, // for the same wave there is two same id, one for a girl one for a boy
                 gender: +d.gender,
@@ -27,7 +40,7 @@ d3.csv("data/SpeedDating.csv")
                 imprelig: +d.imprelig,
                 from: d.from,
                 zipcode: d.zipcode,
-                income: +d.income,
+                income: parseFloat(d.income.replace(/,/g, '')),
                 goal: +d.goal,
                 date: +d.date,
                 go_out: +d.go_out,
@@ -257,7 +270,7 @@ d3.csv("data/SpeedDating.csv")
         let data = [];
         rows.forEach(r => {
             let p = data.find(d => d.iid === r.person.iid);
-            if(!p) {
+            if (!p) {
                 p = r.person;
                 p.speedDates = [];
                 data.push(p);
@@ -269,20 +282,108 @@ d3.csv("data/SpeedDating.csv")
     });
 
 function main(data) {
+    console.log(data);
     // Create the tabs
-    instantiateNavigation();
+    instantiateNavigation(data);
+}
 
-    //GRAPH EXAMPLE
-    //let graph = new GraphExample("tab-wave", data); // Example : a GraphExample object in the Wave tab
+function createPC(data) {
 
-    //RADAR CHART
-    //createRC(data);
-    let radarChart = new RadarChart("tab-person", data); // RadarChart in the Person tab
-    createChart(data, radarChart)
+    let defaultAxes = ["age", "field_cd", "exphappy", "goal"];
+    let graph = new ParallelCoordinates("graph-wave", data, {axes: defaultAxes}); // Example : a GraphExample object in the Wave tab
+    let checkBoxGG = document.getElementById("GG");
+    let checkBoxGR = document.getElementById("GR");
+    let checkBoxRG = document.getElementById("RG");
 
-    //GROUPED BAR CHART
-    let groupedBarChart = new GroupedBarChart("tab-person", data); // Grouped Bar Chart in the Person tab
-    createChart(data, groupedBarChart)
+    let checkBoxRR = document.getElementById("RR");
+
+    checkBoxGG.addEventListener("input", e => {
+        graph.showMidLines("GG", checkBoxGG.checked);
+    });
+
+    checkBoxGR.addEventListener("input", e => {
+        graph.showMidLines("GR", checkBoxGR.checked);
+    });
+
+    checkBoxRG.addEventListener("input", e => {
+        graph.showMidLines("RG", checkBoxRG.checked);
+    });
+
+    checkBoxRR.addEventListener("input", e => {
+        graph.showMidLines("RR", checkBoxRR.checked);
+    });
+    let keys = [];
+    let no_feat = ["iid", "id", "idg", "wave", "round", "position", "speedDates", "gender", "condtn", "positin1",
+        "field", "from", "zipcode", "career"];
+    let axes = [];
+
+    let ul = document.createElement("ul");
+    let listCol = document.getElementById("list-col-wave");
+    let listSel = document.getElementById("list-sel-wave");
+    let graphDiv = document.getElementById("graph-wave");
+
+
+    for (let feature in data[0]) {
+        if (data[0].hasOwnProperty(feature) && !no_feat.includes(feature)) {
+            let li = document.createElement("li");
+            li.innerHTML = feature;
+            li.val = feature;
+            ul.appendChild(li);
+            if (typeof(data[0][feature]) === "object") {
+                let subUl = document.createElement("ul");
+                for (let feat in data[0][feature]) {
+                    if (data[0][feature].hasOwnProperty(feat)) {
+                        keys.push([feature, feat]);
+                        let li = document.createElement("li");
+                        li.innerHTML = feat;
+                        li.val = feature + "/" + feat;
+                        subUl.appendChild(li);
+
+                        // Add listener on sub li
+                        li.addEventListener("click", e => {
+                            li.style.display = "none";
+                            addSelected(li);
+                        })
+                    }
+                }
+                li.appendChild(subUl);
+            } else {
+                // Add listener on li
+                li.addEventListener("click", e => {
+                    li.style.display = "none";
+                    addSelected(li);
+                });
+                keys.push(feature);
+                if (defaultAxes.includes(feature)) {
+                    li.style.display = "none";
+                    addSelected(li);
+                }
+            }
+        }
+    }
+
+    listCol.appendChild(ul);
+
+    function addSelected(li) {
+        let span = document.createElement("span");
+        span.innerHTML = li.val;
+        span.classList.add("col-tag");
+        let ax = li.val.split("/");
+        axes.push(ax);
+        graphDiv.innerHTML = "";
+        graph = new ParallelCoordinates("graph-wave", data, {axes: axes});
+
+
+        span.addEventListener("click", e => {
+            li.style.display = "block";
+            span.remove();
+            axes.splice(axes.indexOf(ax), 1);
+            graphDiv.innerHTML = "";
+            graph = new ParallelCoordinates("graph-wave", data, {axes: axes});
+        });
+        listSel.append(span)
+    }
+
 }
 
 function createChart(data, graph){
@@ -319,12 +420,85 @@ function createChart(data, graph){
     });
 }
 
-function instantiateNavigation(){
+function setUpHome(data) {
+    if (!setups.home) {
+        // Code for the tab goes here
+
+        setups.home = true;
+    }
+}
+
+function setUpPerson(data) {
+    if (!setups.person) {
+        // Code for the tab goes here
+        let radarChart = new RadarChart("tab-person", data); // RadarChart in the Person tab
+        createChart(data, radarChart)
+
+        //GROUPED BAR CHART
+        let groupedBarChart = new GroupedBarChart("tab-person", data); // Grouped Bar Chart in the Person tab
+        createChart(data, groupedBarChart)
+        // Person chris
+        // Input to define
+        let iid = 1;
+
+        // Button Person
+        let continuousVar = ["age", "date"]; // "income"
+        let categoricalVar = ["race", "goal"]; // "gender", "study", "career", "interest"
+        instantiateButtonFeature(continuousVar, "densityVarPersonContinuous"); // Button Continuous Variable
+        instantiateButtonFeature(categoricalVar, "densityVarPersonCategorical"); // Button Categorical Variable
+
+        // Create Person Density Feature
+        createPersonDensityFeature(data, iid);
+
+        setups.person = true;
+    }
+}
+
+function setUpWave(data) {
+    if (!setups.wave) {
+        // Code for the tab goes here
+
+        createPC(data);
+        setups.wave = true;
+    }
+}
+
+
+function setUpSuccess(data) {
+    if (!setups.success) {
+        // Code for the tab goes here
+
+        //  Success Yrieix
+        let primary_plot = createSuccessPrimaryFeature(data, 
+                                            'sbc-success-plot', 
+                                            'sbc-success-interaction');
+
+        
+        let button_iids = document.getElementById('button_get_iids');
+
+        //  Success Chris Button
+        let continuousVar = ["age", "date"]; // "income"
+        let categoricalVar = ["race", "goal"]; // "gender", "study", "career", "interest"
+        instantiateButtonFeature(continuousVar, "varDensityContinuous"); // Button Continuous Variable
+        instantiateButtonFeature(categoricalVar, "varDensityCategorical"); // Button Categorical Variable
+
+        button_iids.addEventListener('click', e => {
+            let iidSelected = primary_plot.get_clicked();
+            createSuccessSecondaryFeature(data, iidSelected);
+        });
+
+        // Success chris
+        setups.success = true;
+    }
+}
+
+
+function instantiateNavigation(data) {
     let data_menu = [
-        { icon : "./data/menu/home.svg", action: "4" },
-        { icon : "./data/menu/wave.svg", action: "0" },
-        { icon : "./data/menu/person.svg", action: "1" },
-        { icon : "./data/menu/success.svg", action: "2" }
+        {icon: "./data/menu/home.svg", action: "0"},
+        {icon: "./data/menu/wave.svg", action: "1"},
+        {icon: "./data/menu/person.svg", action: "2"},
+        {icon: "./data/menu/success.svg", action: "3"}
     ];
 
     // Show menu launch
@@ -332,4 +506,215 @@ function instantiateNavigation(){
         .thickness(30)
         .appendTo("#menu-holder")
         .show(data_menu);
+
+    let tabHome = document.getElementById("tab-home");
+    let tabPerson = document.getElementById("tab-person");
+    let tabWave = document.getElementById("tab-wave");
+    let tabSuccess = document.getElementById("tab-success");
+    tabHome.addEventListener("open", e => {
+        tabHome.classList.toggle("activeTab");
+        setUpHome(data)
+    });
+    tabPerson.addEventListener("open", e => {
+        tabPerson.classList.toggle("activeTab");
+        setUpPerson(data)
+    });
+    tabWave.addEventListener("open", e => {
+        tabWave.classList.toggle("activeTab");
+        setUpWave(data)
+    });
+    tabSuccess.addEventListener("open", e => {
+        tabSuccess.classList.toggle("activeTab");
+        setUpSuccess(data)
+    });
+}
+
+// Person Density Feature
+function createPersonDensityFeature(data, iid) {
+    // Change Button Continuous Variable
+    let buttonSucessContinuous = document.getElementById("densityVarPersonContinuous");
+    buttonSucessContinuous.addEventListener("change", e => {
+        let x = document.getElementById("densityVarPersonContinuous");
+        let densityVarPersonContinuous = x.value;
+        console.log("Change, densityVarPersonContinuous: " + densityVarPersonContinuous);
+        // Update graph
+        instantiatePersonDensityContinuous(data, "graphVarPersonContinuous", densityVarPersonContinuous, iid);
+    });
+
+    // Change Button Categorical Variable
+    let buttonSucessCategorical = document.getElementById("densityVarPersonCategorical");
+    buttonSucessCategorical.addEventListener("change", e => {
+        let x = document.getElementById("densityVarPersonCategorical");
+        let densityVarPersonCategorical = x.value;
+        console.log("Change, densityVarPersonCategorical: " + densityVarPersonCategorical);
+        // Update graph
+        instantiatePersonDensityCategorical(data, "graphVarPersonCategorical", densityVarPersonCategorical, iid);
+    });
+
+    // Create graph for the first time
+    instantiatePersonDensityContinuous(data, "graphVarPersonContinuous", buttonSucessContinuous.value, iid);
+    instantiatePersonDensityCategorical(data, "graphVarPersonCategorical", buttonSucessCategorical.value, iid);
+}
+
+function instantiatePersonDensityContinuous(data, tabToDisplay, densityVarPersonContinuous, iid) {
+    new GraphDensityVerticalLine(tabToDisplay, data,
+        {
+            densityVarPersonContinuous: densityVarPersonContinuous,
+            iid: iid
+        });
+}
+
+function instantiatePersonDensityCategorical(data, tabToDisplay, densityVarPersonCategorical, iid) {
+    new GraphDensityCategoricalPerson(tabToDisplay, data,
+        {
+            densityVarPersonCategorical: densityVarPersonCategorical,
+            iid: iid
+        });
+}
+
+// Success Secondary Feature
+function createSuccessSecondaryFeature(data, iidSelected) {
+    // Change Button Continuous Variable
+    let buttonSucessContinuous = document.getElementById("varDensityContinuous");
+    buttonSucessContinuous.addEventListener("change", e => {
+        let x = document.getElementById("varDensityContinuous");
+        let currentContinuousVar = x.value;
+        console.log("Change, currentContinuousVar: " + currentContinuousVar);
+        // Update graph
+        instantiateGraphDensityContinuous(data, "graphDensityContinuous", currentContinuousVar, iidSelected);
+    });
+
+    // Change Button Categorical Variable
+    let buttonSucessCategorical = document.getElementById("varDensityCategorical");
+    buttonSucessCategorical.addEventListener("change", e => {
+        let x = document.getElementById("varDensityCategorical");
+        let currentCategoricalVar = x.value;
+        console.log("Change, currentCategoricalVar: " + currentCategoricalVar);
+        // Update graph
+        instantiateGraphDensityCategorical(data, "graphDensityCategorical", currentCategoricalVar, iidSelected);
+    });
+
+    // Create graph for the first time
+    instantiateGraphDensityContinuous(data, "graphDensityContinuous", buttonSucessContinuous.value, iidSelected);
+    instantiateGraphDensityCategorical(data, "graphDensityCategorical", buttonSucessCategorical.value, iidSelected);
+}
+
+function instantiateGraphDensityContinuous(data, tabToDisplay, currentContinuousVar, iidSelected) {
+    new GraphDensityContinuous(tabToDisplay, data,
+        {
+            currentContinuousVar: currentContinuousVar,
+            iidSelected: iidSelected
+        });
+}
+
+function instantiateGraphDensityCategorical(data, tabToDisplay, currentCategoricalVar, iidSelected) {
+    new GraphDensityCategorical(tabToDisplay, data,
+        {
+            currentCategoricalVar: currentCategoricalVar,
+            iidSelected: iidSelected
+        });
+}
+
+function instantiateButtonFeature(list, id) {
+    let elm = document.getElementById(id),
+        df = document.createDocumentFragment();
+    let count = list.length;
+    for (let i = 0; i < count; i++) {
+        let option = document.createElement('option');
+        option.value = list[i];
+        option.appendChild(document.createTextNode(list[i]));
+        df.appendChild(option);
+    }
+    elm.appendChild(df);
+}
+
+
+function createSuccessPrimaryFeature(data, plot_div){
+
+    instantiatePrimaryFeatureInteraction();
+
+    let primary_plot = new ScatterBubble(plot_div, data, 'go_out');
+
+
+
+
+    let selectPrimaryFeature = document.getElementById('primary_feature_select');
+    selectPrimaryFeature.addEventListener('change', function(event){
+        let selected_data = event.target.value; 
+        primary_plot.plot_data(selected_data);
+    });
+
+    return primary_plot;
+}
+
+function instantiatePrimaryFeatureInteraction(){
+
+    let info_div = document.getElementById('sbc-success-info');
+    let interaction_div = document.getElementById('sbc-success-interaction');
+
+    let explorable_variables = [{title:'Carreer', name:'career_c', values:['job1', 'job2']},
+                                {title:'Go out', name:'go_out', values:['very often', 'often']},
+                                {title:'Happiness expectation', name:'exphappy', values:['very happy', 'happy']},
+                                {title:'Age', name:'age', values:[]}
+                                ];
+
+    // add Table hover info
+    let infos = [
+        {label: 'Female value', id: 'female'},
+        {label: 'Male value', id: 'male'},
+        {label: 'Match ratio (%)', id:'match_ratio'},
+        {label: '#Match', id: 'nb_matches'},
+        {label: '#Candidates', id: 'nb_candidates'}
+    ];
+
+    let tble = document.createElement('table');
+    tble.id = 'success_primary_feature_table';
+
+    let tbdy = document.createElement('tbody');
+
+    let header = document.createElement('tr');
+    let h_label = document.createElement('th');
+    h_label.innerHTML = 'Info';
+    header.appendChild(h_label);
+
+    let h_value = document.createElement('th');
+    h_value.innerHTML = 'Value';
+    header.appendChild(h_value);
+    tble.appendChild(header);
+
+
+    for (let info of infos){
+        let tr = document.createElement('tr');
+
+        let td_l = document.createElement('td');
+        td_l.innerHTML = info.label;
+        tr.appendChild(td_l);
+
+        let td_v = document.createElement('td');
+        td_v.innerHTML = '<span id='+ info.id +'></span>';
+        tr.appendChild(td_v);
+
+        tbdy.appendChild(tr);
+    }
+    tble.appendChild(tbdy);
+    info_div.appendChild(tble);
+
+    //Create Select
+    let selectPrimaryFeature = document.createElement("select");
+    selectPrimaryFeature.id = 'primary_feature_select';
+    
+    //Create and append the options
+    for (let property of explorable_variables){
+        let option = document.createElement("option");
+        option.value = property.name;
+        option.text = property.title;
+        selectPrimaryFeature.appendChild(option);
+    }    
+    interaction_div.appendChild(selectPrimaryFeature);
+
+    let btn = document.createElement("button");
+    btn.id = 'button_get_iids';
+    btn.appendChild(document.createTextNode("GET SELECTED"));
+    interaction_div.appendChild(btn);
+
 }
