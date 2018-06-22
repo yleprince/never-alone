@@ -1,6 +1,8 @@
 import Graph from "./modules/graphs/Graph.js";
 import ScatterBubble from "./modules/graphs/ScatterBubble.js";
 import GraphExample from "./modules/graphs/GraphExample.js";
+import RadarChart from "./modules/graphs/RadarChart.js";
+import GroupedBarChart from "./modules/graphs/GroupedBarChart.js";
 import ParallelCoordinates from "./modules/graphs/ParallelCoordinates.js";
 import GraphDensityVerticalLine from "./modules/graphs/GraphDensityVerticalLine.js";
 import GraphDensityContinuous from "./modules/graphs/GraphDensityContinuous.js";
@@ -384,6 +386,39 @@ function createPC(data) {
 
 }
 
+function createChart(data, graph){
+    //let graph = new RadarChart("tab-person", data); // RadarChart in the Person tab
+    let checkboxSelf_traits = document.getElementById("self_traits");
+    let checkboxRating_o = document.getElementById("rating_o");
+    let checkboxSelf_look_traits = document.getElementById("self_look_traits");
+    let checkboxSame_gender_look_traits = document.getElementById("same_gender_look_traits");
+    let checkboxOpposite_gender_look_traits = document.getElementById("opposite_gender_look_traits");
+    let checkboxOpposite_gender_self_traits = document.getElementById("opposite_gender_self_traits");
+
+    checkboxSelf_traits.addEventListener("input", e => {
+        graph.showRadarChart("self_traits", checkboxSelf_traits.checked);
+    });
+
+    checkboxRating_o.addEventListener("input", e => {
+        graph.showRadarChart("rating_o", checkboxRating_o.checked);
+    });
+
+    checkboxSelf_look_traits.addEventListener("input", e => {
+        graph.showRadarChart("self_look_traits", checkboxSelf_look_traits.checked);
+    });
+
+    checkboxSame_gender_look_traits.addEventListener("input", e => {
+        graph.showRadarChart("same_gender_look_traits", checkboxSame_gender_look_traits.checked);
+    });
+
+    checkboxOpposite_gender_look_traits.addEventListener("input", e => {
+        graph.showRadarChart("opposite_gender_look_traits", checkboxOpposite_gender_look_traits.checked);
+    });
+
+    checkboxOpposite_gender_self_traits.addEventListener("input", e => {
+        graph.showRadarChart("opposite_gender_self_traits", checkboxOpposite_gender_self_traits.checked);
+    });
+}
 
 function setUpHome(data) {
     if (!setups.home) {
@@ -396,7 +431,12 @@ function setUpHome(data) {
 function setUpPerson(data) {
     if (!setups.person) {
         // Code for the tab goes here
+        let radarChart = new RadarChart("radar-person", data); // RadarChart in the Person tab
+        createChart(data, radarChart);
 
+        //GROUPED BAR CHART
+        let groupedBarChart = new GroupedBarChart("bar-person", data); // Grouped Bar Chart in the Person tab
+        createChart(data, groupedBarChart);
         // Person chris
         // Input to define
         let iid = 1;
