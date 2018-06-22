@@ -264,6 +264,7 @@ label > span {
     grid-template-rows: 5% 50% auto;
 }
 
+
 #select-success {
     grid-column-start: 1;
     grid-column-end: 3;
@@ -273,6 +274,11 @@ label > span {
     justify-content: center;
     align-items: center;
     background-color: darkblue;
+}
+
+#primary_feature_select{
+    margin-top: 1em;
+    padding: 0.2em;
 }
 
 #sbc-success {
@@ -285,22 +291,18 @@ label > span {
     flex-direction: column;
 }
 
-#sbc-success-interaction-div {
-    width: 100%;
-    display: flex;
-}
-
-#sbc-success-info {
-    flex: 1;
-    display: flex;
-}
-
-#sbc-success-interaction {
-    flex: 1;
+#sbc-success-interaction{
+    height: 1em;
+    margin: auto;
 }
 
 #sbc-success-plot {
     width: 100%;
+    flex: 1.4;
+    display: flex;
+}
+
+#sbc-success-info{
     flex: 1;
     display: flex;
 }

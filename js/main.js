@@ -585,11 +585,14 @@ function setUpWave(data) {
 function setUpSuccess(data) {
     if (!setups.success) {
         // Code for the tab goes here
+        let plot = () => {
+            let iidSelected = primary_plot.get_clicked();
+            createSuccessSecondaryFeature(data, iidSelected);
+        };
 
         //  Success Yrieix
         let primary_plot = createSuccessPrimaryFeature(data,
-            'sbc-success-plot',
-            'sbc-success-interaction');
+            'sbc-success-plot', plot);
 
 
         let button_iids = document.getElementById('button_get_iids');
@@ -600,10 +603,10 @@ function setUpSuccess(data) {
         instantiateButtonFeature(continuousVar, "varDensityContinuous"); // Button Continuous Variable
         instantiateButtonFeature(categoricalVar, "varDensityCategorical"); // Button Categorical Variable
 
-        button_iids.addEventListener('click', e => {
-            let iidSelected = primary_plot.get_clicked();
-            createSuccessSecondaryFeature(data, iidSelected);
-        });
+        // button_iids.addEventListener('click', e => {
+        //     let iidSelected = primary_plot.get_clicked();
+        //     createSuccessSecondaryFeature(data, iidSelected);
+        // });
 
         // Success chris
         setups.success = true;
@@ -747,11 +750,11 @@ function instantiateButtonFeature(list, id) {
 }
 
 
-function createSuccessPrimaryFeature(data, plot_div) {
+function createSuccessPrimaryFeature(data, plot_div, plot) {
 
     instantiatePrimaryFeatureInteraction();
 
-    let primary_plot = new ScatterBubble(plot_div, data, 'go_out');
+    let primary_plot = new ScatterBubble(plot_div, data, 'go_out', plot);
 
 
     let selectPrimaryFeature = document.getElementById('primary_feature_select');
@@ -769,20 +772,21 @@ function instantiatePrimaryFeatureInteraction() {
     let interaction_div = document.getElementById('sbc-success-interaction');
 
     let explorable_variables = [
-        {title: 'Age', name: 'age', values: []},
-        {title: 'Carreer', name: 'career_c', values: ['job1', 'job2']},
-        {title: 'Go out', name: 'go_out', values: ['very often', 'often']},
-        {title: 'Goal', name: 'goal', values: []},
-        {title: 'Happiness expectation', name: 'exphappy', values: ['very happy', 'happy']},
-        {title: 'Importance Race', name: 'imprace', values: []},
-        {title: 'Importance Religion', name: 'imprelig', values: []},
-        {title: 'Race', name: 'race', values: []}
+        {title: 'Carreer', name: 'career_c'},
+        {title: 'Field of Study', name:'field_cd'},
+        {title: 'Go out', name: 'go_out'},
+        {title: 'Goal', name: 'goal'},
+        {title: 'Happiness expectation', name: 'exphappy'},
+        {title: 'Importance Race', name: 'imprace'},
+        {title: 'Importance Religion', name: 'imprelig'},
+        {title: 'Race', name: 'race'},
+        {title: 'Same Race', name: 'samerace'}
     ];
 
     // add Table hover info
     let infos = [
-        {label: 'Female value', id: 'female'},
-        {label: 'Male value', id: 'male'},
+        {label: 'Female', id: 'female'},
+        {label: 'Male', id: 'male'},
         {label: 'Match ratio (%)', id: 'match_ratio'},
         {label: '#Match', id: 'nb_matches'},
         {label: '#Candidates', id: 'nb_candidates'}
@@ -799,7 +803,7 @@ function instantiatePrimaryFeatureInteraction() {
     header.appendChild(h_label);
 
     let h_value = document.createElement('th');
-    h_value.innerHTML = 'Value';
+    h_value.innerHTML = "<span id='sbc-Value'>Value</span>";
     header.appendChild(h_value);
     tble.appendChild(header);
 
@@ -833,9 +837,9 @@ function instantiatePrimaryFeatureInteraction() {
     }
     interaction_div.appendChild(selectPrimaryFeature);
 
-    let btn = document.createElement("button");
-    btn.id = 'button_get_iids';
-    btn.appendChild(document.createTextNode("GET SELECTED"));
-    interaction_div.appendChild(btn);
+    // let btn = document.createElement("button");
+    // btn.id = 'button_get_iids';
+    // btn.appendChild(document.createTextNode("GET SELECTED"));
+    // interaction_div.appendChild(btn);
 
 }
