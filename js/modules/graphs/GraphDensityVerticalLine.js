@@ -25,12 +25,8 @@ class GraphDensityVerticalLine extends Graph{
         this.color = ["#1f78b4"];
         this.size = opts.size;
 
-        this.densityVarPerson1 = options.densityVarPerson1;
-        this.densityVarPerson2 = options.densityVarPerson2;
+        this.densityVarPerson1 = options.densityVarPersonContinuous;
         this.iid = options.iid;
-        console.log(this.densityVarPerson1);
-        console.log(this.densityVarPerson2);
-        console.log(this.iid);
 
         this.preprocess();
         this.createGraph();
@@ -49,14 +45,6 @@ class GraphDensityVerticalLine extends Graph{
         this.valueDensityVarPerson1 = this.preprocessValueDensityVarPerson(this.densityVarPerson1, this.iid, this.dataDensityVarPerson1);
         console.log("valueDensityVarPerson1");
         console.log(this.valueDensityVarPerson1);
-
-        this.dataDensityVarPerson2 = this.preprocessDensityVarPerson(this.densityVarPerson2);
-        console.log("dataDensityVarPerson2");
-        console.log(this.dataDensityVarPerson2);
-
-        this.valueDensityVarPerson2 = this.preprocessValueDensityVarPerson(this.densityVarPerson2, this.iid, this.dataDensityVarPerson2);
-        console.log("valueDensityVarPerson2");
-        console.log(this.valueDensityVarPerson2);
     }
 
     preprocessDensityVarPerson(current_tmp_var){
@@ -75,8 +63,16 @@ class GraphDensityVerticalLine extends Graph{
 
     preprocessValueDensityVarPerson(current_tmp_var, tmp_iid, tmp_density){
         // Get all data
+        console.log("preprocessValueDensityVarPerson");
+        console.log(current_tmp_var);
+        console.log(tmp_iid);
+        console.log(tmp_density);
+
         let tmp_element = this.allData.map(d => {return {key : d[current_tmp_var], iid : d["iid"]}})
             .filter(d => d.iid === tmp_iid);
+
+        console.log("tmp_element");
+        console.log(tmp_element);
 
         let tmp_value = new Array(2);
         tmp_value["key"] = tmp_element[0].key;
@@ -95,27 +91,23 @@ class GraphDensityVerticalLine extends Graph{
     /**
      * Fill SVG for the graph (implement the visualization here)
      */
-    createGraph(){
-        // TODO : implement margin, axis according to your needs
-        let margin1 = {top: this.height*(10/100), right: this.width*(5/100), bottom: this.height*(80/100), left: this.width*(75/100)};
-        this.createContinuousGraph(this.dataDensityVarPerson1, this.valueDensityVarPerson1, margin1);
-
-        let margin2 = {top: this.height*(30/100), right: this.width*(5/100), bottom: this.height*(60/100), left: this.width*(75/100)};
-        this.createContinuousGraph(this.dataDensityVarPerson2, this.valueDensityVarPerson2, margin2);
+    createGraph() {
+        // Define data
+        this.createContinuousGraph(this.dataDensityVarPerson1, this.valueDensityVarPerson1);
     }
 
-    createContinuousGraph(data, valuePerson, margin){
+    createContinuousGraph(data, valuePerson){
+        // TODO : implement margin, axis according to your needs
+        let margin = {top: this.height*(5/100), right: this.width*(5/100), bottom: this.height*(10/100), left: this.width*(10/100)};
         let innerWidth = this.width - margin.left - margin.right,
             innerHeight = this.height - margin.top - margin.bottom;
 
         const x = d3.scaleLinear()
             .range([0, innerWidth])
-            // .domain([0, d3.max(this.dataFullContinuous, function(d) { return d.key; })]);
             .domain(d3.extent(data, d => d.key));
 
         const y = d3.scaleLinear()
             .range([innerHeight, 0])
-            // .domain([0, d3.max(this.dataFullContinuous, function(d) { return d.value; })]);
             .domain(d3.extent(data, d => d.value));
 
         let z = d3.scaleOrdinal().range(this.color);
@@ -145,9 +137,9 @@ class GraphDensityVerticalLine extends Graph{
 
         // Value Person
         g.append("line")
-            .attr("x1", x(valuePerson.key))  //<<== change your code here
+            .attr("x1", x(valuePerson.key))
             .attr("y1", y(0))
-            .attr("x2", x(valuePerson.key))  //<<== and here
+            .attr("x2", x(valuePerson.key))
             .attr("y2", y(valuePerson.value))
             .style("stroke-width", 2)
             .style("stroke", "red")
@@ -162,33 +154,7 @@ class GraphDensityVerticalLine extends Graph{
         // y axis
         g.append("g")
             .attr("class", "y axis")
-            // .attr("transform", "translate(0, " + innerWidth + ")")
             .call(d3.axisLeft(y));
-
-        // Keys
-        let keys = ["key", "Full"];
-
-        // Legend
-        let legend = g.append("g")
-            .attr("font-family", "sans-serif")
-            .attr("font-size", 10)
-            .attr("text-anchor", "end")
-            .selectAll("g")
-            .data(keys.slice(1))
-            .enter().append("g")
-            .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
-
-        legend.append("rect")
-            .attr("x", innerWidth - 19)
-            .attr("width", 19)
-            .attr("height", 19)
-            .attr("fill", z);
-
-        legend.append("text")
-            .attr("x", innerWidth - 24)
-            .attr("y", 9.5)
-            .attr("dy", "0.32em")
-            .text(function(d) { return d; });
     }
 
     /**
