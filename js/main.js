@@ -612,10 +612,15 @@ function instantiatePrimaryFeatureInteraction(){
     let info_div = document.getElementById('sbc-success-info');
     let interaction_div = document.getElementById('sbc-success-interaction');
 
-    let explorable_variables = [{title:'Carreer', name:'career_c', values:['job1', 'job2']},
+    let explorable_variables = [
+                                {title:'Age', name:'age', values:[]},
+                                {title:'Carreer', name:'career_c', values:['job1', 'job2']},
                                 {title:'Go out', name:'go_out', values:['very often', 'often']},
+                                {title:'Goal', name:'goal', values:[]},
                                 {title:'Happiness expectation', name:'exphappy', values:['very happy', 'happy']},
-                                {title:'Age', name:'age', values:[]}
+                                {title:'Importance Race', name:'imprace', values:[]},
+                                {title:'Importance Religion', name:'imprelig', values:[]},
+                                {title:'Race', name:'race', values:[]}
                                 ];
 
     // add Table hover info

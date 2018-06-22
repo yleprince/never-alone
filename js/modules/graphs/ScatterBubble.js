@@ -63,14 +63,24 @@ class ScatterBubble extends Graph{
                             career_c : d.career_c,
                             go_out: d.go_out,
                             exphappy: d.exphappy,
-                            age: d.age};
+                            age: d.age,
+                            race: d.race,
+                            imprace: d.imprace,
+                            imprelig: d.imprelig,
+                            goal: d.goal
+                        };
                 }
                 else{
                     females[d.iid] = {iid: d.iid,
                                 career_c : d.career_c,
                                 go_out: d.go_out,
                                 exphappy: d.exphappy,
-                                age: d.age};
+                                age: d.age,
+                                race: d.race,
+                                imprace: d.imprace,
+                                imprelig: d.imprelig,
+                                goal: d.goal
+                            };
                 }
         });
 
