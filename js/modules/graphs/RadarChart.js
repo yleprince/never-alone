@@ -120,8 +120,8 @@ class RadarChart extends Graph{
 
         let cfg = {
             radius: 5,
-            w : 500 - margin.left - margin.right,
-            h : 500 - margin.top - margin.bottom,
+            w : this.width - margin.left - margin.right,
+            h : this.height - margin.top - margin.bottom,
             factor: 1,
             factorLegend: .85,
             levels: 5,

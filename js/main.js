@@ -431,12 +431,12 @@ function setUpHome(data) {
 function setUpPerson(data) {
     if (!setups.person) {
         // Code for the tab goes here
-        let radarChart = new RadarChart("tab-person", data); // RadarChart in the Person tab
-        createChart(data, radarChart)
+        let radarChart = new RadarChart("radar-person", data); // RadarChart in the Person tab
+        createChart(data, radarChart);
 
         //GROUPED BAR CHART
-        let groupedBarChart = new GroupedBarChart("tab-person", data); // Grouped Bar Chart in the Person tab
-        createChart(data, groupedBarChart)
+        let groupedBarChart = new GroupedBarChart("bar-person", data); // Grouped Bar Chart in the Person tab
+        createChart(data, groupedBarChart);
         // Person chris
         // Input to define
         let iid = 1;
