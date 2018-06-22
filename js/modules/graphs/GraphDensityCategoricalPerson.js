@@ -47,6 +47,11 @@ class GraphDensityCategoricalPerson extends Graph{
             .sortKeys(d3.ascending)
             .rollup(function(v) { return v.length; })
             .entries(this.dataCategorical);
+
+        // Get filter data
+        this.dataCategoricalFilter = this.allData.map(d => {return {tmp_var : d[this.currentCategoricalVar], iid : d["iid"]}})
+            .find(d => d.iid === this.iid);
+        console.log("this.dataCategoricalFilter:", this.dataCategoricalFilter)
     }
 
     /**
@@ -96,7 +101,7 @@ class GraphDensityCategoricalPerson extends Graph{
                     return 0;
                 }
             })
-            .attr("fill", function(d) { return z(d.key); })
+            .attr("fill", d => parseInt(d.key) === this.dataCategoricalFilter.tmp_var ? "red" : this.color[0])
             .on("mouseover", function(d, i){
                 //Change color when bar hovers
                 d3.select(this)
