@@ -58,7 +58,7 @@ class GroupedBarChart extends Graph{
                 Attractive : d[variable_time3].att, Intelligent : d[variable_time3].int, Sincere : d[variable_time3].sin}});
 
 
-        this.dataSelf_traits = [
+        this.data = [
             [
                 {"Attribute": "Ambitious",
                     "During the event": this.dataDuringEvent[0].Ambitious,
@@ -87,7 +87,7 @@ class GroupedBarChart extends Graph{
         //console.log(this.dataDuringEvent);
         //console.log(this.data1DayAftEvent);
         //console.log(this.data3WeeksAftEvent);
-        console.log(this.dataSelf_traits[0]);
+        console.log(this.data[0]);
 
     }
 
@@ -105,6 +105,7 @@ class GroupedBarChart extends Graph{
 
         // Declare a SVG
         let g = this.svg.append("g")
+            .attr("id", "main_g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
         this._g = g;
@@ -123,13 +124,15 @@ class GroupedBarChart extends Graph{
             .range(["#6F257F", "#CA0D59", "#7CFC00"])
 
 
-        //"self_traits"
-        // let series = 0;
-        // buildChart(this.dataSelf_traits[0]);
-        //series++;
+        // "self_traits"
+        let series = 0;
+        buildChart(this.data[0]);
+        console.log(this._g.selectAll((".g0")));
+        series++;
 
 
-        this.buildChart = function (data){
+        //this.buildChart = function (data){
+        function buildChart(data){
             let keys = d3.keys(data[0]);
             console.log("key: " + keys.slice(1));
 
@@ -144,9 +147,11 @@ class GroupedBarChart extends Graph{
 
             // Plot the bars
             g.append("g")
-                .selectAll("g")
+                .selectAll(".bars")
                 .data(data)
                 .enter().append("g")
+                // .attr("class", "g" + series)
+                .attr("class", "bars")
                 .attr("transform", function(d) { return "translate(" + x0(d.Attribute) + ",0)"; })
                 .selectAll("rect")
                 .data(function(d) { return keys.slice(1).map(function(key) { return {key: key, value: d[key]}; }); })
@@ -217,6 +222,11 @@ class GroupedBarChart extends Graph{
                 .attr("y", 9.5)
                 .attr("dy", "0.32em")
                 .text(function(d) { return d; });
+
+
+
+            g.selectAll("g")
+                .exit().remove()
         }
 
     }
@@ -232,31 +242,33 @@ class GroupedBarChart extends Graph{
         let variable_time3 = type+"_3";
 
         this.preprocess(variable_time1, variable_time2, variable_time3);
+        d3.select("#main_g").remove();
         this.createGraph();
+
 
         switch (type) {
             //case (type==="self_traits" && show===true):
             case "self_traits":
-                console.log("this._g.selectAll(\"g\")" + JSON.stringify(this._g));
-                this._g.selectAll("g")
-                    .selectAll("rect")
-                    .style("opacity", 0)
-                this.buildChart(this.dataSelf_traits[0]);
+                // console.log("this._g.selectAll(\"g\")" + JSON.stringify(this._g));
+                // this._g.selectAll("g")
+                //     .selectAll("rect")
+                //     .style("opacity", 0)
+                // this.buildChart(this.data[0]);
                 break;
             case "rating_o":
                 ///!\ rating_o : pas de notion de notes evolutives au cours du temps
                 break;
             case "self_look_traits":
-                this.buildChart(this.dataSelf_traits[0]);
+                // this.buildChart(this.data[0]);
                 break;
             case "same_gender_look_traits":
-                this.buildChart(this.dataSelf_traits[0]);
+                // this.buildChart(this.data[0]);
                 break;
             case "opposite_gender_look_traits":
-                this.buildChart(this.dataSelf_traits[0]);
+                // this.buildChart(this.data[0]);
                 break;
             case "opposite_gender_self_traits":
-                this.buildChart(this.dataSelf_traits[0]);
+                // this.buildChart(this.data[0]);
                 break;
             //default:
             //    console.error("None of the above");
