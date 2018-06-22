@@ -27,19 +27,18 @@ class ScatterBubble extends Graph{
      * @param allData the data used to draw the Graph
      * @param options optional variables for the Graph
      */
-    constructor(div_id, allData, selected_feature, options={}){
+    constructor(div_id, allData, selected_feature, clicked_function, options={}){
         super(div_id, allData);
 
+        this.clicked_function = clicked_function;
         let opts = fillWithDefault(options, defaultOptions);
         this.color = opts.color;
         this.size = opts.size;
 
-        // this.properties = ["career_c","go_out","exphappy","age"];
 
         this.preprocess();
         this.createGraph();
 
-        // console.log('this.allData', this.allData);
     }
 
     /**
@@ -67,20 +66,22 @@ class ScatterBubble extends Graph{
                             race: d.race,
                             imprace: d.imprace,
                             imprelig: d.imprelig,
-                            goal: d.goal
+                            goal: d.goal,
+                            field_cd: d.field_cd
                         };
                 }
                 else{
                     females[d.iid] = {iid: d.iid,
-                                career_c : d.career_c,
-                                go_out: d.go_out,
-                                exphappy: d.exphappy,
-                                age: d.age,
-                                race: d.race,
-                                imprace: d.imprace,
-                                imprelig: d.imprelig,
-                                goal: d.goal
-                            };
+                            career_c : d.career_c,
+                            go_out: d.go_out,
+                            exphappy: d.exphappy,
+                            age: d.age,
+                            race: d.race,
+                            imprace: d.imprace,
+                            imprelig: d.imprelig,
+                            goal: d.goal,
+                            field_cd: d.field_cd
+                        };  
                 }
         });
 
@@ -94,7 +95,6 @@ class ScatterBubble extends Graph{
                 }
             }
         }
-        console.log('scatter_data', this.scatter_data);
 
     }
 
@@ -137,17 +137,10 @@ class ScatterBubble extends Graph{
         
         this.margin = {top: this.height*(5/100), right: this.width*(5/100), bottom: this.height*(10/100), left: this.width*(10/100)};
 
-        this.innerWidth = this.width - this.margin.left - this.margin.right,
-            this.innerHeight = this.height - this.margin.top - this.margin.bottom;
+        this.innerWidth = this.width - this.margin.left - this.margin.right;
+        this.innerHeight = this.height - this.margin.top - this.margin.bottom;
 
-        // let margin = {top: 20, right: 30, bottom: 40, left: 40};
-        // let width = 500 - margin.left - margin.right;
-        // let height = 300 - margin.top - margin.bottom;
 
-        // this.canvas_param = {c_margin:margin, c_w: width, c_h: height};
-
-        // this.svg.attr("width", width + margin.left + margin.right)
-                // .attr("height", height + margin.top + margin.bottom);
         this.g = this.svg.append("g")
                     .attr('id', 'scatter_container')
                     .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
@@ -161,9 +154,28 @@ class ScatterBubble extends Graph{
         this.g.selectAll("g").remove();
         this.g.selectAll(".dot").remove();
 
+        let property_desc = {
+            'career_c':{title:'Carreer', desc: ''},
+            'field_cd':{title:'Field of Study', desc: ''},
+            'go_out':{title:'Go out', desc: ''},
+            'goal':{title:'Goal', desc: ''},
+            'exphappy':{title:'Happiness expectation', desc: ''},
+            'imprace':{title:'Importance Race', desc: ''},
+            'imprelig':{title:'Importance Religion', desc: ''},
+            'race':{title:'Race', desc: ''}
+        }
+
+
+
+        document.getElementById('sbc-Value').innerHTML = property_desc[property].title;
+
+
+
+
+
+
         
         this.scatterize(property);
-        console.log('Scattered data', this.scat);
         
         const x = d3.scaleLinear()
             .range([0, this.innerWidth])
@@ -220,6 +232,19 @@ class ScatterBubble extends Graph{
                         male: document.getElementById('male')
                     }
 
+        let ticks = {
+            'field_cd':['Not answered', 'Law', 'Math', 'Social Science, Psychologist', 'Medical Science, Pharmaceuticals, and Bio Tech', 'Engineering', 'English/Creative Writing/ Journalism', 'History/Religion/Philosophy', 'Business/Econ/Finance', 'Education, Academia', 'Biological Sciences/Chemistry/Physics', 'Social Work', 'Undergrad/undecided', 'Political Science/International Affairs', 'Film', 'Fine Arts/Arts Administration', 'Languages', 'Architecture', 'Other'],
+            "race": ['Not answered', 'Black/African American', 'European/Caucasian-American', 'Latino/Hispanic American', 'Asian/Pacific Islander/Asian-American', 'Native American', 'Other'],
+            "imprace": ['Not answered', 'Not important at all', 'Not important', 'Not that important', 'Somewhat important', 'Quite important', 'important', 'very important', 'extremely important', 'tremendously important', 'Nothing more important'],
+            "imprelig": ['Not answered', 'Not important at all', 'Not important', 'Not that important', 'Somewhat important', 'Quite important', 'important', 'very important', 'extremely important', 'tremendously important', 'Nothing more important'],
+            "goal": ['Not answered', 'Seemed like a fun night out', 'To meet new people', 'To get a date', 'Looking for a serious relationship', 'To say I did it', 'Other'],
+            "date": ['Not answered', 'Several times a week', 'Twice a week', 'Once a week', 'Twice a month', 'Once a month', 'Several times a year', 'Almost never'],
+            "go_out": ['Not answered', 'Several times a week', 'Twice a week', 'Once a week', 'Twice a month', 'Once a month', 'Several times a year', 'Almost never'],
+            "career_c": ['Not answered','Lawyer', 'Academic/Research', 'Psychologist', 'Doctor/Medicine', 'Engineer', 'Creative Arts/Entertainment', 'Banking/Consulting/Finance/Marketing/Business/CEO/Entrepreneur/Admin', 'Real Estate', 'International/Humanitarian Affairs', 'Undecided', 'Social Work', 'Speech Pathology', 'Politics', 'Pro sports/Athletics', 'Other', 'Journalism', 'Architecture'],
+            "exphappy": ['Not answered', 'Not happy at all', 'Not happy', 'Not that happy', 'Somewhat happy', 'Quite happy', 'happy', 'very happy', 'extremely happy', 'tremendously happy', "Couldn't be more happy"]
+            };
+
+        let clicked_function = this.clicked_function;
         this.g.selectAll(".dot")
             .data(this.scat)
             .enter().append("circle")
@@ -234,8 +259,8 @@ class ScatterBubble extends Graph{
                 infos.nb_candidates.innerHTML = d.count;
                 infos.nb_matches.innerHTML = d.matches; 
                 infos.match_ratio.innerHTML = Math.trunc(1000*d.matches/d.count)/10;            
-                infos.female.innerHTML = d.x;
-                infos.male.innerHTML = d.y;
+                infos.female.innerHTML = ticks[property][d.x];
+                infos.male.innerHTML = ticks[property][d.y];
 
             })
             .on('mouseout', function (d) {
@@ -253,6 +278,8 @@ class ScatterBubble extends Graph{
                 } else {
                     d3.select(this).attr('stroke-width', 0);
                 }
+
+                clicked_function();
             });
 
         
