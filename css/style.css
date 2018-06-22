@@ -39,44 +39,7 @@ article .activeTab {
     margin: auto;
 }
 */
- 
-th {
-  color:#D5DDE5;;
-  background:#1b1e24;
-  font-size:1.3em;
-  font-weight: 100;
-  padding:0.7em;
-  vertical-align:middle;
-}
 
-tr {
-  color:#666B85;
-  font-size:0.8em;
-  font-weight:normal;
-}
- 
-tr:hover td {
-  background:#5689cd;
-  color:#FFFFFF;
-}
- 
-
-tr:nth-child(odd) td {
-  background:#EBEBEB;
-}
- 
-tr:nth-child(odd):hover td {
-  background:#5689cd;
-}
- 
-td {
-  background:#FFFFFF;
-  padding:0.7em;
-  text-align:right;
-  vertical-align:middle;
-  font-weight:300;
-  font-size: 1.1em;
-}
 
 /* <------ YRIEIX */
 
@@ -254,6 +217,71 @@ td {
     grid-row-end: 3;
     background-color: #3882cd;
 }
+
+#sbc-success-interaction-div{
+    width: 100%;
+    display: flex;
+}
+
+#sbc-success-info{
+    flex: 1;
+    display: flex;
+}
+
+#sbc-success-interaction{
+    flex: 1;
+    /*display: flex;*/
+    /*flex-direction: column; */
+}
+
+#success_primary_feature_table{
+    margin: auto;
+}
+
+#button_get_iids{
+    margin: auto;
+}
+
+
+th {
+  color:#D5DDE5;;
+  background:#1b1e24;
+  font-size:1.3em;
+  font-weight: 100;
+  padding:0.7em;
+  vertical-align:middle;
+}
+
+tr {
+  color:#666B85;
+  font-size:0.8em;
+  font-weight:normal;
+}
+ 
+tr:hover td {
+  background:#5689cd;
+  color:#FFFFFF;
+}
+ 
+
+tr:nth-child(odd) td {
+  background:#EBEBEB;
+}
+ 
+tr:nth-child(odd):hover td {
+  background:#5689cd;
+}
+ 
+td {
+  background:#FFFFFF;
+  padding:0.7em;
+  text-align:right;
+  vertical-align:middle;
+  font-weight:300;
+  font-size: 1.1em;
+}
+
+
 
 #feat1-success {
     grid-column-start: 2;
