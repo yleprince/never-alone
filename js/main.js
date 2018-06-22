@@ -311,7 +311,6 @@ function createPC(data) {
     let checkBoxGG = document.getElementById("GG");
     let checkBoxGR = document.getElementById("GR");
     let checkBoxRG = document.getElementById("RG");
-
     let checkBoxRR = document.getElementById("RR");
 
     let graph = new ParallelCoordinates("graph-wave", data, {
@@ -335,6 +334,74 @@ function createPC(data) {
     checkBoxRR.addEventListener("input", e => {
         graph.showMidLines("RR", checkBoxRR.checked);
     });
+
+    let w = 100;
+    let h = 10;
+
+    d3.select("label[for=GG] span")
+        .append("svg")
+        .attr("width", w)
+        .attr("height", h)
+        .append("g")
+        .selectAll("line")
+        .data(["#00ccff", "#00ccff"])
+        .enter()
+        .append("line")
+        .attr("x1", (d, i) => i * (w / 2))
+        .attr("y1", h / 2)
+        .attr("x2", (d, i) => (i + 1) * (w / 2))
+        .attr("y2", h / 2)
+        .style("stroke", d => d)
+        .style("stroke-width", 2);
+
+    d3.select("label[for=GR] span")
+        .append("svg")
+        .attr("width", w)
+        .attr("height", h)
+        .append("g")
+        .selectAll("line")
+        .data(["#00ccff", "#ff884d"])
+        .enter()
+        .append("line")
+        .attr("x1", (d, i) => i * (w / 2))
+        .attr("y1", h / 2)
+        .attr("x2", (d, i) => (i + 1) * (w / 2))
+        .attr("y2", h / 2)
+        .style("stroke", d => d)
+        .style("stroke-width", 2);
+
+    d3.select("label[for=RG] span")
+        .append("svg")
+        .attr("width", w)
+        .attr("height", h)
+        .append("g")
+        .selectAll("line")
+        .data(["#ff884d", "#00ccff"])
+        .enter()
+        .append("line")
+        .attr("x1", (d, i) => i * (w / 2))
+        .attr("y1", h / 2)
+        .attr("x2", (d, i) => (i + 1) * (w / 2))
+        .attr("y2", h / 2)
+        .style("stroke", d => d)
+        .style("stroke-width", 2);
+
+    d3.select("label[for=RR] span")
+        .append("svg")
+        .attr("width", w)
+        .attr("height", h)
+        .append("g")
+        .selectAll("line")
+        .data(["#ff884d", "#ff884d"])
+        .enter()
+        .append("line")
+        .attr("x1", (d, i) => i * (w / 2))
+        .attr("y1", h / 2)
+        .attr("x2", (d, i) => (i + 1) * (w / 2))
+        .attr("y2", h / 2)
+        .style("stroke", d => d)
+        .style("stroke-width", 2);
+
 
     let keys = [];
     let no_feat = ["iid", "id", "idg", "wave", "round", "position", "speedDates", "gender", "condtn", "positin1",
@@ -422,7 +489,6 @@ function createPC(data) {
 }
 
 function createChart(data, graph) {
-    //let graph = new RadarChart("tab-person", data); // RadarChart in the Person tab
     let checkboxSelf_traits = document.getElementById("self_traits");
     let checkboxRating_o = document.getElementById("rating_o");
     let checkboxSelf_look_traits = document.getElementById("self_look_traits");
@@ -501,7 +567,6 @@ function drawGraphsPerson(data, iid) {
     // Grouped bar chart
     let groupedBarChart = new GroupedBarChart("bar-person", data, {iid : iid}); // Grouped Bar Chart in the Person tab
     createChart(data, groupedBarChart);
-
 
     // Create Person Density Feature
     createPersonDensityFeature(data, iid);

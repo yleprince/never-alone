@@ -58,8 +58,7 @@ class GraphDensityCategoricalPerson extends Graph{
      * Fill SVG for the graph (implement the visualization here)
      */
     createGraph(){
-        // let margin = {top: this.height*(5/100), right: this.width*(5/100), bottom: this.height*(10/100), left: this.width*(10/100)};
-        let margin = {top: 30, right: 10, bottom: 10, left: 30};
+        let margin = {top: this.height*(5/100), right: this.width*(5/100), bottom: this.height*(10/100), left: this.width*(10/100)};
 
         let innerWidth = this.width - margin.left - margin.right,
             innerHeight = this.height - margin.top - margin.bottom;
