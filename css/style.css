@@ -117,7 +117,7 @@ article .activeTab {
 
 /*PERSON*/
 #tab-person {
-    background-color: limegreen;
+    background-color: white;
     grid-template-columns: 40% 30% auto;
     grid-template-rows: 30% 30% auto;
 }
