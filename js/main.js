@@ -299,7 +299,7 @@ function createPC(data) {
         selectWaves.appendChild(opt);
     });
 
-    selectWaves.addEventListener("input", e =>{
+    selectWaves.addEventListener("input", e => {
         graph = new ParallelCoordinates("graph-wave", data, {
             axes: axes,
             cb: [checkBoxGG.checked, checkBoxGR.checked, checkBoxRG.checked, checkBoxRR.checked],
@@ -388,7 +388,7 @@ function createPC(data) {
 
     listCol.appendChild(ul);
 
-    function addSelected(li, regular=true) {
+    function addSelected(li, regular = true) {
         let span = document.createElement("span");
         span.innerHTML = li.val;
         span.classList.add("col-tag");
@@ -396,7 +396,7 @@ function createPC(data) {
         axes.push(ax);
 
 
-        if(regular) {
+        if (regular) {
             graphDiv.innerHTML = "";
             graph = new ParallelCoordinates("graph-wave", data, {
                 axes: axes,
@@ -421,7 +421,7 @@ function createPC(data) {
 
 }
 
-function createChart(data, graph){
+function createChart(data, graph) {
     //let graph = new RadarChart("tab-person", data); // RadarChart in the Person tab
     let checkboxSelf_traits = document.getElementById("self_traits");
     let checkboxRating_o = document.getElementById("rating_o");
@@ -455,6 +455,17 @@ function createChart(data, graph){
     });
 }
 
+function fillIidSelector(data) {
+    let selectIid = document.getElementById("iid-person");
+
+    selectIid.addEventListener("input", e => {
+        let iid = parseInt(selectIid.value);
+        if (iid && iid >= 1 && iid <= 552) {
+            drawGraphsPerson(data, iid);
+        }
+    });
+}
+
 function setUpHome(data) {
     if (!setups.home) {
         // Code for the tab goes here
@@ -465,28 +476,35 @@ function setUpHome(data) {
 
 function setUpPerson(data) {
     if (!setups.person) {
-        // Code for the tab goes here
-        let radarChart = new RadarChart("radar-person", data); // RadarChart in the Person tab
-        createChart(data, radarChart);
+        // Selectors
+        fillIidSelector(data);
 
-        //GROUPED BAR CHART
-        let groupedBarChart = new GroupedBarChart("bar-person", data); // Grouped Bar Chart in the Person tab
-        createChart(data, groupedBarChart);
-        // Person chris
-        // Input to define
-        let iid = 1;
+        let selectIid = document.getElementById("iid-person");
 
         // Button Person
-        let continuousVar = ["age", "date"]; // "income"
+        let continuousVar = ["age", "date", "income"];
         let categoricalVar = ["race", "goal"]; // "gender", "study", "career", "interest"
         instantiateButtonFeature(continuousVar, "densityVarPersonContinuous"); // Button Continuous Variable
         instantiateButtonFeature(categoricalVar, "densityVarPersonCategorical"); // Button Categorical Variable
 
-        // Create Person Density Feature
-        createPersonDensityFeature(data, iid);
+        drawGraphsPerson(data, parseInt(selectIid.value));
 
         setups.person = true;
     }
+}
+
+function drawGraphsPerson(data, iid) {
+    // Radar chart
+    let radarChart = new RadarChart("radar-person", data, {iid : iid}); // RadarChart in the Person tab
+    createChart(data, radarChart);
+
+    // Grouped bar chart
+    let groupedBarChart = new GroupedBarChart("bar-person", data, {iid : iid}); // Grouped Bar Chart in the Person tab
+    createChart(data, groupedBarChart);
+
+
+    // Create Person Density Feature
+    createPersonDensityFeature(data, iid);
 }
 
 function setUpWave(data) {
@@ -504,11 +522,11 @@ function setUpSuccess(data) {
         // Code for the tab goes here
 
         //  Success Yrieix
-        let primary_plot = createSuccessPrimaryFeature(data, 
-                                            'sbc-success-plot', 
-                                            'sbc-success-interaction');
+        let primary_plot = createSuccessPrimaryFeature(data,
+            'sbc-success-plot',
+            'sbc-success-interaction');
 
-        
+
         let button_iids = document.getElementById('button_get_iids');
 
         //  Success Chris Button
@@ -664,45 +682,43 @@ function instantiateButtonFeature(list, id) {
 }
 
 
-function createSuccessPrimaryFeature(data, plot_div){
+function createSuccessPrimaryFeature(data, plot_div) {
 
     instantiatePrimaryFeatureInteraction();
 
     let primary_plot = new ScatterBubble(plot_div, data, 'go_out');
 
 
-
-
     let selectPrimaryFeature = document.getElementById('primary_feature_select');
-    selectPrimaryFeature.addEventListener('change', function(event){
-        let selected_data = event.target.value; 
+    selectPrimaryFeature.addEventListener('change', function (event) {
+        let selected_data = event.target.value;
         primary_plot.plot_data(selected_data);
     });
 
     return primary_plot;
 }
 
-function instantiatePrimaryFeatureInteraction(){
+function instantiatePrimaryFeatureInteraction() {
 
     let info_div = document.getElementById('sbc-success-info');
     let interaction_div = document.getElementById('sbc-success-interaction');
 
     let explorable_variables = [
-                                {title:'Age', name:'age', values:[]},
-                                {title:'Carreer', name:'career_c', values:['job1', 'job2']},
-                                {title:'Go out', name:'go_out', values:['very often', 'often']},
-                                {title:'Goal', name:'goal', values:[]},
-                                {title:'Happiness expectation', name:'exphappy', values:['very happy', 'happy']},
-                                {title:'Importance Race', name:'imprace', values:[]},
-                                {title:'Importance Religion', name:'imprelig', values:[]},
-                                {title:'Race', name:'race', values:[]}
-                                ];
+        {title: 'Age', name: 'age', values: []},
+        {title: 'Carreer', name: 'career_c', values: ['job1', 'job2']},
+        {title: 'Go out', name: 'go_out', values: ['very often', 'often']},
+        {title: 'Goal', name: 'goal', values: []},
+        {title: 'Happiness expectation', name: 'exphappy', values: ['very happy', 'happy']},
+        {title: 'Importance Race', name: 'imprace', values: []},
+        {title: 'Importance Religion', name: 'imprelig', values: []},
+        {title: 'Race', name: 'race', values: []}
+    ];
 
     // add Table hover info
     let infos = [
         {label: 'Female value', id: 'female'},
         {label: 'Male value', id: 'male'},
-        {label: 'Match ratio (%)', id:'match_ratio'},
+        {label: 'Match ratio (%)', id: 'match_ratio'},
         {label: '#Match', id: 'nb_matches'},
         {label: '#Candidates', id: 'nb_candidates'}
     ];
@@ -723,7 +739,7 @@ function instantiatePrimaryFeatureInteraction(){
     tble.appendChild(header);
 
 
-    for (let info of infos){
+    for (let info of infos) {
         let tr = document.createElement('tr');
 
         let td_l = document.createElement('td');
@@ -731,7 +747,7 @@ function instantiatePrimaryFeatureInteraction(){
         tr.appendChild(td_l);
 
         let td_v = document.createElement('td');
-        td_v.innerHTML = '<span id='+ info.id +'></span>';
+        td_v.innerHTML = '<span id=' + info.id + '></span>';
         tr.appendChild(td_v);
 
         tbdy.appendChild(tr);
@@ -742,14 +758,14 @@ function instantiatePrimaryFeatureInteraction(){
     //Create Select
     let selectPrimaryFeature = document.createElement("select");
     selectPrimaryFeature.id = 'primary_feature_select';
-    
+
     //Create and append the options
-    for (let property of explorable_variables){
+    for (let property of explorable_variables) {
         let option = document.createElement("option");
         option.value = property.name;
         option.text = property.title;
         selectPrimaryFeature.appendChild(option);
-    }    
+    }
     interaction_div.appendChild(selectPrimaryFeature);
 
     let btn = document.createElement("button");

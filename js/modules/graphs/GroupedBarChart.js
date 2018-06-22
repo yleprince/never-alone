@@ -8,7 +8,7 @@ import fillWithDefault from "../defaultOptions.js";
 const defaultOptions = {
     color : "crimson",
     size : 5,
-    iid : 232
+    iid : 1
 };
 
 class GroupedBarChart extends Graph{
@@ -82,13 +82,6 @@ class GroupedBarChart extends Graph{
                     "Three-Four weeks after the event": this.data3WeeksAftEvent[0].Sincere}
             ]
         ];
-
-
-        //console.log(this.dataDuringEvent);
-        //console.log(this.data1DayAftEvent);
-        //console.log(this.data3WeeksAftEvent);
-        console.log(this.data[0]);
-
     }
 
     /**
@@ -127,15 +120,12 @@ class GroupedBarChart extends Graph{
         // "self_traits"
         let series = 0;
         buildChart(this.data[0]);
-        console.log(this._g.selectAll((".g0")));
         series++;
 
 
         //this.buildChart = function (data){
         function buildChart(data){
             let keys = d3.keys(data[0]);
-            console.log("key: " + keys.slice(1));
-
 
             x0.domain(data.map(function(d) {return d.Attribute; }));
             x1.domain(keys.slice(1)).rangeRound([0, x0.bandwidth()]);
@@ -233,10 +223,6 @@ class GroupedBarChart extends Graph{
 
 
     showRadarChart(type, show) {
-        console.log("type: " + type);
-        console.log("show: " + show);
-
-
         let variable_time1 = type;
         let variable_time2 = type+"_2";
         let variable_time3 = type+"_3";

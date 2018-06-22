@@ -29,6 +29,10 @@ article .activeTab {
 
 
 /*---------------------- TABS ----------------------*/
+.title {
+    padding: 5px;
+}
+
 #tab-home {
     background-color: gray;
 }
@@ -58,13 +62,13 @@ article .activeTab {
 
 #select-wave {
     grid-column-start: 1;
-    grid-column-end: 3;
+    grid-column-end: 4;
     grid-row-start: 1;
     grid-row-end: 2;
     display: flex;
     justify-content: center;
     align-items: center;
-    /*background-color: #ff3385;*/
+    background-color: palevioletred;
 }
 
 #options-wave {
@@ -75,10 +79,10 @@ article .activeTab {
     /*background-color: #34495e;*/
 }
 
-#options-columns {
+#options-columns-wave {
     grid-column-start: 3;
     grid-column-end: 4;
-    grid-row-start: 1;
+    grid-row-start: 2;
     grid-row-end: 4;
     overflow-y: scroll;
     /*background-color: #ffcce6;*/
@@ -88,7 +92,7 @@ article .activeTab {
     width: 100%;
     height: 5%;
     text-align: center;
-    border: 1px solid #ddd;
+    /*border: 1px solid #ddd;*/
 }
 
 #list-col-wave {
@@ -102,7 +106,7 @@ article .activeTab {
     width: 100%;
     height: 5%;
     text-align: center;
-    border: 1px solid #ddd;
+    /*border: 1px solid #ddd;*/
 }
 
 #list-sel-wave {
@@ -149,60 +153,71 @@ article .activeTab {
 #tab-person {
     background-color: white;
     grid-template-columns: 40% 30% auto;
-    grid-template-rows: 30% 30% auto;
+    grid-template-rows: 5% 30% 30% auto;
+}
+
+#select-person {
+    grid-column-start: 1;
+    grid-column-end: 4;
+    grid-row-start: 1;
+    grid-row-end: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: mediumseagreen;
 }
 
 #radar-person {
     grid-column-start: 1;
     grid-column-end: 2;
-    grid-row-start: 1;
-    grid-row-end: 3;
+    grid-row-start: 2;
+    grid-row-end: 4;
     background-color: #5acd1d;
 }
 
 #bar-person {
     grid-column-start: 1;
     grid-column-end: 3;
-    grid-row-start: 3;
-    grid-row-end: 4;
+    grid-row-start: 4;
+    grid-row-end: 5;
     background-color: #9ccd24;
 }
 
 #rep-person {
     grid-column-start: 2;
     grid-column-end: 3;
-    grid-row-start: 1;
-    grid-row-end: 3;
+    grid-row-start: 2;
+    grid-row-end: 4;
     background-color: #7dcd58;
 }
 
 #feat1-person {
     grid-column-start: 3;
     grid-column-end: 4;
-    grid-row-start: 1;
-    grid-row-end: 2;
+    grid-row-start: 2;
+    grid-row-end: 3;
     background-color: #93cd13;
 }
 
 #feat2-person {
     grid-column-start: 3;
     grid-column-end: 4;
-    grid-row-start: 2;
-    grid-row-end: 3;
+    grid-row-start: 3;
+    grid-row-end: 4;
     background-color: #b8cd40;
 }
 
 #id-person {
     grid-column-start: 3;
     grid-column-end: 4;
-    grid-row-start: 3;
-    grid-row-end: 4;
+    grid-row-start: 4;
+    grid-row-end: 5;
     background-color: #96cd85;
 }
 
 .plot-density {
     display: grid;
-    grid-template-rows: 10% auto;
+    grid-template-rows: 10% 90%;
 }
 
 .select-density {
@@ -222,14 +237,25 @@ article .activeTab {
 #tab-success {
     background-color: deepskyblue;
     grid-template-columns: 70% auto;
-    grid-template-rows: 50% auto;
+    grid-template-rows: 5% 50% auto;
+}
+
+#select-success {
+    grid-column-start: 1;
+    grid-column-end: 3;
+    grid-row-start: 1;
+    grid-row-end: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: darkblue;
 }
 
 #sbc-success {
     grid-column-start: 1;
     grid-column-end: 2;
-    grid-row-start: 1;
-    grid-row-end: 3;
+    grid-row-start: 2;
+    grid-row-end: 4;
     background-color: #3882cd;
     display: flex;
     flex-direction: column;
@@ -307,16 +333,16 @@ td {
 #feat1-success {
     grid-column-start: 2;
     grid-column-end: 3;
-    grid-row-start: 1;
-    grid-row-end: 2;
+    grid-row-start: 2;
+    grid-row-end: 3;
     background-color: #698bcd;
 }
 
 #feat2-success{
     grid-column-start: 2;
     grid-column-end: 3;
-    grid-row-start: 2;
-    grid-row-end: 3;
+    grid-row-start: 3;
+    grid-row-end: 4;
     background-color: #4f2bcd;
 }
 /*---------------------- PARALLEL COORDINATES ----------------------*/
