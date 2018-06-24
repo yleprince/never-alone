@@ -45,19 +45,6 @@ class ParallelCoordinates extends Graph {
     preprocess() {
         this.data = this.allData.filter(d => d.wave === this.wave)
             .map(d => {
-                // return {
-                //     age: d.age,
-                //     field_cd: d.field_cd,
-                //     exphappy: d.exphappy,
-                //     art: d.interests.art,
-                //     iid: d.iid,
-                //     id: d.id,
-                //     gender: d.gender,
-                //     goal: d.goal,
-                //     dec: d.speedDates.map(sd => {
-                //         return {d: sd.dec, d_o: sd.dec_o, id_o: sd.partner, g: d.gender, id: d.id}
-                //     })
-                // }
                 let res = {
                     iid: d.iid,
                     id: d.id,
@@ -335,22 +322,6 @@ class ParallelCoordinates extends Graph {
             .attr("transform", `translate(${-size / 2}, ${-size * 2})`)
             .attr("width", size)
             .attr("height", size);
-            // .attr("x", function (d) {
-            //     return calcMidPoint(d).x - iconSize / 2;
-            // })
-            // .attr("y", function (d) {
-            //     return calcMidPoint(d).y - iconSize / 2;
-            // })
-            // .attr("transform", function (d) {
-            //     // We need to rotate the images backwards to compensate for the rotation of the menu as a whole
-            //     let mp = calcMidPoint(d);
-            //     let angle = -offsetAngleDeg;
-            //     return "rotate(" + angle + "," + mp.x + "," + mp.y + ")";
-            // })
-            // .style("opacity", 0)
-            // .transition()
-            // .delay(animationDuration)
-            // .style("opacity", 1);
 
         // Add and store a brush for each axis.
         axes.append("g")
@@ -414,9 +385,6 @@ class ParallelCoordinates extends Graph {
                 }
             });
             g.selectAll(".midLine")
-            // .transition()
-            // .duration(250)
-            // .style("opacity", d => !selIDs[!!d.g].includes(d.id) || !selIDs[!d.g].includes(d.id_o) ? 0 : 1)
                 .style("display", d => !selIDs[!!d.g].includes(d.id) || !selIDs[!d.g].includes(d.id_o) ? "none" : null)
         }
     }
@@ -447,7 +415,30 @@ class ParallelCoordinates extends Graph {
             .style("opacity", show ? this.opacityMiddle : 0);
     }
 
-    // TODO put this function in another script to use it later
+    highlightMidLines(type, show){
+        let filtering;
+        switch (type) {
+            case "GG":
+                filtering = d => d.d === d.d_o && d.d === 1;
+                break;
+            case "GR":
+                filtering = d => (d.g === 0 && d.d === 1 && d.d_o === 0) || (d.g === 1 && d.d === 0 && d.d_o === 1);
+                break;
+            case "RG":
+                filtering = d => (d.g === 0 && d.d === 0 && d.d_o === 1) || (d.g === 1 && d.d === 1 && d.d_o === 0);
+                break;
+            case "RR":
+                filtering = d => d.d === d.d_o && d.d === 0;
+                break;
+            default:
+                console.error("Bad type for line selection.");
+        }
+
+        this._g.selectAll(".midLine")
+            .filter(d => filtering(d))
+            .classed("highlighted", show);
+    }
+
     static copyData(data) {
         return data.map(a => {
             let newObject = {};

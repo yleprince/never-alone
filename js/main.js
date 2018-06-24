@@ -338,6 +338,13 @@ function createPC(data) {
     let w = 100;
     let h = 10;
 
+    let labels = document.querySelectorAll("#options-wave-container label");
+    labels.forEach(d => {
+        const type = d.getAttribute("for");
+        d.addEventListener("mouseenter", () => graph.highlightMidLines(type, true));
+        d.addEventListener("mouseout", () => graph.highlightMidLines(type, false));
+    });
+
     d3.select("label[for=GG] span")
         .append("svg")
         .attr("width", w)
@@ -353,6 +360,7 @@ function createPC(data) {
         .attr("y2", h / 2)
         .style("stroke", d => d)
         .style("stroke-width", 2);
+
 
     d3.select("label[for=GR] span")
         .append("svg")
