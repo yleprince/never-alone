@@ -296,6 +296,7 @@ function createIDCard(data, iid) {
 
     // Add image
     let imageCard = document.getElementById("image-container");
+    imageCard.innerHTML = "";
     let image = document.createElement("img");
     image.src = !!person.gender ? './data/woman.svg' : './data/man.svg';
     image.width = 50;
