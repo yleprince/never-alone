@@ -497,7 +497,7 @@ function createChart(data, graph) {
     let checkboxOpposite_gender_self_traits = document.getElementById("opposite_gender_self_traits");
 
     checkboxSelf_traits.addEventListener("input", e => {
-        graph.showRadarChart("self_traits", checkboxSelf_traits.checked);
+        // graph.showRadarChart("self_traits", checkboxSelf_traits.checked);
     });
 
     checkboxRating_o.addEventListener("input", e => {
@@ -561,12 +561,26 @@ function setUpPerson(data) {
 
 function drawGraphsPerson(data, iid) {
     // Radar chart
-    let radarChart = new RadarChart("radar-person", data, {iid : iid}); // RadarChart in the Person tab
+    let radarChart = new RadarChart("radar-person-container", data, {iid : iid}); // RadarChart in the Person tab
     createChart(data, radarChart);
 
     // Grouped bar chart
     let groupedBarChart = new GroupedBarChart("bar-person", data, {iid : iid}); // Grouped Bar Chart in the Person tab
-    createChart(data, groupedBarChart);
+    // createChart(data, groupedBarChart);
+
+    window.addEventListener("keydown", e => {
+        if(e.key === "a") {
+            groupedBarChart.updateData("self_look_traits");
+        } else if(e.key === "z") {
+            groupedBarChart.updateData("self_traits");
+        } else if(e.key === "e") {
+            groupedBarChart.updateData("same_gender_look_traits");
+        } else if(e.key === "r") {
+            groupedBarChart.updateData("opposite_gender_look_traits");
+        } else if(e.key === "t") {
+            groupedBarChart.updateData("opposite_gender_self_traits");
+        }
+    });
 
     // Create Person Density Feature
     createPersonDensityFeature(data, iid);
