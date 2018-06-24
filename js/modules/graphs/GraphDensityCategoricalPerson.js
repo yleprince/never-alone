@@ -37,7 +37,6 @@ class GraphDensityCategoricalPerson extends Graph{
      * Keep the interesting data for the Graph
      */
     preprocess(){
-        console.log("Preprocess Categorical Graph");
         // Get all data
         this.dataCategorical = this.allData.map(d => {return {tmp_var : d[this.currentCategoricalVar]}});
 
@@ -51,7 +50,6 @@ class GraphDensityCategoricalPerson extends Graph{
         // Get filter data
         this.dataCategoricalFilter = this.allData.map(d => {return {tmp_var : d[this.currentCategoricalVar], iid : d["iid"]}})
             .find(d => d.iid === this.iid);
-        console.log("this.dataCategoricalFilter:", this.dataCategoricalFilter)
     }
 
     /**

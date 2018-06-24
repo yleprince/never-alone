@@ -29,7 +29,7 @@ class GroupedBarChart extends Graph {
         this.iid = opts.iid;
         this.trait = opts.trait;
 
-        this.preprocess(this.trait);
+        // this.preprocess(this.trait);
         this.createGraph();
     }
 
@@ -128,9 +128,6 @@ class GroupedBarChart extends Graph {
         this.z = d3.scaleOrdinal()
             .range(["#6F257F", "#CA0D59", "#7CFC00"]);
 
-
-        // "self_traits"
-        this.buildChart(this.data);
 
     }
 
@@ -241,9 +238,13 @@ class GroupedBarChart extends Graph {
     }
 
     updateData(trait) {
-        this.trait = trait;
-        this.preprocess(this.trait);
-        this.buildChart(this.data);
+        if (d3.keys(this.allData[0]).includes(trait)) {
+            this.trait = trait;
+            this.preprocess(this.trait);
+            this.buildChart(this.data);
+        } else {
+            this._g.selectAll("*").remove();
+        }
     }
 
     /**

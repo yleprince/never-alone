@@ -497,7 +497,7 @@ function createChart(data, graph) {
     let checkboxOpposite_gender_self_traits = document.getElementById("opposite_gender_self_traits");
 
     checkboxSelf_traits.addEventListener("input", e => {
-        // graph.showRadarChart("self_traits", checkboxSelf_traits.checked);
+        graph.showRadarChart("self_traits", checkboxSelf_traits.checked);
     });
 
     checkboxRating_o.addEventListener("input", e => {
@@ -560,24 +560,41 @@ function setUpPerson(data) {
 }
 
 function drawGraphsPerson(data, iid) {
-    // Radar chart
-    let radarChart = new RadarChart("radar-person-container", data, {iid : iid}); // RadarChart in the Person tab
-    createChart(data, radarChart);
+    let checkboxSelf_traits = document.getElementById("self_traits");
+    let checkboxRating_o = document.getElementById("rating_o");
+    let checkboxSelf_look_traits = document.getElementById("self_look_traits");
+    let checkboxSame_gender_look_traits = document.getElementById("same_gender_look_traits");
+    let checkboxOpposite_gender_look_traits = document.getElementById("opposite_gender_look_traits");
+    let checkboxOpposite_gender_self_traits = document.getElementById("opposite_gender_self_traits");
 
     // Grouped bar chart
-    let groupedBarChart = new GroupedBarChart("bar-person", data, {iid : iid}); // Grouped Bar Chart in the Person tab
+    let groupedBarChart = new GroupedBarChart("bar-person", data, {
+        iid: iid
+    }); // Grouped Bar Chart in the Person tab
     // createChart(data, groupedBarChart);
 
+    // Radar chart
+    let radarChart = new RadarChart("radar-person-container", data, {
+        iid: iid,
+        gbc: groupedBarChart,
+        cb: [checkboxSelf_traits.checked, checkboxRating_o.checked, checkboxSelf_look_traits.checked,
+            checkboxSame_gender_look_traits.checked, checkboxOpposite_gender_look_traits.checked,
+            checkboxOpposite_gender_self_traits.checked
+        ]
+    }); // RadarChart in the Person tab
+    createChart(data, radarChart);
+
+
     window.addEventListener("keydown", e => {
-        if(e.key === "a") {
+        if (e.key === "a") {
             groupedBarChart.updateData("self_look_traits");
-        } else if(e.key === "z") {
+        } else if (e.key === "z") {
             groupedBarChart.updateData("self_traits");
-        } else if(e.key === "e") {
+        } else if (e.key === "e") {
             groupedBarChart.updateData("same_gender_look_traits");
-        } else if(e.key === "r") {
+        } else if (e.key === "r") {
             groupedBarChart.updateData("opposite_gender_look_traits");
-        } else if(e.key === "t") {
+        } else if (e.key === "t") {
             groupedBarChart.updateData("opposite_gender_self_traits");
         }
     });
@@ -787,7 +804,7 @@ function instantiatePrimaryFeatureInteraction() {
 
     let explorable_variables = [
         {title: 'Carreer', name: 'career_c'},
-        {title: 'Field of Study', name:'field_cd'},
+        {title: 'Field of Study', name: 'field_cd'},
         {title: 'Go out', name: 'go_out'},
         {title: 'Goal', name: 'goal'},
         {title: 'Happiness expectation', name: 'exphappy'},

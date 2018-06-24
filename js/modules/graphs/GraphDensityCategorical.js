@@ -37,7 +37,6 @@ class GraphDensityCategorical extends Graph{
      * Keep the interesting data for the Graph
      */
     preprocess(){
-        console.log("Preprocess Categorical Graph");
         // Get all data
         this.dataFullCategorical = this.allData.map(d => {return {tmp_var : d[this.currentCategoricalVar]}});
 
