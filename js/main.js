@@ -288,6 +288,12 @@ function main(data) {
 }
 
 function createPC(data) {
+    let vals = {
+        GG: document.getElementById("valGG"),
+        GR: document.getElementById("valGR"),
+        RG: document.getElementById("valRG"),
+        RR: document.getElementById("valRR")
+    };
     let waves = new Set();
     data.forEach(d => waves.add(d.wave));
 
@@ -303,7 +309,8 @@ function createPC(data) {
         graph = new ParallelCoordinates("graph-wave", data, {
             axes: axes,
             cb: [checkBoxGG.checked, checkBoxGR.checked, checkBoxRG.checked, checkBoxRR.checked],
-            wave: parseInt(selectWaves.value)
+            wave: parseInt(selectWaves.value),
+            vals: vals
         });
     });
 
@@ -316,7 +323,8 @@ function createPC(data) {
     let graph = new ParallelCoordinates("graph-wave", data, {
         axes: defaultAxes,
         cb: [checkBoxGG.checked, checkBoxGR.checked, checkBoxRG.checked, checkBoxRR.checked],
-        wave: parseInt(selectWaves.value)
+        wave: parseInt(selectWaves.value),
+        vals: vals
     });
 
     checkBoxGG.addEventListener("input", e => {
@@ -338,10 +346,10 @@ function createPC(data) {
     let w = 100;
     let h = 10;
 
-    let labels = document.querySelectorAll("#options-wave-container label");
+    let labels = document.querySelectorAll("#options-wave-container tr");
     labels.forEach(d => {
-        const type = d.getAttribute("for");
-        d.addEventListener("mouseenter", () => graph.highlightMidLines(type, true));
+        const type = d.dataset.type;
+        d.addEventListener("mouseover", () => graph.highlightMidLines(type, true));
         d.addEventListener("mouseout", () => graph.highlightMidLines(type, false));
     });
 
@@ -476,7 +484,8 @@ function createPC(data) {
             graph = new ParallelCoordinates("graph-wave", data, {
                 axes: axes,
                 cb: [checkBoxGG.checked, checkBoxGR.checked, checkBoxRG.checked, checkBoxRR.checked],
-                wave: parseInt(selectWaves.value)
+                wave: parseInt(selectWaves.value),
+                vals: vals
             });
         }
 
@@ -488,7 +497,8 @@ function createPC(data) {
             graph = new ParallelCoordinates("graph-wave", data, {
                 axes: axes,
                 cb: [checkBoxGG.checked, checkBoxGR.checked, checkBoxRG.checked, checkBoxRR.checked],
-                wave: parseInt(selectWaves.value)
+                wave: parseInt(selectWaves.value),
+                vals: vals
             });
         });
         listSel.append(span)

@@ -31,6 +31,7 @@ class ParallelCoordinates extends Graph {
         this.opacityMiddle = opts.opacityMiddle;
         this.axes = opts.axes;
         this.cb = opts.cb;
+        this.vals = opts.vals;
         // this.colorByAxis = Array.isArray(this.axes[0]) ? this.axes[0][0] + "/" + this.axes[0][1]: this.axes[0];
 
         this.preprocess();
@@ -83,6 +84,56 @@ class ParallelCoordinates extends Graph {
      * Fill SVG for the graph (implement the visualization here)
      */
     createGraph() {
+        let vals = this.vals;
+        function updateProportions(data, selIDs) {
+            let gg = 0;
+            let gr = 0;
+            let rg = 0;
+            let rr = 0;
+            if (selIDs) {
+                data.filter(p => selIDs[!!p.gender].includes(p.id)).forEach(d => {
+                    if (!d.gender) {
+                        d.dec.filter(po => selIDs[!po.gender].includes(po.id_o)).forEach(dec => {
+                            if (dec.d && dec.d_o) {
+                                gg += 1;
+                            } else if (dec.d && !dec.d_o) {
+                                gr += 1;
+                            } else if (!dec.d && dec.d_o) {
+                                rg += 1;
+                            } else if (!dec.d && !dec.d_o) {
+                                rr += 1;
+                            }
+                        })
+                    }
+                })
+            } else {
+                data.forEach(d => {
+                    if (!d.gender) {
+                        d.dec.forEach(dec => {
+                            if(dec.d && dec.d_o) {
+                                gg += 1;
+                            } else if(dec.d && !dec.d_o) {
+                                gr += 1;
+                            } else if(!dec.d && dec.d_o) {
+                                rg += 1;
+                            } else if(!dec.d && !dec.d_o) {
+                                rr += 1;
+                            }
+                        })
+                    }
+                })
+            }
+            const sum = gg + gr + rg +rr;
+            gg = (gg/sum) * 100;
+            gr = (gr/sum) * 100;
+            rg = (rg/sum) * 100;
+            rr = (rr/sum) * 100;
+            vals.GG.innerHTML = gg.toFixed(2);
+            vals.GR.innerHTML = gr.toFixed(2);
+            vals.RG.innerHTML = rg.toFixed(2);
+            vals.RR.innerHTML = rr.toFixed(2);
+        }
+        updateProportions(this.data);
         let margin = {top: 50, right: 10, bottom: 50, left: 30},
             innerWidth = this.width - margin.left - margin.right,
             innerHeight = this.height - margin.top - margin.bottom;
@@ -356,6 +407,7 @@ class ParallelCoordinates extends Graph {
             d3.event.sourceEvent.stopPropagation();
         }
 
+        let data = this.data;
         // Handles a brush event, toggling the display of foreground lines.
         function brush() {
             let actives = [];
@@ -384,10 +436,13 @@ class ParallelCoordinates extends Graph {
                     return "none";
                 }
             });
+            updateProportions(data, selIDs);
             g.selectAll(".midLine")
                 .style("display", d => !selIDs[!!d.g].includes(d.id) || !selIDs[!d.g].includes(d.id_o) ? "none" : null)
         }
     }
+
+
 
     showMidLines(type, show) {
         let filtering;
