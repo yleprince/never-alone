@@ -8,7 +8,8 @@ import fillWithDefault from "../defaultOptions.js";
 const defaultOptions = {
     color: "black",
     size: 5,
-    iid: 1
+    iid: 1,
+    cb: [true, true, true, true, true, true]
 };
 
 class RadarChart extends Graph {
@@ -26,6 +27,8 @@ class RadarChart extends Graph {
         this.color = opts.color;
         this.size = opts.size;
         this._iid = opts.iid;
+        this.gbc = opts.gbc;
+        this.cb = opts.cb;
 
         this.preprocess();
         this.createGraph();
@@ -140,7 +143,7 @@ class RadarChart extends Graph {
      * Fill SVG for the graph (implement the visualization here)
      */
     createGraph(id) {
-        let margin = {top: 30, right: 50, bottom: 10, left: 50};
+        let margin = {top: 30, right: 50, bottom: 30, left: 50};
 
         let cfg = {
             radius: 5,
@@ -377,54 +380,59 @@ class RadarChart extends Graph {
 
         //Self_traits
         let series = 0;
-        buildChart(dataDictSelf_traits);
+        buildChart(dataDictSelf_traits, "self_traits", this.cb[0]);
         series++;
 
         //Rating_o
-        buildChart(dataDictRating_o);
+        buildChart(dataDictRating_o, "rating_o", this.cb[1]);
         series++;
 
         //Self_look_traits
         if (Object.keys(dataDictSelf_look_traits).length) {
-            buildChart(dataDictSelf_look_traits);
+            buildChart(dataDictSelf_look_traits, "self_look_traits", this.cb[2]);
         }
 
-        this._g
-            .selectAll((".radar-chart-serie2"))
-            .style("opacity", 0);
+        // this._g
+        //     .selectAll(".radar-chart-serie2")
+        //     // .style("opacity", 0);
+        //     .attr("visibility", "hidden");
         series++;
 
         //Same_gender_look_traits
         if (Object.keys(dataDictSame_gender_look_traits).length) {
-            buildChart(dataDictSame_gender_look_traits);
+            buildChart(dataDictSame_gender_look_traits, "same_gender_look_traits", this.cb[3]);
         }
 
-        this._g
-            .selectAll((".radar-chart-serie3"))
-            .style("opacity", 0);
+        // this._g
+        //     .selectAll(".radar-chart-serie3")
+        //     // .style("opacity", 0);
+        //     .attr("visibility", "hidden");
         series++;
 
         //Opposite_gender_look_traits
         if (Object.keys(dataDictOpposite_gender_look_traits).length) {
-            buildChart(dataDictOpposite_gender_look_traits);
+            buildChart(dataDictOpposite_gender_look_traits, "opposite_gender_look_traits", this.cb[4]);
         }
-        ;
-        this._g
-            .selectAll((".radar-chart-serie4"))
-            .style("opacity", 0);
+
+        // this._g
+        //     .selectAll(".radar-chart-serie4")
+        //     // .style("opacity", 0);
+        //     .attr("visibility", "hidden");
+
         series++;
 
         //Opposite_gender_self_traits
         if (Object.keys(dataDictOpposite_gender_self_traits).length > 0) {
-            buildChart(dataDictOpposite_gender_self_traits);
-            this._g
-                .selectAll((".radar-chart-serie5"))
-                .style("opacity", 0);
-
+            buildChart(dataDictOpposite_gender_self_traits, "opposite_gender_self_traits", this.cb[5]);
+            // this._g
+            //     .selectAll(".radar-chart-serie5")
+            //     // .style("opacity", 0);
+            //     .attr("visibility", "hidden");
         }
 
+        let gbc = this.gbc;
 
-        function buildChart(data) {
+        function buildChart(data, trait, visible) {
 
 
             let dataValues = [];
@@ -441,6 +449,8 @@ class RadarChart extends Graph {
                 .enter()
                 .append("polygon")
                 .attr("class", "radar-chart-serie" + series)
+                .attr("info", trait)
+                .attr("visibility", visible ? "visible" : "hidden")
                 .style("stroke-width", "2px")
                 .style("stroke", cfg.color(series))
                 .attr("points", function (d) {
@@ -468,9 +478,7 @@ class RadarChart extends Graph {
                         .transition(200)
                         .style("fill-opacity", cfg.opacityArea);
                 })
-                .on("click", d => {
-                    console.log(d)
-                });
+                .on("click", () => gbc.updateData(trait));
 
 
             let tooltip = d3.select("body").append("div").attr("class", "toolTip");
@@ -495,6 +503,7 @@ class RadarChart extends Graph {
                 .attr("data-id", function (j) {
                     return j.area
                 })
+                .attr("visibility", visible ? "visible" : "hidden")
                 .style("fill", "#fff")
                 .style("stroke-width", "2px")
                 .style("stroke", cfg.color(series)).style("fill-opacity", .9)
@@ -508,7 +517,8 @@ class RadarChart extends Graph {
                 .on("mouseout", function (d) {
                         tooltip.style("display", "none");
                     }
-                );
+                )
+                .on("click", () => gbc.updateData(trait));
 
         }
 
@@ -520,55 +530,66 @@ class RadarChart extends Graph {
                 if (show === true) {
                     this._g
                         .selectAll((".radar-chart-serie0"))
-                        .style("opacity", 1);
+                        // .style("opacity", 1);
+                        .attr("visibility", "visible");
                 } else {
                     this._g
                         .selectAll((".radar-chart-serie0"))
-                        .style("opacity", 0);
+                        // .style("opacity", 0);
+                        .attr("visibility", "hidden");
                 }
                 break;
             case "rating_o":
                 if (show === true) {
                     this._g
                         .selectAll((".radar-chart-serie1"))
-                        .style("opacity", 1);
+                        // .style("opacity", 1);
+                        .attr("visibility", "visible");
                 } else {
                     this._g
                         .selectAll((".radar-chart-serie1"))
-                        .style("opacity", 0);
+                        // .style("opacity", 0);
+                        .attr("visibility", "hidden");
                 }
                 break;
             case "self_look_traits":
                 if (show === true) {
                     this._g
                         .selectAll((".radar-chart-serie2"))
-                        .style("opacity", 1);
+                        // .style("opacity", 1);
+                        .attr("visibility", "visible");
                 } else {
                     this._g
                         .selectAll((".radar-chart-serie2"))
-                        .style("opacity", 0);
+                        // .style("opacity", 0);
+                        .attr("visibility", "hidden");
                 }
                 break;
             case "same_gender_look_traits":
                 if (show === true) {
                     this._g
                         .selectAll((".radar-chart-serie3"))
-                        .style("opacity", 1);
+                        // .style("opacity", 1);
+                        .attr("visibility", "visible");
                 } else {
                     this._g
                         .selectAll((".radar-chart-serie3"))
-                        .style("opacity", 0);
+                        // .style("opacity", 0);
+                        .attr("visibility", "hidden");
+
                 }
                 break;
             case "opposite_gender_look_traits":
                 if (show === true) {
                     this._g
                         .selectAll((".radar-chart-serie4"))
-                        .style("opacity", 1);
+                        // .style("opacity", 1);
+                        .attr("visibility", "visible");
                 } else {
                     this._g
                         .selectAll((".radar-chart-serie4"))
-                        .style("opacity", 0);
+                        // .style("opacity", 0);
+                        .attr("visibility", "hidden");
                 }
                 break;
             case "opposite_gender_self_traits":
@@ -576,11 +597,13 @@ class RadarChart extends Graph {
                 if (show === true) {
                     this._g
                         .selectAll((".radar-chart-serie5"))
-                        .style("opacity", 1);
+                        // .style("opacity", 1);
+                        .attr("visibility", "visible");
                 } else {
                     this._g
                         .selectAll((".radar-chart-serie5"))
-                        .style("opacity", 0);
+                        // .style("opacity", 0);
+                        .attr("visibility", "hidden");
                 }
                 break;
             //default:

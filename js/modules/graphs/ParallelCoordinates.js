@@ -31,6 +31,7 @@ class ParallelCoordinates extends Graph {
         this.opacityMiddle = opts.opacityMiddle;
         this.axes = opts.axes;
         this.cb = opts.cb;
+        this.vals = opts.vals;
         // this.colorByAxis = Array.isArray(this.axes[0]) ? this.axes[0][0] + "/" + this.axes[0][1]: this.axes[0];
 
         this.preprocess();
@@ -45,19 +46,6 @@ class ParallelCoordinates extends Graph {
     preprocess() {
         this.data = this.allData.filter(d => d.wave === this.wave)
             .map(d => {
-                // return {
-                //     age: d.age,
-                //     field_cd: d.field_cd,
-                //     exphappy: d.exphappy,
-                //     art: d.interests.art,
-                //     iid: d.iid,
-                //     id: d.id,
-                //     gender: d.gender,
-                //     goal: d.goal,
-                //     dec: d.speedDates.map(sd => {
-                //         return {d: sd.dec, d_o: sd.dec_o, id_o: sd.partner, g: d.gender, id: d.id}
-                //     })
-                // }
                 let res = {
                     iid: d.iid,
                     id: d.id,
@@ -96,6 +84,56 @@ class ParallelCoordinates extends Graph {
      * Fill SVG for the graph (implement the visualization here)
      */
     createGraph() {
+        let vals = this.vals;
+        function updateProportions(data, selIDs) {
+            let gg = 0;
+            let gr = 0;
+            let rg = 0;
+            let rr = 0;
+            if (selIDs) {
+                data.filter(p => selIDs[!!p.gender].includes(p.id)).forEach(d => {
+                    if (!d.gender) {
+                        d.dec.filter(po => selIDs[!po.gender].includes(po.id_o)).forEach(dec => {
+                            if (dec.d && dec.d_o) {
+                                gg += 1;
+                            } else if (dec.d && !dec.d_o) {
+                                gr += 1;
+                            } else if (!dec.d && dec.d_o) {
+                                rg += 1;
+                            } else if (!dec.d && !dec.d_o) {
+                                rr += 1;
+                            }
+                        })
+                    }
+                })
+            } else {
+                data.forEach(d => {
+                    if (!d.gender) {
+                        d.dec.forEach(dec => {
+                            if(dec.d && dec.d_o) {
+                                gg += 1;
+                            } else if(dec.d && !dec.d_o) {
+                                gr += 1;
+                            } else if(!dec.d && dec.d_o) {
+                                rg += 1;
+                            } else if(!dec.d && !dec.d_o) {
+                                rr += 1;
+                            }
+                        })
+                    }
+                })
+            }
+            const sum = gg + gr + rg +rr;
+            gg = (gg/sum) * 100;
+            gr = (gr/sum) * 100;
+            rg = (rg/sum) * 100;
+            rr = (rr/sum) * 100;
+            vals.GG.innerHTML = gg.toFixed(2);
+            vals.GR.innerHTML = gr.toFixed(2);
+            vals.RG.innerHTML = rg.toFixed(2);
+            vals.RR.innerHTML = rr.toFixed(2);
+        }
+        updateProportions(this.data);
         let margin = {top: 50, right: 10, bottom: 50, left: 30},
             innerWidth = this.width - margin.left - margin.right,
             innerHeight = this.height - margin.top - margin.bottom;
@@ -335,22 +373,6 @@ class ParallelCoordinates extends Graph {
             .attr("transform", `translate(${-size / 2}, ${-size * 2})`)
             .attr("width", size)
             .attr("height", size);
-            // .attr("x", function (d) {
-            //     return calcMidPoint(d).x - iconSize / 2;
-            // })
-            // .attr("y", function (d) {
-            //     return calcMidPoint(d).y - iconSize / 2;
-            // })
-            // .attr("transform", function (d) {
-            //     // We need to rotate the images backwards to compensate for the rotation of the menu as a whole
-            //     let mp = calcMidPoint(d);
-            //     let angle = -offsetAngleDeg;
-            //     return "rotate(" + angle + "," + mp.x + "," + mp.y + ")";
-            // })
-            // .style("opacity", 0)
-            // .transition()
-            // .delay(animationDuration)
-            // .style("opacity", 1);
 
         // Add and store a brush for each axis.
         axes.append("g")
@@ -385,6 +407,7 @@ class ParallelCoordinates extends Graph {
             d3.event.sourceEvent.stopPropagation();
         }
 
+        let data = this.data;
         // Handles a brush event, toggling the display of foreground lines.
         function brush() {
             let actives = [];
@@ -413,13 +436,13 @@ class ParallelCoordinates extends Graph {
                     return "none";
                 }
             });
+            updateProportions(data, selIDs);
             g.selectAll(".midLine")
-            // .transition()
-            // .duration(250)
-            // .style("opacity", d => !selIDs[!!d.g].includes(d.id) || !selIDs[!d.g].includes(d.id_o) ? 0 : 1)
                 .style("display", d => !selIDs[!!d.g].includes(d.id) || !selIDs[!d.g].includes(d.id_o) ? "none" : null)
         }
     }
+
+
 
     showMidLines(type, show) {
         let filtering;
@@ -447,7 +470,30 @@ class ParallelCoordinates extends Graph {
             .style("opacity", show ? this.opacityMiddle : 0);
     }
 
-    // TODO put this function in another script to use it later
+    highlightMidLines(type, show){
+        let filtering;
+        switch (type) {
+            case "GG":
+                filtering = d => d.d === d.d_o && d.d === 1;
+                break;
+            case "GR":
+                filtering = d => (d.g === 0 && d.d === 1 && d.d_o === 0) || (d.g === 1 && d.d === 0 && d.d_o === 1);
+                break;
+            case "RG":
+                filtering = d => (d.g === 0 && d.d === 0 && d.d_o === 1) || (d.g === 1 && d.d === 1 && d.d_o === 0);
+                break;
+            case "RR":
+                filtering = d => d.d === d.d_o && d.d === 0;
+                break;
+            default:
+                console.error("Bad type for line selection.");
+        }
+
+        this._g.selectAll(".midLine")
+            .filter(d => filtering(d))
+            .classed("highlighted", show);
+    }
+
     static copyData(data) {
         return data.map(a => {
             let newObject = {};

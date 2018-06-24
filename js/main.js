@@ -288,6 +288,12 @@ function main(data) {
 }
 
 function createPC(data) {
+    let vals = {
+        GG: document.getElementById("valGG"),
+        GR: document.getElementById("valGR"),
+        RG: document.getElementById("valRG"),
+        RR: document.getElementById("valRR")
+    };
     let waves = new Set();
     data.forEach(d => waves.add(d.wave));
 
@@ -303,7 +309,8 @@ function createPC(data) {
         graph = new ParallelCoordinates("graph-wave", data, {
             axes: axes,
             cb: [checkBoxGG.checked, checkBoxGR.checked, checkBoxRG.checked, checkBoxRR.checked],
-            wave: parseInt(selectWaves.value)
+            wave: parseInt(selectWaves.value),
+            vals: vals
         });
     });
 
@@ -316,7 +323,8 @@ function createPC(data) {
     let graph = new ParallelCoordinates("graph-wave", data, {
         axes: defaultAxes,
         cb: [checkBoxGG.checked, checkBoxGR.checked, checkBoxRG.checked, checkBoxRR.checked],
-        wave: parseInt(selectWaves.value)
+        wave: parseInt(selectWaves.value),
+        vals: vals
     });
 
     checkBoxGG.addEventListener("input", e => {
@@ -338,6 +346,13 @@ function createPC(data) {
     let w = 100;
     let h = 10;
 
+    let labels = document.querySelectorAll("#options-wave-container tr");
+    labels.forEach(d => {
+        const type = d.dataset.type;
+        d.addEventListener("mouseover", () => graph.highlightMidLines(type, true));
+        d.addEventListener("mouseout", () => graph.highlightMidLines(type, false));
+    });
+
     d3.select("label[for=GG] span")
         .append("svg")
         .attr("width", w)
@@ -353,6 +368,7 @@ function createPC(data) {
         .attr("y2", h / 2)
         .style("stroke", d => d)
         .style("stroke-width", 2);
+
 
     d3.select("label[for=GR] span")
         .append("svg")
@@ -468,7 +484,8 @@ function createPC(data) {
             graph = new ParallelCoordinates("graph-wave", data, {
                 axes: axes,
                 cb: [checkBoxGG.checked, checkBoxGR.checked, checkBoxRG.checked, checkBoxRR.checked],
-                wave: parseInt(selectWaves.value)
+                wave: parseInt(selectWaves.value),
+                vals: vals
             });
         }
 
@@ -480,7 +497,8 @@ function createPC(data) {
             graph = new ParallelCoordinates("graph-wave", data, {
                 axes: axes,
                 cb: [checkBoxGG.checked, checkBoxGR.checked, checkBoxRG.checked, checkBoxRR.checked],
-                wave: parseInt(selectWaves.value)
+                wave: parseInt(selectWaves.value),
+                vals: vals
             });
         });
         listSel.append(span)
@@ -555,18 +573,51 @@ function setUpPerson(data) {
 
         drawGraphsPerson(data, parseInt(selectIid.value));
 
+        instantiateDensitySelectors(data, parseInt(selectIid.value));
+
         setups.person = true;
     }
 }
 
 function drawGraphsPerson(data, iid) {
-    // Radar chart
-    let radarChart = new RadarChart("radar-person", data, {iid : iid}); // RadarChart in the Person tab
-    createChart(data, radarChart);
+    let checkboxSelf_traits = document.getElementById("self_traits");
+    let checkboxRating_o = document.getElementById("rating_o");
+    let checkboxSelf_look_traits = document.getElementById("self_look_traits");
+    let checkboxSame_gender_look_traits = document.getElementById("same_gender_look_traits");
+    let checkboxOpposite_gender_look_traits = document.getElementById("opposite_gender_look_traits");
+    let checkboxOpposite_gender_self_traits = document.getElementById("opposite_gender_self_traits");
 
     // Grouped bar chart
-    let groupedBarChart = new GroupedBarChart("bar-person", data, {iid : iid}); // Grouped Bar Chart in the Person tab
-    createChart(data, groupedBarChart);
+    let groupedBarChart = new GroupedBarChart("bar-person", data, {
+        iid: iid
+    }); // Grouped Bar Chart in the Person tab
+    // createChart(data, groupedBarChart);
+
+    // Radar chart
+    let radarChart = new RadarChart("radar-person-container", data, {
+        iid: iid,
+        gbc: groupedBarChart,
+        cb: [checkboxSelf_traits.checked, checkboxRating_o.checked, checkboxSelf_look_traits.checked,
+            checkboxSame_gender_look_traits.checked, checkboxOpposite_gender_look_traits.checked,
+            checkboxOpposite_gender_self_traits.checked
+        ]
+    }); // RadarChart in the Person tab
+    createChart(data, radarChart);
+
+
+    window.addEventListener("keydown", e => {
+        if (e.key === "a") {
+            groupedBarChart.updateData("self_look_traits");
+        } else if (e.key === "z") {
+            groupedBarChart.updateData("self_traits");
+        } else if (e.key === "e") {
+            groupedBarChart.updateData("same_gender_look_traits");
+        } else if (e.key === "r") {
+            groupedBarChart.updateData("opposite_gender_look_traits");
+        } else if (e.key === "t") {
+            groupedBarChart.updateData("opposite_gender_self_traits");
+        }
+    });
 
     // Create Person Density Feature
     createPersonDensityFeature(data, iid);
@@ -650,27 +701,28 @@ function instantiateNavigation(data) {
     });
 }
 
-// Person Density Feature
-function createPersonDensityFeature(data, iid) {
+function instantiateDensitySelectors(data, iid) {
     // Change Button Continuous Variable
-    let buttonSucessContinuous = document.getElementById("densityVarPersonContinuous");
-    buttonSucessContinuous.addEventListener("change", e => {
-        let x = document.getElementById("densityVarPersonContinuous");
-        let densityVarPersonContinuous = x.value;
-        console.log("Change, densityVarPersonContinuous: " + densityVarPersonContinuous);
+    let buttonSuccessContinuous = document.getElementById("densityVarPersonContinuous");
+    buttonSuccessContinuous.addEventListener("input", e => {
+        let densityVarPersonContinuous = buttonSuccessContinuous.value;
         // Update graph
         instantiatePersonDensityContinuous(data, "graphVarPersonContinuous", densityVarPersonContinuous, iid);
     });
 
     // Change Button Categorical Variable
     let buttonSucessCategorical = document.getElementById("densityVarPersonCategorical");
-    buttonSucessCategorical.addEventListener("change", e => {
-        let x = document.getElementById("densityVarPersonCategorical");
-        let densityVarPersonCategorical = x.value;
-        console.log("Change, densityVarPersonCategorical: " + densityVarPersonCategorical);
+    buttonSucessCategorical.addEventListener("input", e => {
+        let densityVarPersonCategorical = buttonSucessCategorical.value;
         // Update graph
         instantiatePersonDensityCategorical(data, "graphVarPersonCategorical", densityVarPersonCategorical, iid);
     });
+}
+
+// Person Density Feature
+function createPersonDensityFeature(data, iid) {
+    let buttonSucessContinuous = document.getElementById("densityVarPersonContinuous");
+    let buttonSucessCategorical = document.getElementById("densityVarPersonCategorical");
 
     // Create graph for the first time
     instantiatePersonDensityContinuous(data, "graphVarPersonContinuous", buttonSucessContinuous.value, iid);
@@ -773,7 +825,7 @@ function instantiatePrimaryFeatureInteraction() {
 
     let explorable_variables = [
         {title: 'Carreer', name: 'career_c'},
-        {title: 'Field of Study', name:'field_cd'},
+        {title: 'Field of Study', name: 'field_cd'},
         {title: 'Go out', name: 'go_out'},
         {title: 'Goal', name: 'goal'},
         {title: 'Happiness expectation', name: 'exphappy'},

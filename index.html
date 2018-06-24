@@ -45,14 +45,36 @@
                 <div id="label-middle-line-wave">
                     Middle lines selection
                 </div>
-                <input type="checkbox" id="GG" checked>
-                <label for="GG"><span></span>Match</label><br>
-                <input type="checkbox" id="GR" checked>
-                <label for="GR"><span></span>Man accepted - Woman refused</label><br>
-                <input type="checkbox" id="RG" checked>
-                <label for="RG"><span></span>Man refused - Woman accepted</label><br>
-                <input type="checkbox" id="RR" checked>
-                <label for="RR"><span></span>No match</label>
+                <table id="midLineTable">
+                    <tr data-type="GG">
+                        <td>
+                            <input type="checkbox" id="GG" checked>
+                            <label for="GG"><span></span>Match</label><br>
+                        </td>
+                        <td><span id="valGG"></span>%</td>
+                    </tr>
+                    <tr data-type="GR">
+                        <td>
+                            <input type="checkbox" id="GR" checked>
+                            <label for="GR"><span></span>Man accepted - Woman refused</label><br>
+                        </td>
+                        <td><span id="valGR"></span>%</td>
+                    </tr>
+                    <tr data-type="RG">
+                        <td>
+                            <input type="checkbox" id="RG" checked>
+                            <label for="RG"><span></span>Man refused - Woman accepted</label><br>
+                        </td>
+                        <td><span id="valRG"></span>%</td>
+                    </tr>
+                    <tr data-type="RR">
+                        <td>
+                            <input type="checkbox" id="RR" checked>
+                            <label for="RR"><span></span>No match</label>
+                        </td>
+                        <td><span id="valRR"></span>%</td>
+                    </tr>
+                </table>
             </div>
         </div>
         <div id="graph-container-wave">
@@ -65,7 +87,10 @@
             <span class="title">Person</span>
             <input type="number" placeholder="Person's iid" id="iid-person" min="1" max="552" value="1"></select>
         </div>
-        <div id="radar-person"></div>
+        <div id="radar-person">
+            <div id="radar-person-container">
+            </div>
+        </div>
         <div id="bar-person"></div>
         <div id="rep-person"></div>
         <div id="feat1-person" class="plot-density">

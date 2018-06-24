@@ -39,12 +39,8 @@ class GraphDensityVerticalLine extends Graph{
      */
     preprocess(){
         this.dataDensityVarPerson1 = this.preprocessDensityVarPerson(this.densityVarPerson1);
-        console.log("dataDensityVarPerson1");
-        console.log(this.dataDensityVarPerson1);
 
         this.valueDensityVarPerson1 = this.preprocessValueDensityVarPerson(this.densityVarPerson1, this.iid, this.dataDensityVarPerson1);
-        console.log("valueDensityVarPerson1");
-        console.log(this.valueDensityVarPerson1);
     }
 
     preprocessDensityVarPerson(current_tmp_var){
@@ -63,16 +59,8 @@ class GraphDensityVerticalLine extends Graph{
 
     preprocessValueDensityVarPerson(current_tmp_var, tmp_iid, tmp_density){
         // Get all data
-        console.log("preprocessValueDensityVarPerson");
-        console.log(current_tmp_var);
-        console.log(tmp_iid);
-        console.log(tmp_density);
-
         let tmp_element = this.allData.map(d => {return {key : d[current_tmp_var], iid : d["iid"]}})
             .filter(d => d.iid === tmp_iid);
-
-        console.log("tmp_element");
-        console.log(tmp_element);
 
         let tmp_value = new Array(2);
         tmp_value["key"] = tmp_element[0].key;
