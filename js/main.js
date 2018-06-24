@@ -555,6 +555,8 @@ function setUpPerson(data) {
 
         drawGraphsPerson(data, parseInt(selectIid.value));
 
+        instantiateDensitySelectors(data, parseInt(selectIid.value));
+
         setups.person = true;
     }
 }
@@ -681,27 +683,28 @@ function instantiateNavigation(data) {
     });
 }
 
-// Person Density Feature
-function createPersonDensityFeature(data, iid) {
+function instantiateDensitySelectors(data, iid) {
     // Change Button Continuous Variable
-    let buttonSucessContinuous = document.getElementById("densityVarPersonContinuous");
-    buttonSucessContinuous.addEventListener("change", e => {
-        let x = document.getElementById("densityVarPersonContinuous");
-        let densityVarPersonContinuous = x.value;
-        console.log("Change, densityVarPersonContinuous: " + densityVarPersonContinuous);
+    let buttonSuccessContinuous = document.getElementById("densityVarPersonContinuous");
+    buttonSuccessContinuous.addEventListener("input", e => {
+        let densityVarPersonContinuous = buttonSuccessContinuous.value;
         // Update graph
         instantiatePersonDensityContinuous(data, "graphVarPersonContinuous", densityVarPersonContinuous, iid);
     });
 
     // Change Button Categorical Variable
     let buttonSucessCategorical = document.getElementById("densityVarPersonCategorical");
-    buttonSucessCategorical.addEventListener("change", e => {
-        let x = document.getElementById("densityVarPersonCategorical");
-        let densityVarPersonCategorical = x.value;
-        console.log("Change, densityVarPersonCategorical: " + densityVarPersonCategorical);
+    buttonSucessCategorical.addEventListener("input", e => {
+        let densityVarPersonCategorical = buttonSucessCategorical.value;
         // Update graph
         instantiatePersonDensityCategorical(data, "graphVarPersonCategorical", densityVarPersonCategorical, iid);
     });
+}
+
+// Person Density Feature
+function createPersonDensityFeature(data, iid) {
+    let buttonSucessContinuous = document.getElementById("densityVarPersonContinuous");
+    let buttonSucessCategorical = document.getElementById("densityVarPersonCategorical");
 
     // Create graph for the first time
     instantiatePersonDensityContinuous(data, "graphVarPersonContinuous", buttonSucessContinuous.value, iid);

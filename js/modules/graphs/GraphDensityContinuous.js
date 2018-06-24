@@ -29,6 +29,8 @@ class GraphDensityContinuous extends Graph{
 
         this.preprocess();
         this.createGraph();
+
+        console.log("GraphDensityContinuous ok");
     }
 
     // -- METHODS TO IMPLEMENT ---
