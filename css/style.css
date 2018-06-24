@@ -228,12 +228,32 @@ label > span {
     background-color: #9ccd24;
 }
 
-#rep-person {
+#id-person {
     grid-column-start: 2;
     grid-column-end: 3;
     grid-row-start: 2;
     grid-row-end: 4;
     background-color: #7dcd58;
+}
+
+#image-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 20px;
+}
+
+#id-person ul {
+    list-style: none;
+}
+
+#id-person li {
+    padding: 3px;
+}
+
+.li-id-card {
+    font-variant: normal;
 }
 
 #feat1-person {
@@ -252,7 +272,7 @@ label > span {
     background-color: #b8cd40;
 }
 
-#id-person {
+#cb-person {
     grid-column-start: 3;
     grid-column-end: 4;
     grid-row-start: 4;
@@ -290,7 +310,6 @@ label > span {
     grid-template-rows: 5% 50% auto;
 }
 
-
 #select-success {
     grid-column-start: 1;
     grid-column-end: 3;
@@ -302,7 +321,7 @@ label > span {
     background-color: darkblue;
 }
 
-#primary_feature_select{
+#primary_feature_select {
     margin-top: 1em;
     padding: 0.2em;
 }
@@ -317,7 +336,7 @@ label > span {
     flex-direction: column;
 }
 
-#sbc-success-interaction{
+#sbc-success-interaction {
     height: 1em;
     margin: auto;
 }
@@ -328,7 +347,7 @@ label > span {
     display: flex;
 }
 
-#sbc-success-info{
+#sbc-success-info {
     flex: 1;
     display: flex;
 }
