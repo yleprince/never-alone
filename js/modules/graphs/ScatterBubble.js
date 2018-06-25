@@ -227,8 +227,8 @@ class ScatterBubble extends Graph{
 
         this.g.append("text")
             .attr("transform", "rotate(-90)")
-            .attr("y", 0 - this.margin.left)
-            .attr("x",0 - this.margin.top)
+            .attr("y", 20 - this.margin.left)
+            .attr("x", 0 - this.margin.top)
             .attr("dy", "1em")
             .style("text-anchor", "end")
             .text("Male");   
