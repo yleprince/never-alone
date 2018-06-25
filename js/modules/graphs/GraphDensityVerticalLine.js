@@ -22,7 +22,7 @@ class GraphDensityVerticalLine extends Graph{
         super(id, allData);
 
         let opts = fillWithDefault(options, defaultOptions);
-        this.color = ["#1f78b4"];
+        this.color = ["#2E8B57"];
         this.size = opts.size;
 
         this.densityVarPerson1 = options.densityVarPersonContinuous;
@@ -129,8 +129,8 @@ class GraphDensityVerticalLine extends Graph{
             .attr("y1", y(0))
             .attr("x2", x(valuePerson.key))
             .attr("y2", y(valuePerson.value))
-            .style("stroke-width", 2)
-            .style("stroke", "red")
+            .style("stroke-width", 3)
+            .style("stroke", "#CA0D59")
             .style("fill", "none");
 
         // x axis

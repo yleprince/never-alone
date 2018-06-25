@@ -211,7 +211,7 @@ label > span {
     grid-column-end: 2;
     grid-row-start: 2;
     grid-row-end: 4;
-    background-color: #5acd1d;
+    /*background-color: #5acd1d;*/
 }
 
 #radar-person-container {
@@ -225,15 +225,49 @@ label > span {
     grid-column-end: 3;
     grid-row-start: 4;
     grid-row-end: 5;
-    background-color: #9ccd24;
+    /*background-color: #9ccd24;*/
 }
 
-#rep-person {
+#id-person {
     grid-column-start: 2;
     grid-column-end: 3;
     grid-row-start: 2;
     grid-row-end: 4;
-    background-color: #7dcd58;
+}
+
+#identity-card-person {
+    background-color: #c2f0c2;
+    border: 3px solid seagreen;
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+#image-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#id-person ul {
+    list-style: none;
+    font-size: 14px;
+    font-family: "Courier New", serif;
+    padding-left: 5px;
+}
+
+#id-person li {
+    padding: 3px;
+}
+
+.li-id-card {
+    font-variant: normal;
+}
+
+.id-card-title {
+    font-family: "Courier New", serif;
+    font-size: 22px;
 }
 
 #feat1-person {
@@ -241,7 +275,7 @@ label > span {
     grid-column-end: 4;
     grid-row-start: 2;
     grid-row-end: 3;
-    background-color: #93cd13;
+    /*background-color: #93cd13;*/
 }
 
 #feat2-person {
@@ -249,15 +283,15 @@ label > span {
     grid-column-end: 4;
     grid-row-start: 3;
     grid-row-end: 4;
-    background-color: #b8cd40;
+    /*background-color: #b8cd40;*/
 }
 
-#id-person {
+#cb-person {
     grid-column-start: 3;
     grid-column-end: 4;
     grid-row-start: 4;
     grid-row-end: 5;
-    background-color: #96cd85;
+    /*background-color: #96cd85;*/
 }
 
 #iid-person {
@@ -285,11 +319,10 @@ label > span {
 
 /*SUCCESS*/
 #tab-success {
-    background-color: deepskyblue;
+    /*background-color: deepskyblue;*/
     grid-template-columns: 70% auto;
     grid-template-rows: 5% 50% auto;
 }
-
 
 #select-success {
     grid-column-start: 1;
@@ -299,10 +332,11 @@ label > span {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: darkblue;
+    background-color: #1f78b4;
+    /*color: white;*/
 }
 
-#primary_feature_select{
+#primary_feature_select {
     margin-top: 1em;
     padding: 0.2em;
 }
@@ -312,12 +346,12 @@ label > span {
     grid-column-end: 2;
     grid-row-start: 2;
     grid-row-end: 4;
-    background-color: #3882cd;
+    /*background-color: #3882cd;*/
     display: flex;
     flex-direction: column;
 }
 
-#sbc-success-interaction{
+#sbc-success-interaction {
     height: 1em;
     margin: auto;
 }
@@ -328,7 +362,7 @@ label > span {
     display: flex;
 }
 
-#sbc-success-info{
+#sbc-success-info {
     flex: 1;
     display: flex;
 }
@@ -383,7 +417,7 @@ td {
     grid-column-end: 3;
     grid-row-start: 2;
     grid-row-end: 3;
-    background-color: #698bcd;
+    /*background-color: #698bcd;*/
 }
 
 #feat2-success {
@@ -391,7 +425,7 @@ td {
     grid-column-end: 3;
     grid-row-start: 3;
     grid-row-end: 4;
-    background-color: #4f2bcd;
+    /*background-color: #4f2bcd;*/
 }
 
 /*---------------------- PARALLEL COORDINATES ----------------------*/

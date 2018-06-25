@@ -40,6 +40,7 @@ d3.csv("data/SpeedDating.csv")
                 imprelig: +d.imprelig,
                 from: d.from,
                 zipcode: d.zipcode,
+                income_raw: d.income,
                 income: parseFloat(d.income.replace(/,/g, '')),
                 goal: +d.goal,
                 date: +d.date,
@@ -285,6 +286,64 @@ function main(data) {
     console.log(data);
     // Create the tabs
     instantiateNavigation(data);
+}
+
+function createIDCard(data, iid) {
+    let idCard = document.getElementById("id-person");
+
+    // Find person
+    let person = data.find(d => d.iid === iid);
+
+    // Add image
+    let imageCard = document.getElementById("image-container");
+    imageCard.innerHTML = "";
+    let image = document.createElement("img");
+    image.src = !!person.gender ? './data/woman.svg' : './data/man.svg';
+    image.width = 50;
+    image.height = 60;
+    imageCard.appendChild(image);
+
+    let ulId = document.createElement("ul");
+
+    // IID
+    let liIId = document.getElementById("li-iid");
+    liIId.innerHTML = person.iid;
+
+    // ID
+    let liId = document.getElementById("li-id");
+    liId.innerHTML = person.id;
+
+    // Wave
+    let liWave = document.getElementById("li-wave");
+    liWave.innerHTML = person.wave;
+
+    // Gender
+    let liGender = document.getElementById("li-gender");
+    liGender.innerHTML = !!person.gender ? "Female" : "Male";
+
+    // Race
+    let liRace = document.getElementById("li-race");
+    liRace.innerHTML = person.race;
+
+    // From
+    let liFrom = document.getElementById("li-from");
+    liFrom.innerHTML = person.from;
+
+    // Field
+    let liField = document.getElementById("li-field");
+    liField.innerHTML = person.field;
+
+    // Career
+    let liCareer = document.getElementById("li-career");
+    liCareer.innerHTML = person.career;
+
+    // Income
+    let liIncome = document.getElementById("li-income");
+    liIncome.innerHTML = "$" + person.income_raw;
+
+    // Goal
+    let liGoal = document.getElementById("li-goal");
+    liGoal.innerHTML = person.goal;
 }
 
 function createPC(data) {
@@ -546,6 +605,7 @@ function fillIidSelector(data) {
         let iid = parseInt(selectIid.value);
         if (iid && iid >= 1 && iid <= 552) {
             drawGraphsPerson(data, iid);
+            createIDCard(data, iid);
         }
     });
 }
@@ -574,6 +634,8 @@ function setUpPerson(data) {
         drawGraphsPerson(data, parseInt(selectIid.value));
 
         instantiateDensitySelectors(data, parseInt(selectIid.value));
+
+        createIDCard(data, parseInt(selectIid.value));
 
         setups.person = true;
     }
