@@ -254,6 +254,7 @@ label > span {
 #id-person ul {
     list-style: none;
     font-family: "Courier New", serif;
+    padding: 5px;
 }
 
 #id-person li {
@@ -262,6 +263,11 @@ label > span {
 
 .li-id-card {
     font-variant: normal;
+}
+
+.id-card-title {
+    font-family: "Courier New", serif;
+    font-size: 22px;
 }
 
 #feat1-person {
