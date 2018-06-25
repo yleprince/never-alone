@@ -142,7 +142,7 @@ class RadarChart extends Graph {
     /**
      * Fill SVG for the graph (implement the visualization here)
      */
-    createGraph(id) {
+    createGraph() {
         let margin = {top: 30, right: 50, bottom: 30, left: 50};
 
         let cfg = {
@@ -169,7 +169,7 @@ class RadarChart extends Graph {
         // Defining some useful variables for afterwards
         let total = d3.keys(this.dataThemself[0]).length;
         let radius = cfg.factor * Math.min(cfg.w / 2, cfg.h / 2);
-        d3.select(id).select("svg").remove();
+        // d3.select(this.id).select("svg").remove();
 
         // Declare a SVG
         let g = this.svg.append("g")
