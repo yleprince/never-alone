@@ -22,7 +22,8 @@ class GraphDensityCategoricalPerson extends Graph{
         super(id, allData);
         let opts = fillWithDefault(options, defaultOptions);
 
-        this.color = ["#1f78b4", "#a6cee3"];
+        this.color = ["#2E8B57", "#c2f0c2"];
+        // this.color = ["#1f78b4", "#a6cee3"];
         this.size = opts.size;
 
         this.currentCategoricalVar = options.densityVarPersonCategorical;
@@ -99,17 +100,17 @@ class GraphDensityCategoricalPerson extends Graph{
                     return 0;
                 }
             })
-            .attr("fill", d => parseInt(d.key) === this.dataCategoricalFilter.tmp_var ? "red" : this.color[0])
-            .on("mouseover", function(d, i){
-                //Change color when bar hovers
-                d3.select(this)
-                    .attr("fill", "grey");})
-            .on("mouseout", function(d, i){
-                //Go back to initial settings when user unhovers
-                d3.select(this)
-                    .attr("fill", function(d) { return z(d.key); });
-
-                d3.select("#id" + i).remove();});
+            .attr("fill", d => parseInt(d.key) === this.dataCategoricalFilter.tmp_var ? "#CA0D59" : this.color[0])
+            // .on("mouseover", function(d, i){
+            //     //Change color when bar hovers
+            //     d3.select(this)
+            //         .attr("fill", "grey");})
+            // .on("mouseout", function(d, i){
+            //     //Go back to initial settings when user unhovers
+            //     d3.select(this)
+            //         .attr("fill", function(d) { return z(d.key); });
+            //
+            //     d3.select("#id" + i).remove();});
 
         // Add horizontal axis with name of the attributes
         g.append("g")

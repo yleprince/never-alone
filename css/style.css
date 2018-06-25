@@ -248,13 +248,13 @@ label > span {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-top: 20px;
 }
 
 #id-person ul {
     list-style: none;
+    font-size: 14px;
     font-family: "Courier New", serif;
-    padding: 5px;
+    padding-left: 5px;
 }
 
 #id-person li {
