@@ -168,7 +168,7 @@ class GroupedBarChart extends Graph {
             .attr("y", d => this.y(d.value))
             .attr("width", this.x1.bandwidth())
             .attr("height", d => this._cfg.height - this.y(d.value))
-            .attr("fill", d => z(d.key))
+            .style("fill", d => z(d.key))
             .style("stroke", "grey")
             .style("stroke-opacity", "0.9")
             .style("fill-opacity", "0.75")
