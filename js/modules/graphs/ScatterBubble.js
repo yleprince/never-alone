@@ -155,7 +155,7 @@ class ScatterBubble extends Graph{
         this.g.selectAll(".dot").remove();
 
         let property_desc = {
-            'career_c':{title:'Carreer', desc: ''},
+            'career_c':{title:'Career', desc: ''},
             'field_cd':{title:'Field of Study', desc: ''},
             'go_out':{title:'Go out', desc: ''},
             'goal':{title:'Goal', desc: ''},
@@ -189,9 +189,21 @@ class ScatterBubble extends Graph{
                            .range([5, 22])
                            .domain(d3.extent(this.scat, d => d.count));
 
-        let color = d3.scalePow().exponent(0.5)
-                .domain(d3.extent(this.scat, d => d.matches/d.count))
-                .range([0,1]);
+        // let color = d3.scalePow().exponent(0.5)
+        //         .domain(d3.extent(this.scat, d => d.matches/d.count))
+        //         .range([0,1]);
+
+// let colorAxis = d3.scaleLinear()
+//             .range(['#d9ff13', '#00A889'])
+//             .domain(d3.extent(this.data, d => d[this.colorByAxis]))
+//             .interpolate(d3.interpolateHcl);
+        let color = d3.scaleLinear()
+            .range(['#00375b', '#93ccf2'])
+            .domain(d3.extent(this.scat, d => d.matches/d.count))
+            .interpolate(d3.interpolateHcl);
+
+
+
 
         let xAxis = d3.axisBottom()
             .scale(x);
@@ -248,9 +260,9 @@ class ScatterBubble extends Graph{
             .attr('r', d => size_scale(d.count))
             .attr("cx", d => x(d.x))
             .attr("cy", d => y(d.y))
-            .attr("fill", d => d3.interpolateViridis(color(d.matches/d.count)))
+            .attr("fill", d => color(d.matches/d.count))
             .on("mouseover", function (d) {
-                d3.select(this).attr("fill", 'black');
+                d3.select(this).attr("fill", '#029bff');
 
                 infos.nb_candidates.innerHTML = d.count;
                 infos.nb_matches.innerHTML = d.matches; 
@@ -260,7 +272,7 @@ class ScatterBubble extends Graph{
 
             })
             .on('mouseout', function (d) {
-                d3.select(this).attr("fill", d => d3.interpolateViridis(color(d.matches/d.count)));
+                d3.select(this).attr("fill", d => color(d.matches/d.count));
             })
             .on('click', function(d){
                 d.clicked = !d.clicked;
@@ -268,9 +280,8 @@ class ScatterBubble extends Graph{
                 if (d.clicked){
 
                     d3.select(this)
-                        .attr("stroke", 'black')
-                        .attr('stroke-width', 1)
-                        .style("stroke-dasharray", ("3, 3"));
+                        .attr("stroke", '#029bff')
+                        .attr('stroke-width', 4);
                 } else {
                     d3.select(this).attr('stroke-width', 0);
                 }

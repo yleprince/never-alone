@@ -899,7 +899,7 @@ function instantiatePrimaryFeatureInteraction() {
     let interaction_div = document.getElementById('sbc-success-interaction');
 
     let explorable_variables = [
-        {title: 'Carreer', name: 'career_c'},
+        {title: 'Career', name: 'career_c'},
         {title: 'Field of Study', name: 'field_cd'},
         {title: 'Go out', name: 'go_out'},
         {title: 'Goal', name: 'goal'},
