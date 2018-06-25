@@ -21,7 +21,7 @@ class RadarChart extends Graph {
      * @param options optional variables for the Graph
      */
     constructor(id, allData, options = {}) {
-        super(id, allData);
+        super(id, allData, true);
 
         let opts = fillWithDefault(options, defaultOptions);
         this.color = opts.color;
@@ -33,10 +33,6 @@ class RadarChart extends Graph {
         this.preprocess();
         this.createGraph();
     }
-
-    //this._iid -> semantique pour que le parametre soit caché/inchangeable
-    //Getter et setter pour iid pour pouvoir acceder et changer depuis main.js
-    //get iid()  ->> _iid
 
     get iid() {
         return this._iid;

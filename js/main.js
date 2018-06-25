@@ -669,7 +669,7 @@ function drawGraphsPerson(data, iid) {
     // createChart(data, groupedBarChart);
 
     // Radar chart
-    let radarChart = new RadarChart("radar-person-container", data, {
+    let radarChart = new RadarChart("radar-person", data, {
         iid: iid,
         gbc: groupedBarChart,
         cb: [checkboxSelf_traits.checked, checkboxRating_o.checked, checkboxSelf_look_traits.checked,

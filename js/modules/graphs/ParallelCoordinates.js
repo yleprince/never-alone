@@ -85,6 +85,7 @@ class ParallelCoordinates extends Graph {
      */
     createGraph() {
         let vals = this.vals;
+
         function updateProportions(data, selIDs) {
             let gg = 0;
             let gr = 0;
@@ -110,29 +111,30 @@ class ParallelCoordinates extends Graph {
                 data.forEach(d => {
                     if (!d.gender) {
                         d.dec.forEach(dec => {
-                            if(dec.d && dec.d_o) {
+                            if (dec.d && dec.d_o) {
                                 gg += 1;
-                            } else if(dec.d && !dec.d_o) {
+                            } else if (dec.d && !dec.d_o) {
                                 gr += 1;
-                            } else if(!dec.d && dec.d_o) {
+                            } else if (!dec.d && dec.d_o) {
                                 rg += 1;
-                            } else if(!dec.d && !dec.d_o) {
+                            } else if (!dec.d && !dec.d_o) {
                                 rr += 1;
                             }
                         })
                     }
                 })
             }
-            const sum = gg + gr + rg +rr;
-            gg = (gg/sum) * 100;
-            gr = (gr/sum) * 100;
-            rg = (rg/sum) * 100;
-            rr = (rr/sum) * 100;
+            const sum = gg + gr + rg + rr;
+            gg = (gg / sum) * 100;
+            gr = (gr / sum) * 100;
+            rg = (rg / sum) * 100;
+            rr = (rr / sum) * 100;
             vals.GG.innerHTML = gg.toFixed(2);
             vals.GR.innerHTML = gr.toFixed(2);
             vals.RG.innerHTML = rg.toFixed(2);
             vals.RR.innerHTML = rr.toFixed(2);
         }
+
         updateProportions(this.data);
         let margin = {top: 50, right: 10, bottom: 50, left: 30},
             innerWidth = this.width - margin.left - margin.right,
@@ -408,6 +410,7 @@ class ParallelCoordinates extends Graph {
         }
 
         let data = this.data;
+
         // Handles a brush event, toggling the display of foreground lines.
         function brush() {
             let actives = [];
@@ -443,7 +446,6 @@ class ParallelCoordinates extends Graph {
     }
 
 
-
     showMidLines(type, show) {
         let filtering;
         switch (type) {
@@ -470,7 +472,7 @@ class ParallelCoordinates extends Graph {
             .style("opacity", show ? this.opacityMiddle : 0);
     }
 
-    highlightMidLines(type, show){
+    highlightMidLines(type, show) {
         let filtering;
         switch (type) {
             case "GG":

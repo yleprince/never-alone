@@ -211,14 +211,17 @@ label > span {
     grid-column-end: 2;
     grid-row-start: 2;
     grid-row-end: 4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     /*background-color: #5acd1d;*/
 }
 
-#radar-person-container {
-    width: 100%;
-    height: 0;
-    padding-bottom: 100%;
-}
+/*#radar-person-container {*/
+/*width: 100%;*/
+/*height: 0;*/
+/*padding-bottom: 100%;*/
+/*}*/
 
 #bar-person {
     grid-column-start: 1;
