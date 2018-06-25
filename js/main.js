@@ -907,7 +907,6 @@ function instantiatePrimaryFeatureInteraction() {
         {title: 'Importance Race', name: 'imprace'},
         {title: 'Importance Religion', name: 'imprelig'},
         {title: 'Race', name: 'race'},
-        {title: 'Same Race', name: 'samerace'}
     ];
 
     // add Table hover info

@@ -376,8 +376,8 @@ label > span {
 }
 
 th {
-    color: #D5DDE5;;
-    background: #1b1e24;
+    color: black;
+    background: #1f78b4;
     font-size: 1.3em;
     font-weight: 100;
     padding: 0.7em;
@@ -396,7 +396,7 @@ tr:hover td {
 }
 
 tr:nth-child(odd) td {
-    background: #EBEBEB;
+    background: #afbcff;
 }
 
 tr:nth-child(odd):hover td {

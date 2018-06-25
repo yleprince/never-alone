@@ -170,10 +170,6 @@ class ScatterBubble extends Graph{
         document.getElementById('sbc-Value').innerHTML = property_desc[property].title;
 
 
-
-
-
-
         
         this.scatterize(property);
         
@@ -190,7 +186,7 @@ class ScatterBubble extends Graph{
             // .domain(d3.extent(this.scatter_selected, d => d.y));
 
         let size_scale = d3.scaleLinear()
-                           .range([2, 20])
+                           .range([5, 22])
                            .domain(d3.extent(this.scat, d => d.count));
 
         let color = d3.scalePow().exponent(0.5)
@@ -252,7 +248,7 @@ class ScatterBubble extends Graph{
             .attr('r', d => size_scale(d.count))
             .attr("cx", d => x(d.x))
             .attr("cy", d => y(d.y))
-            .attr("fill", d => d3.interpolateReds(color(d.matches/d.count)))
+            .attr("fill", d => d3.interpolateViridis(color(d.matches/d.count)))
             .on("mouseover", function (d) {
                 d3.select(this).attr("fill", 'black');
 
@@ -264,7 +260,7 @@ class ScatterBubble extends Graph{
 
             })
             .on('mouseout', function (d) {
-                d3.select(this).attr("fill", d => d3.interpolateReds(color(d.matches/d.count)));
+                d3.select(this).attr("fill", d => d3.interpolateViridis(color(d.matches/d.count)));
             })
             .on('click', function(d){
                 d.clicked = !d.clicked;
