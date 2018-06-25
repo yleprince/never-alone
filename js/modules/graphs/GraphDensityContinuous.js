@@ -76,7 +76,7 @@ class GraphDensityContinuous extends Graph{
 
         const y = d3.scaleLinear()
             .range([innerHeight, 0])
-            .domain(d3.extent(this.dataFullContinuous, d => d.value));
+            .domain([0, d3.max(this.dataFullContinuous, function(d) { return d.value; })]);
 
         let g = this.svg.append("g")
             .attr("class", "ssf-cont")
