@@ -291,16 +291,16 @@ function main(data) {
 function createIDCard(data, iid) {
 
     let features = {
-        'field_cd':['Not answered', 'Law', 'Math', 'Social Science, Psychologist', 'Medical Science, Pharmaceuticals, and Bio Tech', 'Engineering', 'English/Creative Writing/ Journalism', 'History/Religion/Philosophy', 'Business/Econ/Finance', 'Education, Academia', 'Biological Sciences/Chemistry/Physics', 'Social Work', 'Undergrad/undecided', 'Political Science/International Affairs', 'Film', 'Fine Arts/Arts Administration', 'Languages', 'Architecture', 'Other'],
+        'field_cd': ['Not answered', 'Law', 'Math', 'Social Science, Psychologist', 'Medical Science, Pharmaceuticals, and Bio Tech', 'Engineering', 'English/Creative Writing/ Journalism', 'History/Religion/Philosophy', 'Business/Econ/Finance', 'Education, Academia', 'Biological Sciences/Chemistry/Physics', 'Social Work', 'Undergrad/undecided', 'Political Science/International Affairs', 'Film', 'Fine Arts/Arts Administration', 'Languages', 'Architecture', 'Other'],
         "race": ['Not answered', 'Black/African American', 'European/Caucasian-American', 'Latino/Hispanic American', 'Asian/Pacific Islander/Asian-American', 'Native American', 'Other'],
         "imprace": ['Not answered', 'Not important at all', 'Not important', 'Not that important', 'Somewhat important', 'Quite important', 'important', 'very important', 'extremely important', 'tremendously important', 'Nothing more important'],
         "imprelig": ['Not answered', 'Not important at all', 'Not important', 'Not that important', 'Somewhat important', 'Quite important', 'important', 'very important', 'extremely important', 'tremendously important', 'Nothing more important'],
         "goal": ['Not answered', 'Seemed like a fun night out', 'To meet new people', 'To get a date', 'Looking for a serious relationship', 'To say I did it', 'Other'],
         "date": ['Not answered', 'Several times a week', 'Twice a week', 'Once a week', 'Twice a month', 'Once a month', 'Several times a year', 'Almost never'],
         "go_out": ['Not answered', 'Several times a week', 'Twice a week', 'Once a week', 'Twice a month', 'Once a month', 'Several times a year', 'Almost never'],
-        "career_c": ['Not answered','Lawyer', 'Academic/Research', 'Psychologist', 'Doctor/Medicine', 'Engineer', 'Creative Arts/Entertainment', 'Banking/Consulting/Finance/Marketing/Business/CEO/Entrepreneur/Admin', 'Real Estate', 'International/Humanitarian Affairs', 'Undecided', 'Social Work', 'Speech Pathology', 'Politics', 'Pro sports/Athletics', 'Other', 'Journalism', 'Architecture'],
+        "career_c": ['Not answered', 'Lawyer', 'Academic/Research', 'Psychologist', 'Doctor/Medicine', 'Engineer', 'Creative Arts/Entertainment', 'Banking/Consulting/Finance/Marketing/Business/CEO/Entrepreneur/Admin', 'Real Estate', 'International/Humanitarian Affairs', 'Undecided', 'Social Work', 'Speech Pathology', 'Politics', 'Pro sports/Athletics', 'Other', 'Journalism', 'Architecture'],
         "exphappy": ['Not answered', 'Not happy at all', 'Not happy', 'Not that happy', 'Somewhat happy', 'Quite happy', 'happy', 'very happy', 'extremely happy', 'tremendously happy', "Couldn't be more happy"]
-        };
+    };
 
     let idCard = document.getElementById("id-person");
 
@@ -646,7 +646,7 @@ function setUpPerson(data) {
 
         drawGraphsPerson(data, parseInt(selectIid.value));
 
-        instantiateDensitySelectors(data, parseInt(selectIid.value));
+        instantiateDensitySelectors(data);
 
         createIDCard(data, parseInt(selectIid.value));
 
@@ -776,13 +776,15 @@ function instantiateNavigation(data) {
     });
 }
 
-function instantiateDensitySelectors(data, iid) {
+function instantiateDensitySelectors(data) {
+    let selectIid = document.getElementById("iid-person");
+
     // Change Button Continuous Variable
     let buttonSuccessContinuous = document.getElementById("densityVarPersonContinuous");
     buttonSuccessContinuous.addEventListener("input", e => {
         let densityVarPersonContinuous = buttonSuccessContinuous.value;
         // Update graph
-        instantiatePersonDensityContinuous(data, "graphVarPersonContinuous", densityVarPersonContinuous, iid);
+        instantiatePersonDensityContinuous(data, "graphVarPersonContinuous", densityVarPersonContinuous, parseInt(selectIid.value));
     });
 
     // Change Button Categorical Variable
@@ -790,7 +792,7 @@ function instantiateDensitySelectors(data, iid) {
     buttonSucessCategorical.addEventListener("input", e => {
         let densityVarPersonCategorical = buttonSucessCategorical.value;
         // Update graph
-        instantiatePersonDensityCategorical(data, "graphVarPersonCategorical", densityVarPersonCategorical, iid);
+        instantiatePersonDensityCategorical(data, "graphVarPersonCategorical", densityVarPersonCategorical, parseInt(selectIid.value));
     });
 }
 
