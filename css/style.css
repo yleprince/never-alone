@@ -4,6 +4,7 @@ body {
     margin: 0;
     font-variant: small-caps;
     font-family: sans-serif;
+    user-select: none;
 }
 
 body > nav {
