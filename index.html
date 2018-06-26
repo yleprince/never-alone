@@ -17,8 +17,15 @@
 
 <article>
     <div id="tab-home" class="tab activeTab">
-        <h1>Speed Dating Data</h1>
-        <h2>by Christopher Belinguier, Manon Charvet, Yrieix Leprince, Rémi Sanchez, Thai-An Than Trong</h2>
+        <div id="home-title">
+            <h1>Speed Dating Data</h1>
+            <h2>by Christopher Belinguier, Manon Charvet, Yrieix Leprince, Rémi Sanchez, Thai-An Than Trong</h2>
+        </div>
+        <div class="graph-repulsion" id="graph-repulsion"></div>
+        <div id="info-home">
+            iid: <span id="info-iid"></span><br>
+            wave: <span id="info-wave"></span>
+        </div>
     </div>
     <div id="tab-wave" class="tab">
         <div id="select-wave">
@@ -108,6 +115,24 @@
                     <li>Goal : <span class="li-id-card" id="li-goal"></span></li>
                 </ul>
             </div>
+
+            <div id="cb-person">
+                <input type="checkbox" id="self_traits" checked>
+                <label for="self_traits">How you perceive yourself</label> <br>
+                <input type="checkbox" id="rating_o" checked>
+                <label for="rating_o">How your dates perceived you</label> <br>
+                <input type="checkbox" id="self_look_traits">
+                <label for="self_look_traits">What you look for in the opposite sex</label> <br>
+                <input type="checkbox" id="same_gender_look_traits">
+                <label for="same_gender_look_traits">What you think most of your fellow look for in the opposite
+                    sex</label>
+                <br>
+                <input type="checkbox" id="opposite_gender_look_traits">
+                <label for="opposite_gender_look_traits">What you think the opposite sex looks for in a date</label>
+                <br>
+                <input type="checkbox" id="opposite_gender_self_traits">
+                <label for="opposite_gender_self_traits">How you think others perceive you</label> <br>
+            </div>
         </div>
         <div id="feat1-person" class="plot-density">
             <div class="select-density">
@@ -123,21 +148,7 @@
             <div class="graph-density" id="graphVarPersonCategorical">
             </div>
         </div>
-        <div id="cb-person">
-            <input type="checkbox" id="self_traits" checked>
-            <label for="self_traits">How you perceive yourself</label> <br>
-            <input type="checkbox" id="rating_o" checked>
-            <label for="rating_o">How your dates perceived you</label> <br>
-            <input type="checkbox" id="self_look_traits">
-            <label for="self_look_traits">What you look for in the opposite sex</label> <br>
-            <input type="checkbox" id="same_gender_look_traits">
-            <label for="same_gender_look_traits">What you think most of your fellow look for in the opposite sex</label>
-            <br>
-            <input type="checkbox" id="opposite_gender_look_traits">
-            <label for="opposite_gender_look_traits">What you think the opposite sex looks for in a date</label> <br>
-            <input type="checkbox" id="opposite_gender_self_traits">
-            <label for="opposite_gender_self_traits">How you think others perceive you</label> <br>
-        </div>
+        <div id="repulsion-person"></div>
     </div>
 
     <div id="tab-success" class="tab">
@@ -178,6 +189,8 @@
 <script type="module" src="js/modules/graphs/GraphDensityCategorical.js"></script>
 <script type="module" src="js/modules/graphs/GraphDensityVerticalLine.js"></script>
 <script type="module" src="js/modules/graphs/GraphDensityCategoricalPerson.js"></script>
+<script type="module" src="js/modules/graphs/Repulsion.js"></script>
+<script type="module" src="js/modules/graphs/RepulsionPerson.js"></script>
 <script type="module" src="js/modules/defaultOptions.js"></script>
 
 </body>
