@@ -17,7 +17,7 @@ const dicColor = {
     self_look_traits: "#7CFC00",
     same_gender_look_traits: "#FFA500",
     opposite_gender_look_traits: "#00BFFF",
-
+    opposite_gender_self_traits: "#008080",
 }
 
 class GroupedBarChart extends Graph {

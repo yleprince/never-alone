@@ -17,8 +17,15 @@
 
 <article>
     <div id="tab-home" class="tab activeTab">
-        <h1>Speed Dating Data</h1>
-        <h2>by Christopher Belinguier, Manon Charvet, Yrieix Leprince, Rémi Sanchez, Thai-An Than Trong</h2>
+        <div id="home-title">
+            <h1>Speed Dating Data</h1>
+            <h2>by Christopher Belinguier, Manon Charvet, Yrieix Leprince, Rémi Sanchez, Thai-An Than Trong</h2>
+        </div>
+        <div class="graph-repulsion" id="graph-repulsion"></div>
+        <div id="info-home">
+            iid: <span id="info-iid"></span><br>
+            wave: <span id="info-wave"></span>
+        </div>
     </div>
     <div id="tab-wave" class="tab">
         <div id="select-wave">
@@ -178,6 +185,7 @@
 <script type="module" src="js/modules/graphs/GraphDensityCategorical.js"></script>
 <script type="module" src="js/modules/graphs/GraphDensityVerticalLine.js"></script>
 <script type="module" src="js/modules/graphs/GraphDensityCategoricalPerson.js"></script>
+<script type="module" src="js/modules/graphs/Repulsion.js"></script>
 <script type="module" src="js/modules/defaultOptions.js"></script>
 
 </body>

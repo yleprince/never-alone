@@ -8,6 +8,7 @@ import GraphDensityVerticalLine from "./modules/graphs/GraphDensityVerticalLine.
 import GraphDensityContinuous from "./modules/graphs/GraphDensityContinuous.js";
 import GraphDensityCategorical from "./modules/graphs/GraphDensityCategorical.js";
 import GraphDensityCategoricalPerson from "./modules/graphs/GraphDensityCategoricalPerson.js";
+import Repulsion from "./modules/graphs/Repulsion.js";
 
 let setups = {
     "home": true,
@@ -286,6 +287,13 @@ function main(data) {
     console.log(data);
     // Create the tabs
     instantiateNavigation(data);
+
+    // Repulsion
+    createRepulsionHome(data);
+}
+
+function createRepulsionHome(data) {
+    let graph = new Repulsion("graph-repulsion", data);
 }
 
 function createIDCard(data, iid) {
@@ -626,6 +634,9 @@ function fillIidSelector(data) {
 function setUpHome(data) {
     if (!setups.home) {
         // Code for the tab goes here
+
+        // Repulsion graph
+        createRepulsionHome(data);
 
         setups.home = true;
     }
