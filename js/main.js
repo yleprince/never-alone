@@ -774,6 +774,43 @@ function instantiateNavigation(data) {
         tabSuccess.classList.toggle("activeTab");
         setUpSuccess(data)
     });
+    const menu = document.getElementById("menu");
+    let menuSelected = false;
+    let menuMoving = false;
+    let initialPos = {};
+    let currentPos = {};
+    let finalPos = {};
+    let offset = {};
+
+    menu.addEventListener("pointerdown", e => {
+        // console.log(e.clientX, e.clientY);
+        // console.log(e);
+        initialPos.x = e.clientX;
+        initialPos.y = e.clientY;
+        menuSelected = true;
+        const bcr = menu.getBoundingClientRect();
+        offset.x = initialPos.x - bcr.left;
+        offset.y = initialPos.y - bcr.top;
+    });
+    menu.addEventListener("pointermove", e => {
+        if (menuSelected) {
+            menuMoving = true;
+            currentPos.x = e.clientX - initialPos.x;
+            currentPos.y = e.clientY - initialPos.y;
+            menu.style.transform = `translate(${currentPos.x}px, ${currentPos.y}px)`;
+        }
+    });
+    menu.addEventListener("pointerup", e => {
+        menuSelected = false;
+        if (menuMoving) {
+            finalPos.x = currentPos.x + initialPos.x - offset.x;
+            finalPos.y = currentPos.y + initialPos.y - offset.y;
+            menu.style.top = `${finalPos.y}px`;
+            menu.style.left = `${finalPos.x}px`;
+            menu.style.transform = "";
+            menuMoving = false;
+        }
+    });
 }
 
 function instantiateDensitySelectors(data) {
