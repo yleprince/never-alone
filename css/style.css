@@ -38,7 +38,7 @@ article .activeTab {
     grid-template-rows: 15% auto;
 }
 
-#home-title{
+#home-title {
     grid-row-start: 1;
     grid-row-end: 2;
     /*background-color: #ff99cc;*/
@@ -48,9 +48,15 @@ article .activeTab {
     flex-direction: column;
 }
 
-#graph-repulsion{
-    grid-row-start: 2;
-    grid-row-end: 3;
+#graph-repulsion {
+    /*grid-row-start: 2;*/
+    /*grid-row-end: 3;*/
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    /*z-index: -10;*/
 }
 
 #info-home {
@@ -313,11 +319,14 @@ label > span {
 }
 
 #cb-person {
+    padding: 20px;
+}
+
+#repulsion-person {
     grid-column-start: 3;
     grid-column-end: 4;
     grid-row-start: 4;
     grid-row-end: 5;
-    /*background-color: #96cd85;*/
 }
 
 label[for="self_traits"] {
@@ -586,6 +595,7 @@ td {
     width: 25%;
     height: 25%;
     cursor: move;
+    z-index:10;
 }
 
 #menu-holder {

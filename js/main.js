@@ -9,6 +9,7 @@ import GraphDensityContinuous from "./modules/graphs/GraphDensityContinuous.js";
 import GraphDensityCategorical from "./modules/graphs/GraphDensityCategorical.js";
 import GraphDensityCategoricalPerson from "./modules/graphs/GraphDensityCategoricalPerson.js";
 import Repulsion from "./modules/graphs/Repulsion.js";
+import RepulsionPerson from "./modules/graphs/RepulsionPerson.js";
 
 let setups = {
     "home": true,
@@ -647,6 +648,7 @@ function fillIidSelector(data) {
         if (iid && iid >= 1 && iid <= 552) {
             drawGraphsPerson(data, iid);
             createIDCard(data, iid);
+            createRepulsionPerson(data, iid);
         }
     });
 }
@@ -681,8 +683,14 @@ function setUpPerson(data) {
 
         createIDCard(data, parseInt(selectIid.value));
 
+        createRepulsionPerson(data, parseInt(selectIid.value));
+
         setups.person = true;
     }
+}
+
+function createRepulsionPerson(data, iid){
+    let graph = new RepulsionPerson("repulsion-person", data, {iid: iid});
 }
 
 function drawGraphsPerson(data, iid) {

@@ -6,33 +6,23 @@ import Graph from "./Graph.js";
 import fillWithDefault from "../defaultOptions.js";
 
 const defaultOptions = {
-    infoIid: "info-iid",
-    infoWave: "info-wave"
-};
+        iid: 1
+    }
+;
 
-const event = new Event('input', {
-    'bubbles': true,
-    'cancelable': true
-});
-
-class Repulsion extends Graph {
+class RepulsionPerson extends Graph {
 
     /**
      * Constructor of the Graph
      * @param id the div id in which we draw the Graph
      * @param allData the data used to draw the Graph
-     * @param selected the selection for iid to update
-     * @param selectedW the selection for wave to update
      * @param options optional variables for the Graph
      */
-    constructor(id, allData, selected, selectedW, options = {}) {
+    constructor(id, allData, options = {}) {
         super(id, allData);
 
         let opts = fillWithDefault(options, defaultOptions);
-        this.infoIid = opts.infoIid;
-        this.infoWave = opts.infoWave;
-        this.selected = selected;
-        this.selectedW = selectedW;
+        this.iid = opts.iid;
 
         this.preprocess();
         this.createGraph();
@@ -44,10 +34,22 @@ class Repulsion extends Graph {
      * Keep the interesting data for the Graph
      */
     preprocess() {
-        this.allData = this.allData.filter(d => d.wave !== 5);
+        this.person = this.allData.find(d => d.iid === this.iid);
+        this.people = this.allData.filter(d => d.wave === this.person.wave);
+    }
 
-        this.data = this.allData.reduce((acc, curr) => {
-            return acc.concat(curr.speedDates.filter(d => d.dec).map(d => {
+    /**
+     * Fill SVG for the graph (implement the visualization here)
+     */
+    createGraph() {
+        this.person = RepulsionPerson.copyData([this.person])[0];
+        this.people = RepulsionPerson.copyData(this.people);
+
+        let iids = new Set();
+        iids.add(this.iid);
+        let dates = this.people.reduce((acc, curr) => {
+            return acc.concat(curr.speedDates.filter(d => d.dec && d.pid === this.iid).map(d => {
+                iids.add(curr.iid);
                 return {
                     source: curr.iid,
                     gender: curr.gender,
@@ -55,70 +57,61 @@ class Repulsion extends Graph {
                     value: d.like
                 }
             }));
-        }, []);
-    }
+        }, this.person.speedDates.filter(d => d.dec).map(d => {
+            iids.add(d.pid);
+            return {
+                source: this.person.iid,
+                gender: this.person.gender,
+                target: d.pid,
+                value: d.like
+            }
+        }));
 
-    /**
-     * Fill SVG for the graph (implement the visualization here)
-     */
-    createGraph() {
-        let infoIid = document.getElementById(this.infoIid);
-        let infoWave = document.getElementById(this.infoWave);
+        // Graph repulse other people then behave strangely
+        this.people = this.people.filter(d => iids.has(d.iid));
+
         let gender_color = d3.scaleOrdinal()
             .domain([0, 1])
             .range(['#66d9ff', '#ff99cc']);
 
-        let likeExtent = d3.extent(this.data, d => d.value);
+        let likeExtent = d3.extent(dates, d => d.value);
 
         let distScale = d3.scaleLinear()
             .domain(likeExtent)
-            .range([50, 5]);
-
-        let posScale = d3.scaleOrdinal()
-            .domain([0, 1])
-            .range([this.width / 2, this.height / 2 - 100, this.width / 2, this.height / 2 + 100]);
+            .range([250, 5]);
 
         let forceLink = d3
             .forceLink().id(d => d.iid)
             .distance(d => distScale(d.value))
             .strength(0.1);
 
-        let widthScale = d3.scaleLinear()
+        let widthScale = d3.scaleLinear(2)
             .domain(likeExtent)
-            .range([0.5, 2]);
+            .range([1, 3]);
 
         let simulation = d3.forceSimulation()
             .force("link", forceLink)
-            .force("charge", d3.forceManyBody().strength(-75))
+            .force("charge", d3.forceManyBody().strength(-100))
             .force("center", d3.forceCenter(this.width / 2, this.height / 2))
             .force("y", d3.forceY(0.01))
             .force("x", d3.forceX(0.01));
 
+
         let link = this.svg.append("g")
             .attr("class", "links")
             .selectAll("line")
-            .data(this.data)
+            .data(dates)
             .enter().append("line")
             .attr("stroke-width", d => widthScale(d.value))
-            .attr("stroke", d => gender_color(d.gender))
-            .attr("stroke-opacity", 0.3);
+            .attr("stroke", d => gender_color(d.gender));
 
         let node = this.svg.append("g")
             .attr("class", "nodes")
             .selectAll("circle")
-            .data(this.allData)
+            .data(this.people)
             .enter().append("circle")
-            .attr("r", 4)
+            .attr("r", 8)
             .attr("fill", d => gender_color(d.gender))
-            .on("click", d => {
-                // this.selected.iid = d.iid;
-                // this.selected.wave = d.wave;
-                this.selected.value = "" + d.iid;
-                this.selectedW.value = "" + d.wave;
-                this.selectedW.dispatchEvent(event);
-                infoIid.innerHTML = d.iid;
-                infoWave.innerHTML = d.wave;
-            })
             .call(d3.drag()
                 .on("start", dragstarted)
                 .on("drag", dragged)
@@ -131,11 +124,11 @@ class Repulsion extends Graph {
             .text(d => d.value);
 
         simulation
-            .nodes(this.allData)
+            .nodes(this.people)
             .on("tick", ticked);
 
         simulation.force("link")
-            .links(this.data);
+            .links(dates);
 
         function ticked() {
             link
@@ -171,10 +164,20 @@ class Repulsion extends Graph {
         }
     }
 
+    static copyData(data) {
+        return data.map(a => {
+            let newObject = {};
+            Object.keys(a).forEach(propertyKey => {
+                newObject[propertyKey] = a[propertyKey];
+            });
+            return newObject;
+        })
+    }
+
     /**
      * Actions that need to be done when the Graph is resized
      */
     // resizeGraph();
 }
 
-export default Repulsion;
+export default RepulsionPerson;
