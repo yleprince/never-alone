@@ -12,6 +12,14 @@ const defaultOptions = {
     trait: "self_look_traits"
 };
 
+const dicColor = {
+    self_traits: "#6F257F",
+    self_look_traits: "#7CFC00",
+    same_gender_look_traits: "#FFA500",
+    opposite_gender_look_traits: "#00BFFF",
+
+}
+
 class GroupedBarChart extends Graph {
 
     /**
@@ -125,14 +133,15 @@ class GroupedBarChart extends Graph {
         this.y = d3.scaleLinear()
             .rangeRound([cfg.height, 0]);
 
-        this.z = d3.scaleOrdinal()
-            .range(["#6F257F", "#CA0D59", "#7CFC00"]);
-
 
     }
 
-    buildChart(data) {
+    buildChart(data, trait) {
         this._g.selectAll("*").remove();
+
+        const color = d3.rgb(dicColor[trait]);
+        this.z = d3.scaleOrdinal().range([color.brighter(1), color, color.darker(1)]);
+
         let keys = d3.keys(data[0]);
         let z = this.z;
 
@@ -237,11 +246,11 @@ class GroupedBarChart extends Graph {
             .exit().remove()
     }
 
-    updateData(trait) {
+    updateData(trait, color) {
         if (d3.keys(this.allData[0]).includes(trait)) {
             this.trait = trait;
             this.preprocess(this.trait);
-            this.buildChart(this.data);
+            this.buildChart(this.data, trait);
         } else {
             this._g.selectAll("*").remove();
         }

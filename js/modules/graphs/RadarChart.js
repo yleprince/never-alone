@@ -474,7 +474,7 @@ class RadarChart extends Graph {
                         .transition(200)
                         .style("fill-opacity", cfg.opacityArea);
                 })
-                .on("click", () => gbc.updateData(trait));
+                .on("click", (d, i) => gbc.updateData(trait));
 
 
             let tooltip = d3.select("body").append("div").attr("class", "toolTip");
@@ -514,7 +514,7 @@ class RadarChart extends Graph {
                         tooltip.style("display", "none");
                     }
                 )
-                .on("click", () => gbc.updateData(trait));
+                .on("click", (d, i) => gbc.updateData(trait));
 
         }
 
