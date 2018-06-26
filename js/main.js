@@ -17,6 +17,9 @@ let setups = {
     "success": false
 };
 
+let axes = [];
+let changePC = false;
+
 d3.csv("data/SpeedDating.csv")
     .row((d, i) => {
         return {
@@ -287,13 +290,16 @@ function main(data) {
     console.log(data);
     // Create the tabs
     instantiateNavigation(data);
+    fillIidSelector(data);
+    fillWaveSelector(data);
 
     // Repulsion
     createRepulsionHome(data);
 }
 
 function createRepulsionHome(data) {
-    let graph = new Repulsion("graph-repulsion", data);
+    let graph = new Repulsion("graph-repulsion", data, document.getElementById("iid-person"),
+        document.getElementById("nb-wave"));
 }
 
 function createIDCard(data, iid) {
@@ -367,13 +373,7 @@ function createIDCard(data, iid) {
     liGoal.innerHTML = features['goal'][person.goal];
 }
 
-function createPC(data) {
-    let vals = {
-        GG: document.getElementById("valGG"),
-        GR: document.getElementById("valGR"),
-        RG: document.getElementById("valRG"),
-        RR: document.getElementById("valRR")
-    };
+function fillWaveSelector(data) {
     let waves = new Set();
     data.forEach(d => waves.add(d.wave));
 
@@ -384,21 +384,216 @@ function createPC(data) {
         opt.value = w;
         selectWaves.appendChild(opt);
     });
+}
 
-    selectWaves.addEventListener("input", e => {
-        graph = new ParallelCoordinates("graph-wave", data, {
-            axes: axes,
-            cb: [checkBoxGG.checked, checkBoxGR.checked, checkBoxRG.checked, checkBoxRR.checked],
-            wave: parseInt(selectWaves.value),
-            vals: vals
-        });
-    });
-
+function createPC(data, update) {
     let defaultAxes = ["age", "field_cd", "exphappy", "goal"];
     let checkBoxGG = document.getElementById("GG");
     let checkBoxGR = document.getElementById("GR");
     let checkBoxRG = document.getElementById("RG");
     let checkBoxRR = document.getElementById("RR");
+    let selectWaves = document.getElementById("nb-wave");
+    // ugly fix for updating wave select from home after first creation of wave
+    let tabWave = document.getElementById("tab-wave");
+    let vals = {
+        GG: document.getElementById("valGG"),
+        GR: document.getElementById("valGR"),
+        RG: document.getElementById("valRG"),
+        RR: document.getElementById("valRR")
+    };
+
+    if (!update) {
+
+        selectWaves.addEventListener("input", e => {
+            if (tabWave.classList.contains("activeTab")) {
+                graph = new ParallelCoordinates("graph-wave", data, {
+                    axes: axes,
+                    cb: [checkBoxGG.checked, checkBoxGR.checked, checkBoxRG.checked, checkBoxRR.checked],
+                    wave: parseInt(selectWaves.value),
+                    vals: vals
+                });
+            } else {
+                changePC = true;
+            }
+        });
+        checkBoxGG.addEventListener("input", e => {
+            graph.showMidLines("GG", checkBoxGG.checked);
+        });
+
+        checkBoxGR.addEventListener("input", e => {
+            graph.showMidLines("GR", checkBoxGR.checked);
+        });
+
+        checkBoxRG.addEventListener("input", e => {
+            graph.showMidLines("RG", checkBoxRG.checked);
+        });
+
+        checkBoxRR.addEventListener("input", e => {
+            graph.showMidLines("RR", checkBoxRR.checked);
+        });
+
+        let w = 100;
+        let h = 10;
+
+        let labels = document.querySelectorAll("#options-wave-container tr");
+        labels.forEach(d => {
+            const type = d.dataset.type;
+            d.addEventListener("mouseover", () => graph.highlightMidLines(type, true));
+            d.addEventListener("mouseout", () => graph.highlightMidLines(type, false));
+        });
+
+        d3.select("label[for=GG] span")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h)
+            .append("g")
+            .selectAll("line")
+            .data(["#00ccff", "#00ccff"])
+            .enter()
+            .append("line")
+            .attr("x1", (d, i) => i * (w / 2))
+            .attr("y1", h / 2)
+            .attr("x2", (d, i) => (i + 1) * (w / 2))
+            .attr("y2", h / 2)
+            .style("stroke", d => d)
+            .style("stroke-width", 2);
+
+
+        d3.select("label[for=GR] span")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h)
+            .append("g")
+            .selectAll("line")
+            .data(["#00ccff", "#ff884d"])
+            .enter()
+            .append("line")
+            .attr("x1", (d, i) => i * (w / 2))
+            .attr("y1", h / 2)
+            .attr("x2", (d, i) => (i + 1) * (w / 2))
+            .attr("y2", h / 2)
+            .style("stroke", d => d)
+            .style("stroke-width", 2);
+
+        d3.select("label[for=RG] span")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h)
+            .append("g")
+            .selectAll("line")
+            .data(["#ff884d", "#00ccff"])
+            .enter()
+            .append("line")
+            .attr("x1", (d, i) => i * (w / 2))
+            .attr("y1", h / 2)
+            .attr("x2", (d, i) => (i + 1) * (w / 2))
+            .attr("y2", h / 2)
+            .style("stroke", d => d)
+            .style("stroke-width", 2);
+
+        d3.select("label[for=RR] span")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h)
+            .append("g")
+            .selectAll("line")
+            .data(["#ff884d", "#ff884d"])
+            .enter()
+            .append("line")
+            .attr("x1", (d, i) => i * (w / 2))
+            .attr("y1", h / 2)
+            .attr("x2", (d, i) => (i + 1) * (w / 2))
+            .attr("y2", h / 2)
+            .style("stroke", d => d)
+            .style("stroke-width", 2);
+
+
+        let keys = [];
+        let no_feat = ["iid", "id", "idg", "wave", "round", "position", "speedDates", "gender", "condtn", "positin1",
+            "field", "from", "zipcode", "career"];
+        axes = [];
+
+        let ul = document.createElement("ul");
+        let listCol = document.getElementById("list-col-wave");
+        let listSel = document.getElementById("list-sel-wave");
+        let graphDiv = document.getElementById("graph-wave");
+
+
+        for (let feature in data[0]) {
+            if (data[0].hasOwnProperty(feature) && !no_feat.includes(feature)) {
+                let li = document.createElement("li");
+                li.innerHTML = feature;
+                li.val = feature;
+                ul.appendChild(li);
+                if (typeof(data[0][feature]) === "object") {
+                    let subUl = document.createElement("ul");
+                    for (let feat in data[0][feature]) {
+                        if (data[0][feature].hasOwnProperty(feat)) {
+                            keys.push([feature, feat]);
+                            let li = document.createElement("li");
+                            li.innerHTML = feat;
+                            li.val = feature + "/" + feat;
+                            subUl.appendChild(li);
+
+                            // Add listener on sub li
+                            li.addEventListener("click", e => {
+                                li.style.display = "none";
+                                addSelected(li);
+                            })
+                        }
+                    }
+                    li.appendChild(subUl);
+                } else {
+                    // Add listener on li
+                    li.addEventListener("click", e => {
+                        li.style.display = "none";
+                        addSelected(li);
+                    });
+                    keys.push(feature);
+                    if (defaultAxes.includes(feature)) {
+                        li.style.display = "none";
+                        addSelected(li, false);
+                    }
+                }
+            }
+        }
+
+        listCol.appendChild(ul);
+
+        function addSelected(li, regular = true) {
+            let span = document.createElement("span");
+            span.innerHTML = li.val;
+            span.classList.add("col-tag");
+            let ax = li.val.split("/");
+            axes.push(ax);
+
+
+            if (regular) {
+                graphDiv.innerHTML = "";
+                graph = new ParallelCoordinates("graph-wave", data, {
+                    axes: axes,
+                    cb: [checkBoxGG.checked, checkBoxGR.checked, checkBoxRG.checked, checkBoxRR.checked],
+                    wave: parseInt(selectWaves.value),
+                    vals: vals
+                });
+            }
+
+            span.addEventListener("click", e => {
+                li.style.display = "block";
+                span.remove();
+                axes.splice(axes.indexOf(ax), 1);
+                graphDiv.innerHTML = "";
+                graph = new ParallelCoordinates("graph-wave", data, {
+                    axes: axes,
+                    cb: [checkBoxGG.checked, checkBoxGR.checked, checkBoxRG.checked, checkBoxRR.checked],
+                    wave: parseInt(selectWaves.value),
+                    vals: vals
+                });
+            });
+            listSel.append(span)
+        }
+
+    }
 
     let graph = new ParallelCoordinates("graph-wave", data, {
         axes: defaultAxes,
@@ -407,182 +602,7 @@ function createPC(data) {
         vals: vals
     });
 
-    checkBoxGG.addEventListener("input", e => {
-        graph.showMidLines("GG", checkBoxGG.checked);
-    });
 
-    checkBoxGR.addEventListener("input", e => {
-        graph.showMidLines("GR", checkBoxGR.checked);
-    });
-
-    checkBoxRG.addEventListener("input", e => {
-        graph.showMidLines("RG", checkBoxRG.checked);
-    });
-
-    checkBoxRR.addEventListener("input", e => {
-        graph.showMidLines("RR", checkBoxRR.checked);
-    });
-
-    let w = 100;
-    let h = 10;
-
-    let labels = document.querySelectorAll("#options-wave-container tr");
-    labels.forEach(d => {
-        const type = d.dataset.type;
-        d.addEventListener("mouseover", () => graph.highlightMidLines(type, true));
-        d.addEventListener("mouseout", () => graph.highlightMidLines(type, false));
-    });
-
-    d3.select("label[for=GG] span")
-        .append("svg")
-        .attr("width", w)
-        .attr("height", h)
-        .append("g")
-        .selectAll("line")
-        .data(["#00ccff", "#00ccff"])
-        .enter()
-        .append("line")
-        .attr("x1", (d, i) => i * (w / 2))
-        .attr("y1", h / 2)
-        .attr("x2", (d, i) => (i + 1) * (w / 2))
-        .attr("y2", h / 2)
-        .style("stroke", d => d)
-        .style("stroke-width", 2);
-
-
-    d3.select("label[for=GR] span")
-        .append("svg")
-        .attr("width", w)
-        .attr("height", h)
-        .append("g")
-        .selectAll("line")
-        .data(["#00ccff", "#ff884d"])
-        .enter()
-        .append("line")
-        .attr("x1", (d, i) => i * (w / 2))
-        .attr("y1", h / 2)
-        .attr("x2", (d, i) => (i + 1) * (w / 2))
-        .attr("y2", h / 2)
-        .style("stroke", d => d)
-        .style("stroke-width", 2);
-
-    d3.select("label[for=RG] span")
-        .append("svg")
-        .attr("width", w)
-        .attr("height", h)
-        .append("g")
-        .selectAll("line")
-        .data(["#ff884d", "#00ccff"])
-        .enter()
-        .append("line")
-        .attr("x1", (d, i) => i * (w / 2))
-        .attr("y1", h / 2)
-        .attr("x2", (d, i) => (i + 1) * (w / 2))
-        .attr("y2", h / 2)
-        .style("stroke", d => d)
-        .style("stroke-width", 2);
-
-    d3.select("label[for=RR] span")
-        .append("svg")
-        .attr("width", w)
-        .attr("height", h)
-        .append("g")
-        .selectAll("line")
-        .data(["#ff884d", "#ff884d"])
-        .enter()
-        .append("line")
-        .attr("x1", (d, i) => i * (w / 2))
-        .attr("y1", h / 2)
-        .attr("x2", (d, i) => (i + 1) * (w / 2))
-        .attr("y2", h / 2)
-        .style("stroke", d => d)
-        .style("stroke-width", 2);
-
-
-    let keys = [];
-    let no_feat = ["iid", "id", "idg", "wave", "round", "position", "speedDates", "gender", "condtn", "positin1",
-        "field", "from", "zipcode", "career"];
-    let axes = [];
-
-    let ul = document.createElement("ul");
-    let listCol = document.getElementById("list-col-wave");
-    let listSel = document.getElementById("list-sel-wave");
-    let graphDiv = document.getElementById("graph-wave");
-
-
-    for (let feature in data[0]) {
-        if (data[0].hasOwnProperty(feature) && !no_feat.includes(feature)) {
-            let li = document.createElement("li");
-            li.innerHTML = feature;
-            li.val = feature;
-            ul.appendChild(li);
-            if (typeof(data[0][feature]) === "object") {
-                let subUl = document.createElement("ul");
-                for (let feat in data[0][feature]) {
-                    if (data[0][feature].hasOwnProperty(feat)) {
-                        keys.push([feature, feat]);
-                        let li = document.createElement("li");
-                        li.innerHTML = feat;
-                        li.val = feature + "/" + feat;
-                        subUl.appendChild(li);
-
-                        // Add listener on sub li
-                        li.addEventListener("click", e => {
-                            li.style.display = "none";
-                            addSelected(li);
-                        })
-                    }
-                }
-                li.appendChild(subUl);
-            } else {
-                // Add listener on li
-                li.addEventListener("click", e => {
-                    li.style.display = "none";
-                    addSelected(li);
-                });
-                keys.push(feature);
-                if (defaultAxes.includes(feature)) {
-                    li.style.display = "none";
-                    addSelected(li, false);
-                }
-            }
-        }
-    }
-
-    listCol.appendChild(ul);
-
-    function addSelected(li, regular = true) {
-        let span = document.createElement("span");
-        span.innerHTML = li.val;
-        span.classList.add("col-tag");
-        let ax = li.val.split("/");
-        axes.push(ax);
-
-
-        if (regular) {
-            graphDiv.innerHTML = "";
-            graph = new ParallelCoordinates("graph-wave", data, {
-                axes: axes,
-                cb: [checkBoxGG.checked, checkBoxGR.checked, checkBoxRG.checked, checkBoxRR.checked],
-                wave: parseInt(selectWaves.value),
-                vals: vals
-            });
-        }
-
-        span.addEventListener("click", e => {
-            li.style.display = "block";
-            span.remove();
-            axes.splice(axes.indexOf(ax), 1);
-            graphDiv.innerHTML = "";
-            graph = new ParallelCoordinates("graph-wave", data, {
-                axes: axes,
-                cb: [checkBoxGG.checked, checkBoxGR.checked, checkBoxRG.checked, checkBoxRR.checked],
-                wave: parseInt(selectWaves.value),
-                vals: vals
-            });
-        });
-        listSel.append(span)
-    }
 
 }
 
@@ -645,7 +665,7 @@ function setUpHome(data) {
 function setUpPerson(data) {
     if (!setups.person) {
         // Selectors
-        fillIidSelector(data);
+        // fillIidSelector(data);
 
         let selectIid = document.getElementById("iid-person");
 
@@ -713,8 +733,11 @@ function setUpWave(data) {
     if (!setups.wave) {
         // Code for the tab goes here
 
-        createPC(data);
+        createPC(data, false);
         setups.wave = true;
+    }
+    if (changePC) {
+        createPC(data, true);
     }
 }
 

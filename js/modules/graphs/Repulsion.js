@@ -10,20 +10,29 @@ const defaultOptions = {
     infoWave: "info-wave"
 };
 
+const event = new Event('input', {
+    'bubbles': true,
+    'cancelable': true
+});
+
 class Repulsion extends Graph {
 
     /**
      * Constructor of the Graph
      * @param id the div id in which we draw the Graph
      * @param allData the data used to draw the Graph
+     * @param selected the selection for iid to update
+     * @param selectedW the selection for wave to update
      * @param options optional variables for the Graph
      */
-    constructor(id, allData, options = {}) {
+    constructor(id, allData, selected, selectedW, options = {}) {
         super(id, allData);
 
         let opts = fillWithDefault(options, defaultOptions);
         this.infoIid = opts.infoIid;
         this.infoWave = opts.infoWave;
+        this.selected = selected;
+        this.selectedW = selectedW;
 
         this.preprocess();
         this.createGraph();
@@ -113,6 +122,11 @@ class Repulsion extends Graph {
             .attr("r", 4)
             .attr("fill", d => gender_color(d.gender))
             .on("click", d => {
+                // this.selected.iid = d.iid;
+                // this.selected.wave = d.wave;
+                this.selected.value = "" + d.iid;
+                this.selectedW.value = "" + d.wave;
+                this.selectedW.dispatchEvent(event);
                 infoIid.innerHTML = d.iid;
                 infoWave.innerHTML = d.wave;
             })

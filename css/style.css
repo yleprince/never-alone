@@ -320,6 +320,30 @@ label > span {
     /*background-color: #96cd85;*/
 }
 
+label[for="self_traits"] {
+    color: #6F257F;
+}
+
+label[for="rating_o"] {
+    color: #CA0D59;
+}
+
+label[for="self_look_traits"] {
+    color: #7CFC00;
+}
+
+label[for="same_gender_look_traits"] {
+    color: #FFA500;
+}
+
+label[for="opposite_gender_look_traits"] {
+    color: #00BFFF;
+}
+
+label[for="opposite_gender_self_traits"] {
+    color: #008080;
+}
+
 #iid-person {
     right: 2%;
     position: absolute;
