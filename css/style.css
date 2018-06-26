@@ -539,12 +539,17 @@ td {
     position: absolute;
     width: 25%;
     height: 25%;
+    cursor: move;
 }
 
 #menu-holder {
     position: absolute;
     width: 100%;
     height: 100%;
+}
+
+.menu-segment {
+    cursor: pointer;
 }
 
 .menu-segment.home {
