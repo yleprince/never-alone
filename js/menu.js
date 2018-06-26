@@ -208,15 +208,16 @@ d3.radialMenu = function () {
 
         // Chris
         let tabs = document.getElementsByClassName("tab");
+        let tabsName = ["home", "wave", "person", "success"];
 
         // Add the segments
         menuSegments.append("path")
-            .attr("class", "menu-segment")
             .each(function (d) {
                 this._current = d;
             })                   // store the initial data value for later
             // .on("click", function(d) { alert(d.data.action); })
             // Chris
+            .attr("class", (d, i) => "menu-segment " + tabsName[i])
             .on("click", function (d) {
                 // console.log("menuSegments");
                 // console.log(tabs);

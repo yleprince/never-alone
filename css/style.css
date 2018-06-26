@@ -34,7 +34,7 @@ article .activeTab {
 }
 
 #tab-home {
-    background-color: gray;
+    /*background-color: gray;*/
 }
 
 /*WAVE*/
@@ -546,12 +546,36 @@ td {
     height: 100%;
 }
 
-.menu-segment {
-    fill: #4679bd;
+.menu-segment.home {
+    fill: #ffad33;
 }
 
-.menu-segment:hover {
-    fill: #5689cd;
+.menu-segment.wave {
+    fill: palevioletred;
+}
+
+.menu-segment.person {
+    fill: mediumseagreen;
+}
+
+.menu-segment.success {
+    fill: #1f78b4;
+}
+
+.menu-segment.home:hover {
+    fill: #ffc266;
+}
+
+.menu-segment.wave:hover {
+    fill: #e699b2;
+}
+
+.menu-segment.person:hover {
+    fill: #9fdfbc;
+}
+
+.menu-segment.success:hover {
+    fill: #92c8ed;
 }
 
 .menu-icon {

@@ -316,7 +316,7 @@ function createIDCard(data, iid) {
     image.height = 60;
     imageCard.appendChild(image);
 
-    let ulId = document.createElement("ul");
+    // let ulId = document.createElement("ul");
 
     // IID
     let liIId = document.getElementById("li-iid");
